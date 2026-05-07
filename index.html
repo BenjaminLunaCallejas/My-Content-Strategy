@@ -35,7 +35,6 @@
 
         <main class="flex-1 overflow-y-auto p-8">
             
-            <!-- SECCIÓN 1: ESTRATEGIA -->
             <section id="estrategia" class="tab-content active max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                 <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Identidad y Estrategia Central</h2>
                 
@@ -48,11 +47,9 @@
                     <div>
                         <label class="block text-sm font-semibold text-gray-600 mb-2">Arquetipos de Marca (Mínimo 2 para perfil híbrido)</label>
                         <div id="arquetiposContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg bg-gray-50 max-h-64 overflow-y-auto">
-                            <!-- JS inyecta los 12 aquí -->
-                        </div>
+                            </div>
                         <div id="arquetipoDescripcion" class="mt-4 p-5 bg-indigo-50 border-l-4 border-indigo-500 text-sm text-indigo-900 hidden">
-                            <!-- Descripción dinámica y combinación -->
-                        </div>
+                            </div>
                     </div>
                 </div>
 
@@ -72,13 +69,11 @@
                 <span id="estrategia-msg" class="ml-4 text-green-600 font-semibold hidden">¡Estrategia guardada!</span>
             </section>
 
-            <!-- SECCIÓN 2: NOTAS Y TAREAS (EXPANDIDA) -->
             <section id="notas" class="tab-content w-full">
                 <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Panel de Notas y Tendencias</h2>
                 
                 <div class="overflow-x-auto pb-4">
                     <div class="flex gap-6 min-w-[1200px]">
-                        <!-- Columna 1: Ideas Crudas -->
                         <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-[500px] cursor-text hover:border-indigo-300 transition" onclick="if(event.target === this || event.target.tagName === 'H3' || event.target.tagName === 'UL') document.getElementById('inputTarea_ideas').focus()">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Ideas Crudas</h3>
                             <div class="flex gap-2 mb-4">
@@ -88,7 +83,6 @@
                             <ul id="lista_ideas" class="space-y-2 text-sm"></ul>
                         </div>
                         
-                        <!-- Columna 2: Audios -->
                         <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col cursor-text hover:border-indigo-300 transition" onclick="if(event.target === this || event.target.tagName === 'H3' || event.target.tagName === 'UL') document.getElementById('inputTarea_audios').focus()">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Audios y Referencias</h3>
                             <div class="flex gap-2 mb-4">
@@ -98,7 +92,6 @@
                             <ul id="lista_audios" class="space-y-2 text-sm"></ul>
                         </div>
 
-                        <!-- Columna 3: Tendencias -->
                         <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col cursor-text hover:border-indigo-300 transition" onclick="if(event.target === this || event.target.tagName === 'H3' || event.target.tagName === 'UL') document.getElementById('inputTarea_tendencias').focus()">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Tendencias</h3>
                             <div class="flex gap-2 mb-4">
@@ -108,7 +101,6 @@
                             <ul id="lista_tendencias" class="space-y-2 text-sm"></ul>
                         </div>
 
-                        <!-- Columna 4: Próximos Videos (ESTANDARIZADA) -->
                         <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col cursor-text hover:border-indigo-300 transition" onclick="if(event.target === this || event.target.tagName === 'H3' || event.target.tagName === 'UL') document.getElementById('inputTarea_proximos').focus()">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Próximos Videos / Colabs</h3>
                             <div class="flex gap-2 mb-4">
@@ -121,7 +113,6 @@
                 </div>
             </section>
 
-            <!-- SECCIÓN 3: IDEAS Y GUIONES (ORIGINAL) -->
             <section id="ideas" class="tab-content max-w-5xl mx-auto">
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-8">
                     <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Generador de Ideas y Guiones</h2>
@@ -141,7 +132,6 @@
                 <div id="listaIdeas" class="grid grid-cols-1 gap-4"></div>
             </section>
 
-            <!-- SECCIÓN 4: PLANIFICADOR (ORIGINAL) -->
             <section id="planificador" class="tab-content max-w-5xl mx-auto">
                 <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Planificador Cronológico</h2>
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"><div id="calendarioGrid" class="space-y-4"></div></div>
@@ -167,10 +157,32 @@
             "El Amigo": "Busca la pertenencia y conexión. Estrategia: Empatía y realismo. Formatos: El 'día a día' sin filtros, errores comunes del emprendedor."
         };
 
+        // --- RASGOS PARA COMBINACIONES ---
+        const arquetiposRasgos = {
+            "El Sabio": { adjetivo: "analítica, rigurosa y profunda", contenido: "análisis detallados, desmitificaciones y data-storytelling" },
+            "El Bufón": { adjetivo: "irreverente, magnética y entretenida", contenido: "memes educativos, sketches de comedia (POV) y humor situacional" },
+            "El Mago": { adjetivo: "visionaria, sorprendente y transformadora", contenido: "demostraciones de 'efecto wow' y procesos complejos explicados mágicamente" },
+            "El Rebelde": { adjetivo: "disruptiva, provocadora y sin filtros", contenido: "opiniones impopulares (hot takes), debates intensos y ruptura de mitos de la industria" },
+            "El Héroe": { adjetivo: "inspiradora, disciplinada y valiente", contenido: "retos de superación personal, historias de fracaso/éxito y vlogs competitivos" },
+            "El Creador": { adjetivo: "innovadora, estructurada y estética", contenido: "tutoriales paso a paso, 'build in public' y detrás de escena del proceso creativo" },
+            "El Gobernante": { adjetivo: "autoritaria, asertiva y de alto nivel", contenido: "masterclasses, guías definitivas y estrategias metodológicas exclusivas" },
+            "El Amante": { adjetivo: "apasionada, sensorial y muy cercana", contenido: "storytimes emocionales, colaboraciones íntimas (1 a 1) y estética audiovisual cuidada" },
+            "El Cuidador": { adjetivo: "empática, protectora y altruista", contenido: "tips de bienestar, sesiones de Q&A resolviendo problemas de la audiencia y guías de soporte" },
+            "El Explorador": { adjetivo: "aventurera, curiosa y dinámica", contenido: "vlogs de laboratorio/campo, documentales cortos inmersivos y descubrimientos en tiempo real" },
+            "El Inocente": { adjetivo: "optimista, transparente y accesible", contenido: "explicaciones simples para principiantes (ELI5) y contenido puramente motivacional" },
+            "El Amigo": { adjetivo: "cercana, realista y confiable", contenido: "el 'día a día' sin filtros, charlas tipo podcast relajado y confesiones de errores comunes" }
+        };
+
         let ideas = JSON.parse(localStorage.getItem('contentIdeas')) || [];
         let ejesTags = JSON.parse(localStorage.getItem('ejesTags')) || [];
         let pilaresTags = JSON.parse(localStorage.getItem('pilaresTags')) || [];
-        let tasks = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
+        
+        // Carga de tareas con seguro anti-bugs para datos antiguos
+        let tasks = JSON.parse(localStorage.getItem('contentTasks')) || {};
+        if (!tasks.ideas) tasks.ideas = [];
+        if (!tasks.audios) tasks.audios = [];
+        if (!tasks.tendencias) tasks.tendencias = [];
+        if (!tasks.proximos) tasks.proximos = []; // <--- Esto repara el bug de la columna 4
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -202,7 +214,7 @@
             updateArquetipoDesc();
         }
 
-        // --- ACTUALIZACIÓN DINÁMICA DE ARQUETIPOS (NUEVA LÓGICA) ---
+        // --- ACTUALIZACIÓN DINÁMICA DE ARQUETIPOS (COMBINACIÓN INTELIGENTE) ---
         function updateArquetipoDesc() {
             const selected = Array.from(document.querySelectorAll('.arq-checkbox:checked')).map(cb => cb.value);
             const descBox = document.getElementById('arquetipoDescripcion');
@@ -214,12 +226,19 @@
                     // Solo 1 arquetipo: Descripción independiente
                     descBox.innerHTML = `<div class="space-y-2"><strong>${selected[0]}:</strong> ${arquetiposInfo[selected[0]]}</div>`;
                 } else {
-                    // Más de 1 arquetipo: Personalidad combinada
+                    // Fusión dinámica de personalidades
+                    let arq1 = selected[0];
+                    let arq2 = selected[1];
+                    let rasgo1 = arquetiposRasgos[arq1].adjetivo;
+                    let rasgo2 = arquetiposRasgos[arq2].adjetivo;
+                    let cont1 = arquetiposRasgos[arq1].contenido;
+                    let cont2 = arquetiposRasgos[arq2].contenido;
+
                     let descText = `
                         <div class="mb-3 text-indigo-800 font-bold text-lg uppercase tracking-wider border-b border-indigo-200 pb-1">
                             Fusión de Marca: ${selected.join(' + ')}
                         </div>
-                        <p class="text-sm mb-3">Tu identidad es híbrida. Proyectas una mezcla de las siguientes características, úsalas para destacar:</p>
+                        <p class="text-sm mb-3">Tu identidad es híbrida. Proyectas una mezcla de las siguientes características individuales:</p>
                         <ul class="space-y-2 mb-4 list-disc pl-5">
                     `;
                     
@@ -229,8 +248,11 @@
                     
                     descText += `
                         </ul>
-                        <div class="mt-4 p-3 bg-indigo-100 rounded border border-indigo-200 text-indigo-900 shadow-sm">
-                            <strong>⭐ Contenido Estrella Combinado:</strong> Genera impacto mezclando el formato y tono de tus arquetipos. Por ejemplo, puedes tomar el rigor o la estructura de un <em>[${selected[0]}]</em> y comunicarlo a través de la narrativa o el estilo visual de un <em>[${selected[1]}]</em> para lograr un contenido verdaderamente diferencial.
+                        <div class="mt-4 p-4 bg-indigo-100 rounded-lg border border-indigo-200 text-indigo-900 shadow-sm leading-relaxed">
+                            <strong class="text-base">⭐ Tu Personalidad Combinada y Contenido Estrella:</strong><br><br>
+                            Una marca que fusiona <strong>${arq1}</strong> y <strong>${arq2}</strong> tiene una personalidad excepcionalmente <em>${rasgo1}</em>, pero al mismo tiempo <em>${rasgo2}</em>.<br><br>
+                            Para explotar esta mezcla única, tu <strong>contenido estrella</strong> debe consistir en <strong>${cont1}</strong>, pero ejecutados con el formato y estilo de <strong>${cont2}</strong> (o viceversa). <br><br>
+                            <em>Ejemplo de formato:</em> Entrevistas dinámicas, debates híbridos, mini-documentales o vlogs donde la forma atrape visualmente/emocionalmente, pero el fondo entregue un valor y estructura contundente.
                         </div>
                     `;
                     descBox.innerHTML = descText;
@@ -278,7 +300,6 @@
             input.value = '';
             renderTasks();
             saveTasks();
-            // Mantener el foco en el input para seguir escribiendo rápidamente
             input.focus();
         }
 
@@ -338,7 +359,6 @@
             });
             localStorage.setItem('contentIdeas', JSON.stringify(ideas));
             renderIdeas();
-            // Limpiar formulario básico
             document.getElementById('ideaTitulo').value = '';
             document.getElementById('ideaGuion').value = '';
         }
