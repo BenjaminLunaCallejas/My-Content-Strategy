@@ -79,41 +79,41 @@
                 <div class="overflow-x-auto pb-4">
                     <div class="flex gap-6 min-w-[1200px]">
                         <!-- Columna 1: Ideas Crudas -->
-                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-[500px]">
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-[500px] cursor-text hover:border-indigo-300 transition" onclick="if(event.target === this || event.target.tagName === 'H3' || event.target.tagName === 'UL') document.getElementById('inputTarea_ideas').focus()">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Ideas Crudas</h3>
                             <div class="flex gap-2 mb-4">
-                                <input type="text" id="inputTarea_ideas" class="flex-1 p-2 border rounded text-sm" placeholder="Nueva idea...">
-                                <button onclick="addTask('ideas')" class="bg-indigo-500 text-white px-3 rounded">+</button>
+                                <input type="text" id="inputTarea_ideas" class="flex-1 p-2 border rounded text-sm" placeholder="Nueva idea... (Presiona Enter)" onkeypress="if(event.key === 'Enter') addTask('ideas')">
+                                <button onclick="addTask('ideas')" class="bg-indigo-500 text-white px-3 rounded hover:bg-indigo-600 transition">+</button>
                             </div>
                             <ul id="lista_ideas" class="space-y-2 text-sm"></ul>
                         </div>
                         
                         <!-- Columna 2: Audios -->
-                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col cursor-text hover:border-indigo-300 transition" onclick="if(event.target === this || event.target.tagName === 'H3' || event.target.tagName === 'UL') document.getElementById('inputTarea_audios').focus()">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Audios y Referencias</h3>
                             <div class="flex gap-2 mb-4">
-                                <input type="text" id="inputTarea_audios" class="flex-1 p-2 border rounded text-sm" placeholder="Enlace o nombre...">
-                                <button onclick="addTask('audios')" class="bg-indigo-500 text-white px-3 rounded">+</button>
+                                <input type="text" id="inputTarea_audios" class="flex-1 p-2 border rounded text-sm" placeholder="Enlace o nombre... (Presiona Enter)" onkeypress="if(event.key === 'Enter') addTask('audios')">
+                                <button onclick="addTask('audios')" class="bg-indigo-500 text-white px-3 rounded hover:bg-indigo-600 transition">+</button>
                             </div>
                             <ul id="lista_audios" class="space-y-2 text-sm"></ul>
                         </div>
 
                         <!-- Columna 3: Tendencias -->
-                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col cursor-text hover:border-indigo-300 transition" onclick="if(event.target === this || event.target.tagName === 'H3' || event.target.tagName === 'UL') document.getElementById('inputTarea_tendencias').focus()">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Tendencias</h3>
                             <div class="flex gap-2 mb-4">
-                                <input type="text" id="inputTarea_tendencias" class="flex-1 p-2 border rounded text-sm" placeholder="Tendencia actual...">
-                                <button onclick="addTask('tendencias')" class="bg-indigo-500 text-white px-3 rounded">+</button>
+                                <input type="text" id="inputTarea_tendencias" class="flex-1 p-2 border rounded text-sm" placeholder="Tendencia actual... (Presiona Enter)" onkeypress="if(event.key === 'Enter') addTask('tendencias')">
+                                <button onclick="addTask('tendencias')" class="bg-indigo-500 text-white px-3 rounded hover:bg-indigo-600 transition">+</button>
                             </div>
                             <ul id="lista_tendencias" class="space-y-2 text-sm"></ul>
                         </div>
 
-                        <!-- Columna 4: Próximos Videos (NUEVA) -->
-                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col border-l-4 border-l-indigo-400">
+                        <!-- Columna 4: Próximos Videos (ESTANDARIZADA) -->
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col cursor-text hover:border-indigo-300 transition" onclick="if(event.target === this || event.target.tagName === 'H3' || event.target.tagName === 'UL') document.getElementById('inputTarea_proximos').focus()">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Próximos Videos / Colabs</h3>
                             <div class="flex gap-2 mb-4">
-                                <input type="text" id="inputTarea_proximos" class="flex-1 p-2 border rounded text-sm" placeholder="Planear video o colab...">
-                                <button onclick="addTask('proximos')" class="bg-indigo-500 text-white px-3 rounded">+</button>
+                                <input type="text" id="inputTarea_proximos" class="flex-1 p-2 border rounded text-sm" placeholder="Planear video... (Presiona Enter)" onkeypress="if(event.key === 'Enter') addTask('proximos')">
+                                <button onclick="addTask('proximos')" class="bg-indigo-500 text-white px-3 rounded hover:bg-indigo-600 transition">+</button>
                             </div>
                             <ul id="lista_proximos" class="space-y-2 text-sm"></ul>
                         </div>
@@ -170,7 +170,6 @@
         let ideas = JSON.parse(localStorage.getItem('contentIdeas')) || [];
         let ejesTags = JSON.parse(localStorage.getItem('ejesTags')) || [];
         let pilaresTags = JSON.parse(localStorage.getItem('pilaresTags')) || [];
-        // Se añade 'proximos' al objeto de tareas
         let tasks = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
 
         function switchTab(tabId) {
@@ -186,7 +185,7 @@
             if(tabId === 'notas') renderTasks();
         }
 
-        // --- INICIALIZACIÓN DE ARQUETIPOS (12) ---
+        // --- INICIALIZACIÓN DE ARQUETIPOS ---
         function initArquetipos() {
             const container = document.getElementById('arquetiposContainer');
             const seleccionados = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
@@ -203,18 +202,39 @@
             updateArquetipoDesc();
         }
 
+        // --- ACTUALIZACIÓN DINÁMICA DE ARQUETIPOS (NUEVA LÓGICA) ---
         function updateArquetipoDesc() {
             const selected = Array.from(document.querySelectorAll('.arq-checkbox:checked')).map(cb => cb.value);
             const descBox = document.getElementById('arquetipoDescripcion');
+            
             if(selected.length > 0) {
                 descBox.classList.remove('hidden');
-                let hybridName = selected.length >= 2 ? `<div class="mb-2 text-indigo-700 font-bold text-lg underline uppercase tracking-widest">Combinación: ${selected.join(' + ')}</div>` : '';
-                let descText = `${hybridName}<div class="space-y-3">`;
-                selected.forEach(arq => {
-                    descText += `<div><strong>${arq}:</strong> ${arquetiposInfo[arq]}</div>`;
-                });
-                descText += "</div>";
-                descBox.innerHTML = descText;
+                
+                if (selected.length === 1) {
+                    // Solo 1 arquetipo: Descripción independiente
+                    descBox.innerHTML = `<div class="space-y-2"><strong>${selected[0]}:</strong> ${arquetiposInfo[selected[0]]}</div>`;
+                } else {
+                    // Más de 1 arquetipo: Personalidad combinada
+                    let descText = `
+                        <div class="mb-3 text-indigo-800 font-bold text-lg uppercase tracking-wider border-b border-indigo-200 pb-1">
+                            Fusión de Marca: ${selected.join(' + ')}
+                        </div>
+                        <p class="text-sm mb-3">Tu identidad es híbrida. Proyectas una mezcla de las siguientes características, úsalas para destacar:</p>
+                        <ul class="space-y-2 mb-4 list-disc pl-5">
+                    `;
+                    
+                    selected.forEach(arq => {
+                        descText += `<li><strong>${arq}:</strong> ${arquetiposInfo[arq]}</li>`;
+                    });
+                    
+                    descText += `
+                        </ul>
+                        <div class="mt-4 p-3 bg-indigo-100 rounded border border-indigo-200 text-indigo-900 shadow-sm">
+                            <strong>⭐ Contenido Estrella Combinado:</strong> Genera impacto mezclando el formato y tono de tus arquetipos. Por ejemplo, puedes tomar el rigor o la estructura de un <em>[${selected[0]}]</em> y comunicarlo a través de la narrativa o el estilo visual de un <em>[${selected[1]}]</em> para lograr un contenido verdaderamente diferencial.
+                        </div>
+                    `;
+                    descBox.innerHTML = descText;
+                }
             } else {
                 descBox.classList.add('hidden');
             }
@@ -250,7 +270,7 @@
             renderTags(listId, targetArray, storageKey);
         }
 
-        // --- GESTIÓN DE NOTAS/TAREAS (4 COLUMNAS) ---
+        // --- GESTIÓN DE NOTAS/TAREAS ---
         function addTask(category) {
             const input = document.getElementById(`inputTarea_${category}`);
             if(input.value.trim() === '') return;
@@ -258,6 +278,8 @@
             input.value = '';
             renderTasks();
             saveTasks();
+            // Mantener el foco en el input para seguir escribiendo rápidamente
+            input.focus();
         }
 
         function toggleTask(category, index) {
@@ -279,9 +301,9 @@
                 list.innerHTML = '';
                 tasks[cat].forEach((task, index) => {
                     list.innerHTML += `
-                        <li class="flex justify-between items-start p-2 bg-slate-50 rounded border group hover:bg-white transition">
+                        <li class="flex justify-between items-start p-2 bg-slate-50 rounded border group hover:bg-white transition cursor-default">
                             <span onclick="toggleTask('${cat}', ${index})" class="flex-1 cursor-pointer pr-2 ${task.done ? 'task-done' : ''}">${task.text}</span>
-                            <button onclick="removeTask('${cat}', ${index})" class="text-red-400 opacity-0 group-hover:opacity-100 transition font-bold">×</button>
+                            <button onclick="removeTask('${cat}', ${index}); event.stopPropagation();" class="text-red-400 opacity-0 group-hover:opacity-100 transition font-bold cursor-pointer">×</button>
                         </li>
                     `;
                 });
@@ -299,7 +321,7 @@
             setTimeout(() => msg.classList.add('hidden'), 2000);
         }
 
-        // --- FUNCIONES DE IDEA/CALENDARIO (MANTENIDAS) ---
+        // --- FUNCIONES DE IDEA/CALENDARIO ---
         function guardarIdea() {
             const titulo = document.getElementById('ideaTitulo').value;
             if(!titulo) return alert('Título requerido');
@@ -316,6 +338,9 @@
             });
             localStorage.setItem('contentIdeas', JSON.stringify(ideas));
             renderIdeas();
+            // Limpiar formulario básico
+            document.getElementById('ideaTitulo').value = '';
+            document.getElementById('ideaGuion').value = '';
         }
 
         function renderIdeas() {
