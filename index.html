@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificador Estratégico de Contenido</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+        <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-lg">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold tracking-wider text-indigo-400">Content<br>Core Hub</h1>
+            </div>
+            <nav class="flex-1 px-4 space-y-2">
+                <button onclick="switchTab('estrategia')" class="w-full text-left px-4 py-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition" id="btn-estrategia">1. Estrategia y Marca</button>
+                <button onclick="switchTab('notas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-notas">2. Notas y Tendencias</button>
+                <button onclick="switchTab('ideas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-ideas">3. Repositorio y Guiones</button>
+                <button onclick="switchTab('planificador')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-planificador">4. Planificador</button>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto p-8">
+            
+            <section id="estrategia" class="tab-content active max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Identidad y Estrategia Central</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Tema Central</label>
+                        <input type="text" id="temaCentral" placeholder="Ej. Emprendimiento STEAM y Ciencia" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Arquetipo de Marca (Carl Jung)</label>
+                        <select id="arquetipo" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="El Sabio">El Sabio (Busca la verdad, analiza, enseña)</option>
+                            <option value="El Creador">El Creador (Innovación, visión, estructura)</option>
+                            <option value="El Explorador">El Explorador (Descubrimiento, autonomía)</option>
+                            <option value="El Mago">El Mago (Transformación, catalizador de cambios)</option>
+                            <option value="El Héroe">El Héroe (Maestría, superación de retos)</option>
+                            <option value="El Rebelde">El Rebelde (Disrupción, romper esquemas)</option>
+                            <option value="El Gobernante">El Gobernante (Liderazgo, control, éxito)</option>
+                            <option value="El Amigo">El Amigo (Conexión, pertenencia, empatía)</option>
+                            <option value="El Cuidador">El Cuidador (Servicio, protección, altruismo)</option>
+                            <option value="El Inocente">El Inocente (Optimismo, simplicidad, pureza)</option>
+                            <option value="El Amante">El Amante (Pasión, intimidad, compromiso)</option>
+                            <option value="El Bufón">El Bufón (Alegría, irreverencia, vivir el momento)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">Ejes Transversales (Temas secundarios recurrentes)</label>
+                    <textarea id="ejesTransversales" rows="2" placeholder="Ej. Herramientas digitales, biotecnología, metodologías de estudio..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">Pilares de Contenido</label>
+                    <textarea id="pilares" rows="3" placeholder="Ej. 1. Educativo (Tutoriales), 2. Inspiracional (Casos de éxito), 3. Autoridad (Análisis de papers)" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                </div>
+
+                <button onclick="guardarEstrategia()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Estrategia</button>
+                <span id="estrategia-msg" class="ml-4 text-green-600 font-semibold hidden">¡Estrategia guardada!</span>
+            </section>
+
+            <section id="notas" class="tab-content max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Panel de Notas y Tendencias</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                        <h3 class="text-xl font-bold text-gray-700 mb-4">Ideas Crudas (Brainstorming)</h3>
+                        <p class="text-sm text-gray-500 mb-4">Registra pensamientos sin procesar antes de estructurarlos como guiones formales.</p>
+                        <textarea id="notasCrudas" rows="12" placeholder="Ej. Hablar sobre el mito del emprendedor solitario, explicar el ciclo de Krebs con una analogía de videojuegos..." class="w-full flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"></textarea>
+                    </div>
+                    
+                    <div class="space-y-6 flex flex-col">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <h3 class="text-xl font-bold text-gray-700 mb-4">Audios Virales y Referencias</h3>
+                            <p class="text-sm text-gray-500 mb-2">Pega enlaces de audios en tendencia o videos que sirvan como inspiración directa.</p>
+                            <textarea id="notasAudios" rows="4" placeholder="https://tiktok.com/...&#10;Audio de transición dramática..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex-1">
+                            <h3 class="text-xl font-bold text-gray-700 mb-4">Análisis de Tendencias</h3>
+                            <p class="text-sm text-gray-500 mb-2">Anota formatos que están funcionando actualmente en tu nicho algorítmico.</p>
+                            <textarea id="notasTendencias" rows="4" placeholder="Ej. Carruseles interactivos en LinkedIn, Shorts con edición dinámica (CapCut) y subtítulos amarillos..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex items-center">
+                    <button onclick="guardarNotas()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Banco de Notas</button>
+                    <span id="notas-msg" class="ml-4 text-green-600 font-semibold hidden">¡Información almacenada correctamente!</span>
+                </div>
+            </section>
+
+            <section id="ideas" class="tab-content max-w-5xl mx-auto">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-8">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Generador de Ideas y Guiones</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                        <div class="md:col-span-5">
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Título de la Idea</label>
+                            <input type="text" id="ideaTitulo" placeholder="Ej. ¿Cómo estructurar un proyecto de investigación?" class="w-full p-3 border rounded-lg outline-none">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Formato</label>
+                            <select id="ideaFormato" class="w-full p-3 border rounded-lg outline-none">
+                                <option value="Short Content">Short Content (Reel/TikTok/Shorts)</option>
+                                <option value="Long Form">Long Form (YouTube/Podcast)</option>
+                                <option value="Carrusel">Carrusel (Instagram/LinkedIn)</option>
+                                <option value="Hilo">Hilo (X/Threads)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Tipo</label>
+                            <select id="ideaTipo" class="w-full p-3 border rounded-lg outline-none">
+                                <option value="Divulgación">Divulgación Científica</option>
+                                <option value="Entrevista">Entrevista / Colaboración</option>
+                                <option value="Recomendación">Recomendación (Herramientas)</option>
+                                <option value="Tutorial">Tutorial Técnico</option>
+                                <option value="Vlog/Lifestyle">Vlog / Documental</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Objetivo Estratégico</label>
+                            <select id="ideaObjetivo" class="w-full p-3 border rounded-lg outline-none">
+                                <option value="Educar (Valor)">Educar (Aportar Valor)</option>
+                                <option value="Inspirar (Presencia)">Inspirar (Generar Conexión)</option>
+                                <option value="Autoridad (Demostrar)">Autoridad (Demostrar Expertise)</option>
+                                <option value="Convertir (Venta/Lead)">Convertir (Call to Action / Inscripción)</option>
+                                <option value="Entretener (Alcance)">Entretener (Maximizar Alcance)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Fecha de Publicación</label>
+                            <input type="date" id="ideaFecha" class="w-full p-3 border rounded-lg outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Hora (Opcional)</label>
+                            <input type="time" id="ideaHora" class="w-full p-3 border rounded-lg outline-none">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Estructura del Guion (Hook, Body, CTA)</label>
+                        <textarea id="ideaGuion" rows="5" placeholder="1. Gancho (0-3s): ...&#10;2. Desarrollo Académico/Técnico: ...&#10;3. Llamado a la acción: ..." class="w-full p-3 border rounded-lg outline-none"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Copy (Texto de la publicación)</label>
+                        <textarea id="ideaCopy" rows="3" placeholder="Texto descriptivo que acompañará tu contenido en la plataforma..." class="w-full p-3 border rounded-lg outline-none"></textarea>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Hashtags</label>
+                        <input type="text" id="ideaHashtags" placeholder="Ej. #Ciencia #STEAM #Biotecnología #Emprendimiento" class="w-full p-3 border rounded-lg outline-none">
+                    </div>
+
+                    <button onclick="guardarIdea()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Guion Estructurado</button>
+                </div>
+
+                <div id="listaIdeas" class="grid grid-cols-1 gap-4">
+                    </div>
+            </section>
+
+            <section id="planificador" class="tab-content max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Planificador Cronológico</h2>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div id="calendarioGrid" class="space-y-4">
+                        </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        let ideas = JSON.parse(localStorage.getItem('contentIdeas')) || [];
+
+        // --- SISTEMA DE NAVEGACIÓN ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('aside button').forEach(btn => {
+                btn.classList.remove('bg-slate-800');
+                btn.classList.add('hover:bg-slate-700');
+            });
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('bg-slate-800');
+            document.getElementById('btn-' + tabId).classList.remove('hover:bg-slate-700');
+            
+            if(tabId === 'ideas') renderIdeas();
+            if(tabId === 'planificador') renderCalendario();
+        }
+
+        // --- MÓDULO: ESTRATEGIA CENTRAL ---
+        function cargarEstrategia() {
+            document.getElementById('temaCentral').value = localStorage.getItem('temaCentral') || '';
+            document.getElementById('arquetipo').value = localStorage.getItem('arquetipo') || 'El Sabio';
+            document.getElementById('ejesTransversales').value = localStorage.getItem('ejesTransversales') || '';
+            document.getElementById('pilares').value = localStorage.getItem('pilares') || '';
+        }
+
+        function guardarEstrategia() {
+            localStorage.setItem('temaCentral', document.getElementById('temaCentral').value);
+            localStorage.setItem('arquetipo', document.getElementById('arquetipo').value);
+            localStorage.setItem('ejesTransversales', document.getElementById('ejesTransversales').value);
+            localStorage.setItem('pilares', document.getElementById('pilares').value);
+            
+            const msg = document.getElementById('estrategia-msg');
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 2000);
+        }
+
+        // --- MÓDULO: NOTAS Y TENDENCIAS ---
+        function cargarNotas() {
+            document.getElementById('notasCrudas').value = localStorage.getItem('notasCrudas') || '';
+            document.getElementById('notasAudios').value = localStorage.getItem('notasAudios') || '';
+            document.getElementById('notasTendencias').value = localStorage.getItem('notasTendencias') || '';
+        }
+
+        function guardarNotas() {
+            localStorage.setItem('notasCrudas', document.getElementById('notasCrudas').value);
+            localStorage.setItem('notasAudios', document.getElementById('notasAudios').value);
+            localStorage.setItem('notasTendencias', document.getElementById('notasTendencias').value);
+            
+            const msg = document.getElementById('notas-msg');
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 2000);
+        }
+
+        // --- MÓDULO: REPOSITORIO DE GUIONES ---
+        function guardarIdea() {
+            const titulo = document.getElementById('ideaTitulo').value;
+            if(!titulo) return alert('El parámetro de Título es mandatorio para el registro.');
+
+            const nuevaIdea = {
+                id: Date.now(),
+                titulo: titulo,
+                formato: document.getElementById('ideaFormato').value,
+                tipo: document.getElementById('ideaTipo').value,
+                objetivo: document.getElementById('ideaObjetivo').value,
+                fecha: document.getElementById('ideaFecha').value,
+                hora: document.getElementById('ideaHora').value, // Almacena hora
+                guion: document.getElementById('ideaGuion').value,
+                copy: document.getElementById('ideaCopy').value, // Almacena copy
+                hashtags: document.getElementById('ideaHashtags').value // Almacena hashtags
+            };
+
+            ideas.push(nuevaIdea);
+            localStorage.setItem('contentIdeas', JSON.stringify(ideas));
+            
+            // Reinicio de parámetros en la interfaz
+            document.getElementById('ideaTitulo').value = '';
+            document.getElementById('ideaGuion').value = '';
+            document.getElementById('ideaCopy').value = '';
+            document.getElementById('ideaHashtags').value = '';
+            document.getElementById('ideaFecha').value = '';
+            document.getElementById('ideaHora').value = '';
+            
+            renderIdeas();
+        }
+
+        function eliminarIdea(id) {
+            ideas = ideas.filter(i => i.id !== id);
+            localStorage.setItem('contentIdeas', JSON.stringify(ideas));
+            renderIdeas();
+            renderCalendario();
+        }
+
+        function renderIdeas() {
+            const container = document.getElementById('listaIdeas');
+            container.innerHTML = '';
+            
+            [...ideas].reverse().forEach(idea => {
+                // Formateo de visualización de campos opcionales
+                const bloqueCopy = idea.copy ? `<p class="text-gray-600 whitespace-pre-wrap text-sm mt-3 border-t pt-2"><strong>Copy:</strong><br>${idea.copy}</p>` : '';
+                const bloqueHashtags = idea.hashtags ? `<p class="text-indigo-500 text-sm mt-1">${idea.hashtags}</p>` : '';
+                const displayHora = idea.hora ? ` a las ${idea.hora}` : '';
+
+                container.innerHTML += `
+                    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-gray-800">${idea.titulo}</h3>
+                            <button onclick="eliminarIdea(${idea.id})" class="text-red-500 text-sm hover:underline">Eliminar Registro</button>
+                        </div>
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded">${idea.formato}</span>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${idea.tipo}</span>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded">${idea.objetivo}</span>
+                            ${idea.fecha ? `<span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded font-mono">📅 ${idea.fecha}${displayHora}</span>` : ''}
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-gray-600 whitespace-pre-wrap text-sm"><strong>Guion:</strong><br>${idea.guion || 'Sin estructura de guion registrada.'}</p>
+                            ${bloqueCopy}
+                            ${bloqueHashtags}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- MÓDULO: PLANIFICADOR CRONOLÓGICO ---
+        function renderCalendario() {
+            const container = document.getElementById('calendarioGrid');
+            container.innerHTML = '';
+
+            // Filtrado y ordenamiento temporal de registros
+            const programadas = ideas.filter(i => i.fecha).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+            if (programadas.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">No existen publicaciones indexadas con una fecha de ejecución definida.</p>';
+                return;
+            }
+
+            let lastDate = '';
+            programadas.forEach(idea => {
+                if (idea.fecha !== lastDate) {
+                    container.innerHTML += `<h4 class="text-lg font-bold text-slate-700 mt-6 mb-2 border-b-2 border-indigo-100">${idea.fecha}</h4>`;
+                    lastDate = idea.fecha;
+                }
+                
+                const timeStr = idea.hora ? idea.hora : '--:--';
+
+                container.innerHTML += `
+                    <div class="flex items-center gap-4 bg-slate-50 p-3 rounded border border-slate-200">
+                        <div class="w-16 text-sm font-semibold text-gray-500 bg-white px-2 py-1 rounded border text-center">${timeStr}</div>
+                        <div class="w-24 text-xs font-semibold text-indigo-600">${idea.formato}</div>
+                        <div class="flex-1 font-medium text-gray-800">${idea.titulo} <span class="text-xs text-gray-500 font-normal ml-2">(${idea.objetivo})</span></div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- INICIALIZACIÓN DEL SISTEMA ---
+        window.onload = () => {
+            cargarEstrategia();
+            cargarNotas();
+        };
+    </script>
+</body>
+</html>
