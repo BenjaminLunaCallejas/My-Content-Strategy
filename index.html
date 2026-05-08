@@ -627,47 +627,60 @@
         }
 
         // LÓGICA DE LA NUEVA PESTAÑA: ESTRATEGIA DE CONTENIDO ACTUALIZADA
-        function renderEstrategiaResumen() {
-            const container = document.getElementById('resumenContent');
-            const promptArea = document.getElementById('aiPromptArea');
-            
-            const tema = localStorage.getItem('temaCentral') || 'No definido';
-            const nicho = localStorage.getItem('nichoContenido') || 'No definido';
-            const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
-            const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
-            const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
-            
-            // Funnel Data
-            const aw = localStorage.getItem('strat_awareness') || 'Generar visibilidad masiva.';
-            const co = localStorage.getItem('strat_consideracion') || 'Establecer autoridad y confianza.';
-            const cv = localStorage.getItem('strat_conversion') || 'Llamado a la acción directa.';
-            const fi = localStorage.getItem('strat_fidelizacion') || 'Mantener a la comunidad activa.';
+function renderEstrategiaResumen() {
+    const container = document.getElementById('resumenContent');
+    const promptArea = document.getElementById('aiPromptArea');
+    
+    // 1. Recuperar Contexto de Marca
+    const tema = localStorage.getItem('temaCentral') || 'No definido';
+    const nicho = localStorage.getItem('nichoContenido') || 'No definido';
+    const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
+    const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
+    const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
+    
+    // 2. Recuperar Insumos del Panel "Notas y Tendencias"
+    const notasActuales = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
+    
+    // Procesamos los arrays para que el prompt reciba texto limpio
+    const listaIdeas = notasActuales.ideas?.length ? notasActuales.ideas.map(t => t.text).join(', ') : 'No hay ideas pendientes.';
+    const listaAudios = notasActuales.audios?.length ? notasActuales.audios.map(t => t.text).join(', ') : 'No hay audios específicos.';
+    const listaTendencias = notasActuales.tendencias?.length ? notasActuales.tendencias.map(t => t.text).join(', ') : 'Sin tendencias registradas.';
+    const listaProximos = notasActuales.proximos?.length ? notasActuales.proximos.map(t => t.text).join(', ') : 'Sin videos planeados aún.';
 
-            container.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="p-4 bg-slate-50 rounded-lg border">
-                        <h4 class="text-xs font-bold text-gray-400 uppercase">Perfil de Creador</h4>
-                        <p class="text-lg font-bold text-slate-800">${tema}</p>
-                        <p class="text-sm text-indigo-600 font-medium">${nicho} • ${arq.join(' + ')}</p>
-                    </div>
-                    <div class="p-4 bg-slate-50 rounded-lg border">
-                        <h4 class="text-xs font-bold text-gray-400 uppercase">Audiencia Clave</h4>
-                        <p class="text-sm text-slate-700 mt-1">${publico}</p>
-                    </div>
+    // 3. Funnel Data
+    const aw = localStorage.getItem('strat_awareness') || 'Generar visibilidad masiva.';
+    const co = localStorage.getItem('strat_consideracion') || 'Establecer autoridad y confianza.';
+    const cv = localStorage.getItem('strat_conversion') || 'Llamado a la acción directa.';
+    const fi = localStorage.getItem('strat_fidelizacion') || 'Mantener a la comunidad activa.';
+
+    // 4. Renderizado en Interfaz (Visualización para el usuario)
+    if (container) {
+        container.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="p-4 bg-slate-50 rounded-lg border">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase">Perfil de Creador</h4>
+                    <p class="text-lg font-bold text-slate-800">${tema}</p>
+                    <p class="text-sm text-indigo-600 font-medium">${nicho} • ${arq.join(' + ')}</p>
                 </div>
-                <div class="bg-indigo-50 p-6 rounded-lg border border-indigo-100">
-                    <h4 class="font-bold text-indigo-900 mb-2">Recomendación Táctica</h4>
-                    <p class="text-sm text-indigo-800 leading-relaxed">
-                        Tu marca se apoya en los ejes transversales: <strong>${ejes.join(', ')}</strong>. 
-                        Basado en tu arquetipo <strong>${arq.join(' / ')}</strong>, tu tono debe ser ${arq.map(a => arquetiposRasgos[a]?.adjetivo).join(' y ')}.
-                    </p>
+                <div class="p-4 bg-slate-50 rounded-lg border">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase">Audiencia Clave</h4>
+                    <p class="text-sm text-slate-700 mt-1">${publico}</p>
                 </div>
-            `;
+            </div>
+            <div class="bg-indigo-50 p-6 rounded-lg border border-indigo-100">
+                <h4 class="font-bold text-indigo-900 mb-2">Insumos de Tendencias Detectados</h4>
+                <p class="text-xs text-indigo-800 leading-relaxed">
+                    <strong>Ideas a desarrollar:</strong> ${listaIdeas.substring(0, 100)}...<br>
+                    <strong>Tendencias en radar:</strong> ${listaTendencias.substring(0, 100)}...
+                </p>
+            </div>
+        `;
+    }
 
-            // Generar Prompt Actualizado y Directo
-            const prompt = `Actúa como un estratega de contenido profesional especializado en crecimiento de Marca personal en redes sociales. 
+    // 5. Generación del Prompt Maestro
+    const prompt = `Actúa como un estratega de contenido profesional.
 
-CONTEXTO DE MI MARCA:
+CONTEXTO ESTRATÉGICO DE MI MARCA:
 - Nicho: ${nicho}
 - Tema de Autoridad: ${tema}
 - Personalidad (Arquetipos): ${arq.join(', ')}
@@ -680,21 +693,28 @@ ESTRATEGIA SEGÚN FUNNEL:
 - Conversión: ${cv}
 - Fidelización: ${fi}
 
+DATOS DEL PANEL "NOTAS Y TENDENCIAS" (INSUMOS OBLIGATORIOS):
+- Ideas específicas: ${listaIdeas}
+- Audios/Referencias virales: ${listaAudios}
+- Tendencias actuales: ${listaTendencias}
+- Próximos contenidos: ${listaProximos}
+
 TU TAREA:
-Genera directamente una tabla con un calendario de 90 días (una idea por día) que combine mis temas de rigor científico con mis ejes transversales para humanizar la marca. NO ME HAGAS PREGUNTAS PREVIAS.
+Genera un calendario de 90 días (una idea por día) combinando mi autoridad con mis ejes transversales. NO ME HAGAS PREGUNTAS.
 
-La tabla debe tener exactamente estas columnas:
-Día | Tipo (Conexión, Educativo o Autoridad) | Gancho (Máx 8 palabras) | Contenido (Mensaje Principal) | Llamado a la acción (CTA)
+FORMATO DE SALIDA:
+Una tabla con las columnas: Día | Tipo (Presencia, Marca o Valor) | Gancho (Máx 8 palabras) | Contenido (Mensaje Principal) | Llamado a la acción (CTA) | Tipo de contenido sugerido
 
-REGLAS DE CONTENIDO:
-1. Contenido de Conexión: Usa mis ejes transversales y humor sobre la vida en investigación/academia.
-2. Contenido Educativo: Explica conceptos técnicos (ej: p-valor, SPSS, rigor metodológico).
-3. Contenido de Autoridad: Habla sobre ética, publicación científica y resultados de alto impacto.
-4. Cada idea debe ser para un video de máximo 39 segundos.
-5. El tono debe ser coherente con mis arquetipos (${arq.join(' y ')}).`;
+REGLAS CRÍTICAS:
+1. PRIORIDAD TÉCNICA: Debes integrar de forma prioritaria las ideas, audios y tendencias listados arriba. El calendario debe ser una ejecución de mis notas actuales.
+2. SEO & ENGAGEMENT: Los ganchos deben estar optimizados para SEO.
+3. DURACIÓN: Contenido diseñado para videos de máximo 39 segundos.
+4. TONO: Coherente con los arquetipos ${arq.join(' y ')}.`;
 
-            promptArea.value = prompt;
-        }
+    if (promptArea) {
+        promptArea.value = prompt;
+    }
+}
 
         function copyPrompt() {
             const area = document.getElementById('aiPromptArea');
