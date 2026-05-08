@@ -764,6 +764,8 @@ TAREA: Genera calendario de 90 días (una idea/día). Formato: Tabla (Día, Tipo
         // NUEVA FUNCIÓN: ACTUALIZAR PROMPT DE GUIÓN EN VIVO
         function updateLivePrompt() {
             const area = document.getElementById('aiScriptPromptArea');
+            
+            // Variables de Formulario (Locales)
             const formato = document.getElementById('ideaFormato').value;
             const tipo = document.getElementById('ideaTipo').value;
             const obj = document.getElementById('ideaObjetivo').value;
@@ -772,8 +774,12 @@ TAREA: Genera calendario de 90 días (una idea/día). Formato: Tabla (Día, Tipo
             const pub = document.getElementById('ideaPublicacion').value;
             const hook = document.getElementById('ideaHook').value || "[INSERTAR GANCHO AQUÍ]";
             
-            const tema = localStorage.getItem('temaCentral') || "mi nicho científico/profesional";
+            // Variables de Estrategia (Globales / LocalStorage)
+            const tema = localStorage.getItem('temaCentral') || "mi pilar de autoridad";
+            const nicho = localStorage.getItem('nichoContenido') || "No definido";
+            const publico = localStorage.getItem('publicoObjetivo') || "mi audiencia objetivo";
             const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || ["El Sabio"];
+            const ejes = JSON.parse(localStorage.getItem('ejesTags')) || ["mis temas secundarios"];
 
             area.value = `Actúa como un guionista experto en redes sociales. 
 MI PERFIL ESTRATÉGICO:
@@ -806,7 +812,6 @@ ENTREGABLES ADICIONALES (Debajo del guion):
 - HASHTAGS (5): #1 Formato (ej. #tutorial), #2 y #3 Tema, #4 y #5 Nicho/Audiencia específica.
 - FUENTES: Lista de 4 enlaces con las fuentes oficiales/teóricas de donde obtuviste la información.`;
         }
-
         function copyPrompt() {
             copyToClipboardElement('aiPromptArea');
             alert('Prompt estratégico copiado con éxito.');
