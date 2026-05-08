@@ -49,9 +49,12 @@
             <nav class="flex-1 px-4 space-y-2">
                 <button onclick="switchTab('estrategia')" class="w-full text-left px-4 py-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition" id="btn-estrategia">1. Estrategia y Marca</button>
                 <button onclick="switchTab('notas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-notas">2. Notas y Tendencias</button>
-                <button onclick="switchTab('ideas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-ideas">3. Repositorio y Guiones</button>
-                <button onclick="switchTab('planificador')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-planificador">4. Planificador</button>
-                <button onclick="switchTab('estrategia_resumen')" class="w-full text-left px-4 py-3 rounded-lg border border-indigo-500/30 hover:bg-indigo-900/30 transition text-indigo-300 font-bold" id="btn-estrategia_resumen">5. Estrategia de Contenido</button>
+                <!-- Pestaña 3 reordenada -->
+                <button onclick="switchTab('estrategia_resumen')" class="w-full text-left px-4 py-3 rounded-lg border border-indigo-500/30 hover:bg-indigo-900/30 transition text-indigo-300 font-bold" id="btn-estrategia_resumen">3. Estrategia de Contenido</button>
+                <!-- Pestaña 4 reordenada -->
+                <button onclick="switchTab('ideas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-ideas">4. Repositorio y Guiones</button>
+                <!-- Pestaña 5 reordenada -->
+                <button onclick="switchTab('planificador')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-planificador">5. Planificador</button>
             </nav>
         </aside>
 
@@ -70,7 +73,6 @@
                         <input type="text" id="temaCentral" onblur="guardarTemaCentralAuto()" placeholder="Ej. Emprendimiento STEAM y Ciencia" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
 
-                    <!-- SECCIÓN AÑADIDA: Descripción del Creador -->
                     <div class="border-t pt-4">
                         <label class="block text-sm font-semibold text-gray-600 mb-1">Descripción del Creador de Contenido</label>
                         <p class="text-xs text-gray-500 mb-2">Para conocer más de ti: tus intereses, hobbies, talentos y características personales. Esta información humanizará tu estrategia y se integrará en el prompt de la IA.</p>
@@ -123,7 +125,6 @@
                     <label class="block text-sm font-semibold text-gray-800 mb-4 bg-slate-100 p-2 rounded">Objetivos del Contenido (Redacción obligatoria)</label>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="p-4 border rounded-lg border-blue-200 bg-blue-50">
-                            <!-- CAMBIO: Awareness a Reconocimiento -->
                             <h4 class="font-bold text-blue-800">Reconocimiento</h4>
                             <p class="text-[10px] text-blue-600 mb-2 italic">Alcance masivo y descubrimiento.</p>
                             <textarea id="strat_awareness" onblur="saveFunnel()" class="w-full p-2 text-sm border rounded" placeholder="Estrategia de alcance..."></textarea>
@@ -190,6 +191,25 @@
                 </div>
             </section>
 
+            <!-- PESTAÑA 3 REUBICADA: ESTRATEGIA DE CONTENIDO -->
+            <section id="estrategia_resumen" class="tab-content max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                <h2 class="text-3xl font-bold mb-6 text-indigo-900 border-b pb-2">Estrategia de Contenido Resumida</h2>
+                
+                <div id="resumenContent" class="space-y-6">
+                    <!-- Aquí se genera dinámicamente el resumen -->
+                </div>
+
+                <div class="mt-8 border-t pt-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">AI Prompt Generator</h3>
+                    <p class="text-sm text-gray-500 mb-4">Copia este prompt para usarlo en ChatGPT, Claude o Gemini y generar tu calendario de 90 días.</p>
+                    <div class="relative">
+                        <textarea id="aiPromptArea" rows="12" class="w-full p-4 bg-slate-900 text-indigo-200 font-mono text-xs rounded-lg border border-slate-700 leading-relaxed" readonly></textarea>
+                        <button onclick="copyPrompt()" class="absolute top-2 right-2 bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-500 transition">Copiar Prompt</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PESTAÑA 4 REUBICADA: REPOSITORIO Y GUIONES -->
             <section id="ideas" class="tab-content max-w-5xl mx-auto">
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-8">
                     <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Generador de Ideas y Guiones</h2>
@@ -243,7 +263,6 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Objetivo del Contenido</label>
                             <select id="ideaObjetivo" onchange="updateLivePrompt()" class="w-full p-3 border rounded-lg outline-none">
-                                <!-- CAMBIO: Awareness a Reconocimiento -->
                                 <option value="Reconocimiento">Reconocimiento</option>
                                 <option value="Consideración">Consideración</option>
                                 <option value="Conversión">Conversión</option>
@@ -290,13 +309,27 @@
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Hora</label>
                             <input type="time" id="ideaHora" class="w-full p-3 border rounded-lg outline-none">
                         </div>
+                    </div> <!-- CIERRE DEL GRID DE ARRIBA -->
 
-                        <div>
-                            <label class="block text-sm font-semibold text-indigo-600 mb-2">Idea de Gancho (HOOK)</label>
-                            <input type="text" id="ideaHook" oninput="updateLivePrompt()" placeholder="Ej: ¿Sabías que...?" class="w-full p-3 border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400 bg-indigo-50/30">
-                        </div>
+                    <!-- GANCHO EXPANDIDO Y REUBICADO -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-indigo-600 mb-2">Idea de Gancho (HOOK)</label>
+                        <textarea id="ideaHook" oninput="updateLivePrompt()" placeholder="Ej: ¿Sabías que...?" class="w-full p-3 border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400 bg-indigo-50/30 custom-scroll" rows="3"></textarea>
                     </div>
 
+                    <!-- AI SCRIPT PROMPT REUBICADO -->
+                    <div class="mb-8 border-t-2 border-dashed pt-6 bg-slate-50 p-6 rounded-xl">
+                        <h3 class="text-sm font-bold text-indigo-900 mb-3 uppercase tracking-wider flex items-center gap-2">
+                            ✨ AI SCRIPT PROMPT (Basado en tu selección)
+                        </h3>
+                        <div class="relative">
+                            <textarea id="aiScriptPromptArea" rows="6" class="w-full p-4 bg-white text-slate-700 font-mono text-[11px] rounded-lg border border-slate-200 leading-relaxed shadow-inner custom-scroll" readonly></textarea>
+                            <button onclick="copyToClipboardElement('aiScriptPromptArea')" class="absolute top-2 right-2 bg-slate-800 text-white px-3 py-1 rounded text-[10px] hover:bg-slate-700 transition">Copiar Prompt</button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2 italic">Este prompt se actualiza automáticamente según los selectores de arriba.</p>
+                    </div>
+
+                    <!-- GUION Y DEMÁS ELEMENTOS -->
                     <div class="mb-4">
                         <label class="block text-sm font-semibold text-gray-600 mb-1">Guion</label>
                         <p class="text-[10px] text-gray-400 mb-2">💡 Estructura: [HOOK] -> [FRASE DE REFUERZO] -> [CUERPO] -> [CIERRE]</p>
@@ -321,23 +354,12 @@
                         <button id="btnGuardarGuion" onclick="guardarIdea()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition flex-1">Guardar Guion Estructurado</button>
                         <button id="btnCancelarEdicion" onclick="cancelarEdicion()" class="bg-gray-200 text-gray-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition hidden">Cancelar</button>
                     </div>
-
-                    <!-- SECCIÓN: AI SCRIPT PROMPT -->
-                    <div class="mt-8 border-t-2 border-dashed pt-6 bg-slate-50 p-6 rounded-xl">
-                        <h3 class="text-sm font-bold text-indigo-900 mb-3 uppercase tracking-wider flex items-center gap-2">
-                            ✨ AI SCRIPT PROMPT (Basado en tu selección)
-                        </h3>
-                        <div class="relative">
-                            <textarea id="aiScriptPromptArea" rows="5" class="w-full p-4 bg-white text-slate-700 font-mono text-[11px] rounded-lg border border-slate-200 leading-relaxed shadow-inner" readonly></textarea>
-                            <button onclick="copyToClipboardElement('aiScriptPromptArea')" class="absolute top-2 right-2 bg-slate-800 text-white px-3 py-1 rounded text-[10px] hover:bg-slate-700 transition">Copiar Prompt</button>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-2 italic">Este prompt se actualiza automáticamente según los selectores de arriba.</p>
-                    </div>
                 </div>
                 
                 <div id="listaIdeas" class="grid grid-cols-1 gap-4"></div>
             </section>
 
+            <!-- PESTAÑA 5 REUBICADA: PLANIFICADOR -->
             <section id="planificador" class="tab-content max-w-6xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <div class="flex flex-col">
@@ -353,24 +375,6 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div id="plannerContainer" class="overflow-auto max-h-[70vh] custom-scroll">
                         </div>
-                </div>
-            </section>
-
-            <!-- PESTAÑA: ESTRATEGIA DE CONTENIDO -->
-            <section id="estrategia_resumen" class="tab-content max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-                <h2 class="text-3xl font-bold mb-6 text-indigo-900 border-b pb-2">Estrategia de Contenido Resumida</h2>
-                
-                <div id="resumenContent" class="space-y-6">
-                    <!-- Aquí se genera dinámicamente el resumen -->
-                </div>
-
-                <div class="mt-8 border-t pt-6">
-                    <h3 class="text-xl font-bold mb-4 text-gray-800">AI Prompt Generator</h3>
-                    <p class="text-sm text-gray-500 mb-4">Copia este prompt para usarlo en ChatGPT, Claude o Gemini y generar tu calendario de 90 días.</p>
-                    <div class="relative">
-                        <textarea id="aiPromptArea" rows="12" class="w-full p-4 bg-slate-900 text-indigo-200 font-mono text-xs rounded-lg border border-slate-700 leading-relaxed" readonly></textarea>
-                        <button onclick="copyPrompt()" class="absolute top-2 right-2 bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-500 transition">Copiar Prompt</button>
-                    </div>
                 </div>
             </section>
 
@@ -473,7 +477,7 @@
         function saveStrategyExtras() {
             localStorage.setItem('nichoContenido', document.getElementById('nichoContenido').value);
             localStorage.setItem('publicoObjetivo', document.getElementById('publicoObjetivo').value);
-            localStorage.setItem('descCreador', document.getElementById('descCreador').value); // ACTUALIZADO PARA NUEVO CAMPO
+            localStorage.setItem('descCreador', document.getElementById('descCreador').value);
         }
 
         function saveFunnel() {
@@ -726,7 +730,7 @@
             const tema = localStorage.getItem('temaCentral') || 'No definido';
             const nicho = localStorage.getItem('nichoContenido') || 'No definido';
             const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
-            const creador = localStorage.getItem('descCreador') || 'No definido'; // INTEGRACIÓN DEL CREADOR
+            const creador = localStorage.getItem('descCreador') || 'No definido';
             const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
             const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
             
@@ -764,7 +768,6 @@
                     </div>`;
             }
 
-            // MODIFICACIÓN DEL PROMPT PARA INCLUIR "DESCRIPCIÓN DEL CREADOR" Y "RECONOCIMIENTO"
             const prompt = `Actúa como un estratega de contenido profesional.
 CONTEXTO:
 - Nicho: ${nicho} | Tema de autoridad: ${tema}
@@ -901,7 +904,7 @@ ENTREGABLES ADICIONALES (Debajo del guion):
         window.onload = () => {
             initArquetipos();
             document.getElementById('temaCentral').value = localStorage.getItem('temaCentral') || '';
-            document.getElementById('descCreador').value = localStorage.getItem('descCreador') || ''; // CARGA DE NUEVA VARIABLE
+            document.getElementById('descCreador').value = localStorage.getItem('descCreador') || '';
             document.getElementById('nichoContenido').value = localStorage.getItem('nichoContenido') || '';
             document.getElementById('publicoObjetivo').value = localStorage.getItem('publicoObjetivo') || '';
             document.getElementById('strat_awareness').value = localStorage.getItem('strat_awareness') || '';
