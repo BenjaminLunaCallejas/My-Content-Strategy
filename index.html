@@ -664,35 +664,34 @@
                 </div>
             `;
 
-            // Generar Prompt Actualizado
-            const prompt = `Actua como un estratega de contenido profesional especializado en crecimiento de Marca personal en redes sociales. 
+            // Generar Prompt Actualizado y Directo
+            const prompt = `Actúa como un estratega de contenido profesional especializado en crecimiento de Marca personal en redes sociales. 
 
-MI ECOSISTEMA DE MARCA:
-- Nicho/Industria: ${nicho}
-- Tema Central (Autoridad): ${tema}
-- Mi Personalidad (Arquetipos): ${arq.join(' y ')}
+CONTEXTO DE MI MARCA:
+- Nicho: ${nicho}
+- Tema de Autoridad: ${tema}
+- Personalidad (Arquetipos): ${arq.join(', ')}
 - Público Objetivo: ${publico}
-- Ejes Transversales (Temas secundarios): ${ejes.join(', ')}
+- Ejes Transversales: ${ejes.join(', ')}
 
-MIS OBJETIVOS ESTRATÉGICOS (Fases del Funnel):
-1. AWARENESS (Alcance): ${aw}
-2. CONSIDERACIÓN (Confianza): ${co}
-3. CONVERSIÓN (Venta/Acción): ${cv}
-4. FIDELIZACIÓN (Comunidad): ${fi}
+ESTRATEGIA SEGÚN FUNNEL:
+- Awareness: ${aw}
+- Consideración: ${co}
+- Conversión: ${cv}
+- Fidelización: ${fi}
 
 TU TAREA:
-1. Hazme 10 preguntas clave para profundizar en mi estilo visual y tono de voz antes de empezar.
-2. Tras mi respuesta, genera un calendario de 90 ideas de contenido (una por día) distribuidas equilibradamente entre las 4 fases de mi funnel mencionadas arriba.
-3. El contenido debe entrelazar mi Tema Central con mis Ejes Transversales.
+Genera directamente una tabla con un calendario de 90 días (una idea por día) que combine mis temas de rigor científico con mis ejes transversales para humanizar la marca. NO ME HAGAS PREGUNTAS PREVIAS.
 
-PARA CADA IDEA INCLUYE:
-- Día y Fase del Funnel correspondiente.
-- Gancho (Máximo 8 palabras).
-- Mensaje Principal del video (Concepto central).
-- Llamado a la Acción (CTA específico).
-- Tipo de Eje Transversal utilizado.
+La tabla debe tener exactamente estas columnas:
+Día | Tipo (Conexión, Educativo o Autoridad) | Gancho (Máx 8 palabras) | Contenido (Mensaje Principal) | Llamado a la acción (CTA)
 
-ENTREGA TODO EN UNA TABLA. Cada idea es para un video corto de máximo 39 segundos.`;
+REGLAS DE CONTENIDO:
+1. Contenido de Conexión: Usa mis ejes transversales y humor sobre la vida en investigación/academia.
+2. Contenido Educativo: Explica conceptos técnicos (ej: p-valor, SPSS, rigor metodológico).
+3. Contenido de Autoridad: Habla sobre ética, publicación científica y resultados de alto impacto.
+4. Cada idea debe ser para un video de máximo 39 segundos.
+5. El tono debe ser coherente con mis arquetipos (${arq.join(' y ')}).`;
 
             promptArea.value = prompt;
         }
