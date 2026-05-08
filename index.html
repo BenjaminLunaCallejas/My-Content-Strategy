@@ -638,14 +638,28 @@ function renderEstrategiaResumen() {
     const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
     const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
     
-    // 2. Recuperar Insumos del Panel "Notas y Tendencias"
+    // 2. Recuperar Insumos y generar bloque dinámico
     const notasActuales = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
     
-    // Procesamos los arrays para que el prompt reciba texto limpio
-    const listaIdeas = notasActuales.ideas?.length ? notasActuales.ideas.map(t => t.text).join(', ') : 'No hay ideas pendientes.';
-    const listaAudios = notasActuales.audios?.length ? notasActuales.audios.map(t => t.text).join(', ') : 'No hay audios específicos.';
-    const listaTendencias = notasActuales.tendencias?.length ? notasActuales.tendencias.map(t => t.text).join(', ') : 'Sin tendencias registradas.';
-    const listaProximos = notasActuales.proximos?.length ? notasActuales.proximos.map(t => t.text).join(', ') : 'Sin videos planeados aún.';
+    // Creamos un array con las líneas que SÍ tienen datos
+    let lineasInsumos = [];
+    
+    if (notasActuales.ideas?.length) 
+        lineasInsumos.push(`- Ideas específicas: ${notasActuales.ideas.map(t => t.text).join(', ')}`);
+    
+    if (notasActuales.audios?.length) 
+        lineasInsumos.push(`- Audios/Referencias virales: ${notasActuales.audios.map(t => t.text).join(', ')}`);
+    
+    if (notasActuales.tendencias?.length) 
+        lineasInsumos.push(`- Tendencias actuales: ${notasActuales.tendencias.map(t => t.text).join(', ')}`);
+    
+    if (notasActuales.proximos?.length) 
+        lineasInsumos.push(`- Próximos contenidos: ${notasActuales.proximos.map(t => t.text).join(', ')}`);
+
+    // Solo creamos la sección si hay al menos una línea con datos
+    const seccionInsumos = lineasInsumos.length > 0 
+        ? `\nDATOS DEL PANEL "NOTAS Y TENDENCIAS" (INSUMOS OBLIGATORIOS):\n${lineasInsumos.join('\n')}\n` 
+        : "";
 
     // 3. Funnel Data
     const aw = localStorage.getItem('strat_awareness') || 'Generar visibilidad masiva.';
@@ -653,7 +667,7 @@ function renderEstrategiaResumen() {
     const cv = localStorage.getItem('strat_conversion') || 'Llamado a la acción directa.';
     const fi = localStorage.getItem('strat_fidelizacion') || 'Mantener a la comunidad activa.';
 
-    // 4. Renderizado en Interfaz (Visualización para el usuario)
+    // 4. Renderizado en Interfaz
     if (container) {
         container.innerHTML = `
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -668,10 +682,11 @@ function renderEstrategiaResumen() {
                 </div>
             </div>
             <div class="bg-indigo-50 p-6 rounded-lg border border-indigo-100">
-                <h4 class="font-bold text-indigo-900 mb-2">Insumos de Tendencias Detectados</h4>
-                <p class="text-xs text-indigo-800 leading-relaxed">
-                    <strong>Ideas a desarrollar:</strong> ${listaIdeas.substring(0, 100)}...<br>
-                    <strong>Tendencias en radar:</strong> ${listaTendencias.substring(0, 100)}...
+                <h4 class="font-bold text-indigo-900 mb-2">Estado del Prompt</h4>
+                <p class="text-sm text-indigo-800">
+                    ${lineasInsumos.length > 0 
+                        ? `Se han integrado ${lineasInsumos.length} categorías de tendencias al calendario.` 
+                        : "No hay tendencias activas. El calendario se generará basado puramente en tu estrategia de marca."}
                 </p>
             </div>
         `;
@@ -692,13 +707,7 @@ ESTRATEGIA SEGÚN FUNNEL:
 - Consideración: ${co}
 - Conversión: ${cv}
 - Fidelización: ${fi}
-
-DATOS DEL PANEL "NOTAS Y TENDENCIAS" (INSUMOS OBLIGATORIOS):
-- Ideas específicas: ${listaIdeas}
-- Audios/Referencias virales: ${listaAudios}
-- Tendencias actuales: ${listaTendencias}
-- Próximos contenidos: ${listaProximos}
-
+${seccionInsumos}
 TU TAREA:
 Genera un calendario de 90 días (una idea por día) combinando mi autoridad con mis ejes transversales. NO ME HAGAS PREGUNTAS.
 
@@ -706,7 +715,7 @@ FORMATO DE SALIDA:
 Una tabla con las columnas: Día | Tipo (Presencia, Marca o Valor) | Gancho (Máx 8 palabras) | Contenido (Mensaje Principal) | Llamado a la acción (CTA) | Tipo de contenido sugerido
 
 REGLAS CRÍTICAS:
-1. PRIORIDAD TÉCNICA: Debes integrar de forma prioritaria las ideas, audios y tendencias listados arriba. El calendario debe ser una ejecución de mis notas actuales.
+1. PRIORIDAD TÉCNICA: ${lineasInsumos.length > 0 ? "Debes integrar de forma prioritaria las ideas y tendencias listadas arriba." : "Genera ideas creativas e innovadoras basadas en mi nicho y ejes transversales."}
 2. SEO & ENGAGEMENT: Los ganchos deben estar optimizados para SEO.
 3. El contenido debe resolver algún problema o dar un tema de interés para mi público objetivo.
 4. DURACIÓN: Contenido diseñado para videos de máximo 39 segundos.
