@@ -767,14 +767,21 @@
             // MODIFICACIÓN DEL PROMPT PARA INCLUIR "DESCRIPCIÓN DEL CREADOR" Y "RECONOCIMIENTO"
             const prompt = `Actúa como un estratega de contenido profesional.
 CONTEXTO:
-- Nicho: ${nicho} | Tema: ${tema}
+- Nicho: ${nicho} | Tema de autoridad: ${tema}
 - Descripción del Creador: ${creador}
-- Personalidad: ${arq.join(', ')} | Público: ${publico}
-- Ejes: ${ejes.join(', ')}
+- Personalidad (Arquetipos): ${arq.join(', ')} | Público: ${publico}
+- Ejes Transversales: ${ejes.join(', ')}
 FUNNEL:
 - Reconocimiento: ${aw} | Consideración: ${co} | Conversión: ${cv} | Fidelización: ${fi}
 ${seccionInsumos}
-TAREA: Genera calendario de 90 días (una idea/día). Formato: Tabla (Día, Tipo, Gancho, Mensaje Principal, Guion Breve, CTA).`;
+TAREA: Genera calendario de 90 días (una idea/día). Combinando mi autoridad con mis ejes transversales y considerando los detalles descritos anteriormente. Una tabla con las columnas: Día | Tipo (Presencia, Marca o Valor) | Gancho (Máx 8 palabras) | Contenido (Mensaje Principal) | Propuesta de guión (breve) | Llamado a la acción (CTA) | Tipo de contenido sugerido
+
+REGLAS CRÍTICAS:
+1. PRIORIDAD TÉCNICA: ${lineasInsumos.length > 0 ? "Debes integrar de forma prioritaria las ideas y tendencias listadas arriba." : "Genera ideas creativas e innovadoras basadas en mi nicho y ejes transversales."}
+2. SEO & ENGAGEMENT: Los ganchos deben estar optimizados para SEO.
+3. El contenido debe resolver algún problema o dar un tema de interés para mi público objetivo. Además debe ser lógico, preciso y entretenido.
+4. DURACIÓN: Contenido diseñado para videos de máximo 39 segundos.
+5. TONO: Coherente con los arquetipos ${arq.join(' y ')}.`;
             if (promptArea) promptArea.value = prompt;
         }
 
