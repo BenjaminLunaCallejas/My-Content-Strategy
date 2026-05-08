@@ -776,19 +776,35 @@ TAREA: Genera calendario de 90 días (una idea/día). Formato: Tabla (Día, Tipo
             const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || ["El Sabio"];
 
             area.value = `Actúa como un guionista experto en redes sociales. 
-MI PERFIL: Mi tema central es ${tema} y mis arquetipos son ${arq.join(' y ')}.
+MI PERFIL ESTRATÉGICO:
+- Tema central (Autoridad): ${tema}
+- Nicho: ${nicho} 
+- Personalidad (Arquetipos): ${arq.join(', ')} 
+- Público Objetivo: ${publico}
+- Ejes Transversales: ${ejes.join(', ')}
 
 TAREA: Redacta un guion completo para un contenido de tipo "${formato}".
-ESPECIFICACIONES TÉCNICAS:
+ESPECIFICACIONES TÉCNICAS DEL VIDEO:
 - Estilo de contenido: ${tipo}
 - Objetivo estratégico: ${obj}
 - Enfoque de valor: ${est}
 - Colaboración: ${col}
 - Tipo de publicación: ${pub}
+- GANCHO (Hook) PROPUESTO: "${hook}"
 
-GANCHO (Hook) PROPUESTO: "${hook}"
+INSTRUCCIONES DE REDACCIÓN:
+1. TONO: Dinámico, profesional pero accesible. DEBE SER MEMORABLE, EMOCIONAL Y ENTRETENIDO.
+2. CALIDAD: Entrega información de valor y precisa o propone un microresultado. El desarrollo debe explicar el tema para que todos entiendan pero con información oficial, confiable y un contexto teórico útil. Evita lo superficial; debe ser relevante, específico y completo.
+3. ESTRUCTURA: Diseña el guion en UN SOLO PÁRRAFO. Debe incluir: Hook verbal interesante + Frase breve de refuerzo + Desarrollo + Llamado a la acción (CTA).
+4. RESTRICCIONES: No especifiques las partes en el video. Evita figuras retóricas. PROHIBIDO PRESENTARSE (Ej: "Hola soy...", "En este video hablaremos de..."). Evita saludos o temarios.
+5. ELEMENTOS ADICIONALES: Incluye indicaciones de cámara (B-roll), texto en pantalla y un CTA potente. Duración: 30-45 segundos.
 
-INSTRUCCIONES: El guion debe ser dinámico, con un lenguaje profesional pero accesible. Incluye indicaciones de cámara (B-roll), texto en pantalla y un llamado a la acción (CTA) potente. Duración estimada: 30-45 segundos.`;
+ENTREGABLES ADICIONALES (Debajo del guion):
+- COPYWRITING: Breve, que incluya información relevante, repita palabras clave y sea atrapante.
+- TÍTULO: Un título corto y potente para el overlay de TikTok.
+- SEO: Palabras clave para el algoritmo.
+- HASHTAGS (5): #1 Formato (ej. #tutorial), #2 y #3 Tema, #4 y #5 Nicho/Audiencia específica.
+- FUENTES: Lista de 4 enlaces con las fuentes oficiales/teóricas de donde obtuviste la información.`;
         }
 
         function copyPrompt() {
