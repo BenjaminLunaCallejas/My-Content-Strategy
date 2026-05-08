@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planificador Estratégico de Contenido v2</title>
+    <title>Planificador Estratégico de Contenido - Core Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
@@ -12,36 +12,31 @@
         .tag button { margin-left: 0.5rem; color: #ef4444; font-weight: bold; }
         .task-done { text-decoration: line-through; opacity: 0.6; }
         
-        /* Scrollbars estéticas */
-        .custom-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+        /* Estética de scroll */
+        .custom-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Estilo para el calendario */
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, minmax(200px, 1fr));
-            gap: 1px;
-            background-color: #e2e8f0;
-            border: 1px solid #e2e8f0;
-        }
-        .calendar-day {
-            background-color: white;
-            min-height: 150px;
-            padding: 0.5rem;
-        }
-        .content-card {
-            font-size: 0.7rem;
-            padding: 4px;
-            margin-bottom: 4px;
-            border-radius: 4px;
-            border-left: 3px solid #6366f1;
-            background: #f8fafc;
-        }
+        /* Calendario */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 1px; background-color: #e2e8f0; border: 1px solid #e2e8f0; }
+        .calendar-day { background-color: white; min-height: 120px; padding: 0.5rem; overflow-y: auto; }
+        .content-item { font-size: 0.7rem; padding: 4px; margin-bottom: 3px; border-radius: 4px; background: #eef2ff; border-left: 3px solid #6366f1; cursor: pointer; transition: all 0.2s; }
+        .content-item:hover { background: #e0e7ff; transform: scale(1.02); }
+
+        /* Modal */
+        #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-card { background: white; width: 90%; max-width: 600px; border-radius: 12px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <div id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-card shadow-2xl" onclick="event.stopPropagation()">
+            <button onclick="closeModal(null)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
 
     <div class="flex h-screen overflow-hidden">
         <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-lg">
@@ -65,75 +60,90 @@
                     <div>
                         <div class="flex justify-between items-end mb-1">
                             <label class="block text-sm font-semibold text-gray-600">Tema Central (Pilar de Autoridad)</label>
-                            <span id="tema-guardado" class="text-xs text-green-600 font-bold opacity-0 transition-opacity duration-300">¡Guardado!</span>
+                            <span id="tema-guardado" class="text-xs text-green-600 font-bold opacity-0 transition-opacity duration-300">¡Guardado automáticamente!</span>
                         </div>
-                        <input type="text" id="temaCentral" onblur="guardarEstrategia()" placeholder="Ej. Emprendimiento STEAM y Ciencia" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <p class="text-xs text-gray-500 mb-2">Representa tu nicho principal y área de mayor rigor o <em>expertise</em>. Es el núcleo primario por el que tu audiencia te reconocerá como referente. <br><span class="font-medium">Ejemplo:</span> <em>Emprendimiento STEAM, Astrofísica Aplicada, Biotecnología.</em></p>
+                        <input type="text" id="temaCentral" onblur="guardarTemaCentralAuto()" placeholder="Ej. Emprendimiento STEAM y Ciencia" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-2">Arquetipos de Marca</label>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Arquetipos de Marca (Mínimo 2 para perfil híbrido)</label>
                         <div id="arquetiposContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg bg-gray-50 max-h-64 overflow-y-auto custom-scroll"></div>
                         <div id="arquetipoDescripcion" class="mt-4 p-5 bg-indigo-50 border-l-4 border-indigo-500 text-sm text-indigo-900 hidden"></div>
                     </div>
                 </div>
 
                 <div class="mb-6 border-t pt-6">
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">Ejes Transversales</label>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Ejes Transversales (Pilares Secundarios)</label>
+                    <p class="text-xs text-gray-500 mb-2">Temáticas complementarias que cruzan tu contenido principal para humanizar la marca, generar afinidad o alcanzar a una audiencia más amplia. <br><span class="font-medium">Ejemplo:</span> <em>Productividad para académicos, Salud mental en el laboratorio, Análisis de herramientas digitales.</em></p>
                     <input type="text" id="inputEjes" placeholder="Escribe un eje secundario y presiona Enter..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none mb-2">
                     <div id="listaEjes" class="flex flex-wrap"></div>
                 </div>
 
                 <div class="mb-6 border-t pt-6">
-                    <label class="block text-sm font-semibold text-gray-800 mb-4 uppercase tracking-wider text-center bg-gray-100 py-2 rounded">Objetivos del Contenido (Funnel)</label>
+                    <label class="block text-sm font-semibold text-gray-800 mb-4 bg-slate-100 p-2 rounded">Objetivos del Contenido (Funnel Estratégico)</label>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-4 border rounded-lg bg-blue-50">
-                            <h4 class="font-bold text-blue-800 text-sm">1. Awareness: Alcance Masivo</h4>
-                            <p class="text-[10px] text-blue-600 mb-2">Contenido para ser descubierto por nuevos usuarios.</p>
-                            <textarea id="obj_awareness" onblur="guardarEstrategia()" class="w-full p-2 text-sm border rounded" placeholder="Ej: Reels de tendencias, retos..."></textarea>
+                        <div class="p-4 border rounded-lg border-blue-200 bg-blue-50">
+                            <h4 class="font-bold text-blue-800">Awareness</h4>
+                            <p class="text-[10px] text-blue-600 mb-2 italic">Alcance masivo y descubrimiento.</p>
+                            <textarea id="strat_awareness" onblur="saveFunnel()" class="w-full p-2 text-sm border rounded" placeholder="Estrategia de alcance..."></textarea>
                         </div>
-                        <div class="p-4 border rounded-lg bg-emerald-50">
-                            <h4 class="font-bold text-emerald-800 text-sm">2. Consideración: Confianza</h4>
-                            <p class="text-[10px] text-emerald-600 mb-2">Demostrar autoridad y generar consciencia del problema.</p>
-                            <textarea id="obj_consideracion" onblur="guardarEstrategia()" class="w-full p-2 text-sm border rounded" placeholder="Ej: Tutoriales profundos, carruseles educativos..."></textarea>
+                        <div class="p-4 border rounded-lg border-emerald-200 bg-emerald-50">
+                            <h4 class="font-bold text-emerald-800">Consideración</h4>
+                            <p class="text-[10px] text-emerald-600 mb-2 italic">Generar confianza y consciencia.</p>
+                            <textarea id="strat_consideracion" onblur="saveFunnel()" class="w-full p-2 text-sm border rounded" placeholder="Estrategia de confianza..."></textarea>
                         </div>
-                        <div class="p-4 border rounded-lg bg-amber-50">
-                            <h4 class="font-bold text-amber-800 text-sm">3. Conversión: Venta Final</h4>
-                            <p class="text-[10px] text-amber-600 mb-2">Llamados a la acción directos (CTA).</p>
-                            <textarea id="obj_conversion" onblur="guardarEstrategia()" class="w-full p-2 text-sm border rounded" placeholder="Ej: Ofertas, testimonios, demos..."></textarea>
+                        <div class="p-4 border rounded-lg border-amber-200 bg-amber-50">
+                            <h4 class="font-bold text-amber-800">Conversión</h4>
+                            <p class="text-[10px] text-amber-600 mb-2 italic">La venta final o registro.</p>
+                            <textarea id="strat_conversion" onblur="saveFunnel()" class="w-full p-2 text-sm border rounded" placeholder="Estrategia de venta..."></textarea>
                         </div>
-                        <div class="p-4 border rounded-lg bg-purple-50">
-                            <h4 class="font-bold text-purple-800 text-sm">4. Fidelización: Comunidad</h4>
-                            <p class="text-[10px] text-purple-600 mb-2">Contenido exclusivo para seguidores actuales.</p>
-                            <textarea id="obj_fidelizacion" onblur="guardarEstrategia()" class="w-full p-2 text-sm border rounded" placeholder="Ej: Detrás de cámaras, Q&A, encuestas..."></textarea>
+                        <div class="p-4 border rounded-lg border-purple-200 bg-purple-50">
+                            <h4 class="font-bold text-purple-800">Fidelización</h4>
+                            <p class="text-[10px] text-purple-600 mb-2 italic">Crear comunidad y recompra.</p>
+                            <textarea id="strat_fidelizacion" onblur="saveFunnel()" class="w-full p-2 text-sm border rounded" placeholder="Estrategia de comunidad..."></textarea>
                         </div>
                     </div>
                 </div>
 
-                <button onclick="guardarEstrategia()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Estrategia</button>
+                <button onclick="guardarEstrategia()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Toda la Estrategia</button>
+                <span id="estrategia-msg" class="ml-4 text-green-600 font-semibold hidden">¡Configuración guardada!</span>
             </section>
 
             <section id="notas" class="tab-content w-full">
                 <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Panel de Notas y Tendencias</h2>
-                <div class="overflow-x-auto custom-scroll pb-4">
+                <div class="overflow-x-auto pb-4 custom-scroll">
                     <div class="flex gap-6 min-w-[1200px]">
-                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-[500px]">
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-[500px]" onclick="if(event.target === this) document.getElementById('inputTarea_ideas').focus()">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Ideas Crudas</h3>
-                            <input type="text" id="inputTarea_ideas" class="p-2 border rounded text-sm mb-4" placeholder="Nueva idea..." onkeypress="if(event.key === 'Enter') addTask('ideas')">
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="inputTarea_ideas" class="flex-1 p-2 border rounded text-sm" placeholder="Nueva idea..." onkeypress="if(event.key === 'Enter') addTask('ideas')">
+                                <button onclick="addTask('ideas')" class="bg-indigo-500 text-white px-3 rounded hover:bg-indigo-600 transition font-bold">+</button>
+                            </div>
                             <ul id="lista_ideas" class="space-y-2 text-sm"></ul>
                         </div>
                         <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Audios y Referencias</h3>
-                            <input type="text" id="inputTarea_audios" class="p-2 border rounded text-sm mb-4" placeholder="Enlace..." onkeypress="if(event.key === 'Enter') addTask('audios')">
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="inputTarea_audios" class="flex-1 p-2 border rounded text-sm" placeholder="Link..." onkeypress="if(event.key === 'Enter') addTask('audios')">
+                                <button onclick="addTask('audios')" class="bg-indigo-500 text-white px-3 rounded hover:bg-indigo-600 transition font-bold">+</button>
+                            </div>
                             <ul id="lista_audios" class="space-y-2 text-sm"></ul>
                         </div>
                         <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Tendencias</h3>
-                            <input type="text" id="inputTarea_tendencias" class="p-2 border rounded text-sm mb-4" placeholder="Tendencia..." onkeypress="if(event.key === 'Enter') addTask('tendencias')">
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="inputTarea_tendencias" class="flex-1 p-2 border rounded text-sm" placeholder="Tendencia..." onkeypress="if(event.key === 'Enter') addTask('tendencias')">
+                                <button onclick="addTask('tendencias')" class="bg-indigo-500 text-white px-3 rounded hover:bg-indigo-600 transition font-bold">+</button>
+                            </div>
                             <ul id="lista_tendencias" class="space-y-2 text-sm"></ul>
                         </div>
                         <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Próximos Videos</h3>
-                            <input type="text" id="inputTarea_proximos" class="p-2 border rounded text-sm mb-4" placeholder="Planear..." onkeypress="if(event.key === 'Enter') addTask('proximos')">
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="inputTarea_proximos" class="flex-1 p-2 border rounded text-sm" placeholder="Video..." onkeypress="if(event.key === 'Enter') addTask('proximos')">
+                                <button onclick="addTask('proximos')" class="bg-indigo-500 text-white px-3 rounded hover:bg-indigo-600 transition font-bold">+</button>
+                            </div>
                             <ul id="lista_proximos" class="space-y-2 text-sm"></ul>
                         </div>
                     </div>
@@ -144,14 +154,17 @@
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-8">
                     <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Generador de Ideas y Guiones</h2>
                     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-                        <div class="md:col-span-3"><label class="block text-sm font-semibold text-gray-600 mb-2">Título</label><input type="text" id="ideaTitulo" class="w-full p-3 border rounded-lg outline-none"></div>
+                        <div class="md:col-span-5"><label class="block text-sm font-semibold text-gray-600 mb-2">Título de la Idea</label><input type="text" id="ideaTitulo" class="w-full p-3 border rounded-lg outline-none"></div>
+                        <div><label class="block text-sm font-semibold text-gray-600 mb-2">Formato</label><select id="ideaFormato" class="w-full p-3 border rounded-lg outline-none"><option value="Short Content">Short Content</option><option value="Long Form">Long Form</option><option value="Carrusel">Carrusel</option></select></div>
+                        <div><label class="block text-sm font-semibold text-gray-600 mb-2">Tipo</label><select id="ideaTipo" class="w-full p-3 border rounded-lg outline-none"><option value="Divulgación">Divulgación</option><option value="Tutorial">Tutorial</option></select></div>
+                        <div><label class="block text-sm font-semibold text-gray-600 mb-2">Objetivo</label><select id="ideaObjetivo" class="w-full p-3 border rounded-lg outline-none"><option value="Awareness">Awareness</option><option value="Consideración">Consideración</option><option value="Conversión">Conversión</option><option value="Fidelización">Fidelización</option></select></div>
                         <div><label class="block text-sm font-semibold text-gray-600 mb-2">Fecha</label><input type="date" id="ideaFecha" class="w-full p-3 border rounded-lg outline-none"></div>
                         <div><label class="block text-sm font-semibold text-gray-600 mb-2">Hora</label><input type="time" id="ideaHora" class="w-full p-3 border rounded-lg outline-none"></div>
-                        <div><label class="block text-sm font-semibold text-gray-600 mb-2">Formato</label><select id="ideaFormato" class="w-full p-3 border rounded-lg"><option value="Short Content">Short Content</option><option value="Long Form">Long Form</option><option value="Carrusel">Carrusel</option></select></div>
-                        <div><label class="block text-sm font-semibold text-gray-600 mb-2">Objetivo</label><select id="ideaObjetivo" class="w-full p-3 border rounded-lg"><option value="Awareness">Awareness</option><option value="Consideración">Consideración</option><option value="Conversión">Conversión</option><option value="Fidelización">Fidelización</option></select></div>
                     </div>
-                    <div class="mb-4"><label class="block text-sm font-semibold text-gray-600 mb-2">Guion / Estructura</label><textarea id="ideaGuion" rows="4" class="w-full p-3 border rounded-lg outline-none"></textarea></div>
-                    <button onclick="guardarIdea()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Guion</button>
+                    <div class="mb-4"><label class="block text-sm font-semibold text-gray-600 mb-2">Guion</label><textarea id="ideaGuion" rows="5" class="w-full p-3 border rounded-lg outline-none"></textarea></div>
+                    <div class="mb-4"><label class="block text-sm font-semibold text-gray-600 mb-2">Copy</label><textarea id="ideaCopy" rows="3" class="w-full p-3 border rounded-lg outline-none"></textarea></div>
+                    <div class="mb-6"><label class="block text-sm font-semibold text-gray-600 mb-2">Hashtags</label><input type="text" id="ideaHashtags" class="w-full p-3 border rounded-lg outline-none"></div>
+                    <button onclick="guardarIdea()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Guion Estructurado</button>
                 </div>
                 <div id="listaIdeas" class="grid grid-cols-1 gap-4"></div>
             </section>
@@ -159,17 +172,15 @@
             <section id="planificador" class="tab-content max-w-6xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-3xl font-bold text-gray-800 border-b pb-2">Planificador Cronológico</h2>
-                    <div class="flex gap-2 bg-gray-200 p-1 rounded-lg">
-                        <button onclick="changeCalendarView('dia')" id="view-dia" class="px-4 py-2 rounded-md text-sm font-bold transition">Día</button>
-                        <button onclick="changeCalendarView('semana')" id="view-semana" class="px-4 py-2 rounded-md text-sm font-bold bg-white shadow transition">Semana</button>
+                    <div class="flex bg-gray-200 p-1 rounded-lg gap-1">
+                        <button onclick="renderCalendario('dia')" class="px-4 py-1 rounded hover:bg-white transition text-xs font-bold">Día</button>
+                        <button onclick="renderCalendario('semana')" class="px-4 py-1 rounded hover:bg-white transition text-xs font-bold">Semana</button>
+                        <button onclick="renderCalendario('mes')" class="px-4 py-1 rounded bg-white shadow transition text-xs font-bold">Mes</button>
                     </div>
                 </div>
-
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="overflow-x-auto overflow-y-auto max-h-[600px] custom-scroll" id="calendarContainer">
-                        <div id="calendarViewContent" class="min-w-[1000px]">
-                            </div>
-                    </div>
+                    <div id="plannerContainer" class="overflow-auto max-h-[70vh] custom-scroll">
+                        </div>
                 </div>
             </section>
 
@@ -177,188 +188,99 @@
     </div>
 
     <script>
-        // --- DATA ---
+        const arquetiposInfo = {
+            "El Sabio": "Busca la verdad y el conocimiento. Su estrategia se basa en el rigor científico, el análisis y la pedagogía. Formatos: Data-storytelling, análisis de papers.",
+            "El Bufón": "Vive el momento con alegría e irreverencia. Su estrategia es la viralidad emocional y romper la tensión con humor. Formatos: Memes educativos, POV.",
+            "El Mago": "Busca la transformación y entender las leyes del universo. Estrategia: 'Efectos wow' y procesos biotecnológicos complejos explicados de forma mágica.",
+            "El Rebelde": "Busca la disrupción y libertad. Estrategia: Cuestionar el status quo académico o industrial. Formatos: Opiniones impopulares, mitos rotos.",
+            "El Héroe": "Busca demostrar su valor mediante actos valientes. Estrategia: Superación de retos técnicos o personales. Formatos: Retos 30 días, hitos logrados.",
+            "El Creador": "Busca dar forma a una visión. Estrategia: Innovación y estructura. Formatos: 'Build in public', tutoriales de herramientas nuevas.",
+            "El Gobernante": "Busca el control y el éxito. Estrategia: Liderazgo y autoridad. Formatos: Guías definitivas, frameworks de trabajo, gestión de proyectos.",
+            "El Amante": "Busca la conexión y la intimidad. Estrategia: Estética visual impecable y pasión por el tema. Formatos: Storytime emocional, colaboraciones estrechas.",
+            "El Cuidador": "Busca proteger y ayudar a otros. Estrategia: Servicio y altruismo. Formatos: Consejos de salud mental, bienestar del tesista, soporte técnico.",
+            "El Explorador": "Busca la libertad para descubrirse. Estrategia: Autonomía y descubrimiento. Formatos: Vlogs de viajes científicos, campo de trabajo.",
+            "El Inocente": "Busca la felicidad y simplicidad. Estrategia: Optimismo y transparencia. Formatos: Explicaciones para principiantes (ELI5).",
+            "El Amigo": "Busca la pertenencia y conexión. Estrategia: Empatía y realismo. Formatos: El 'día a día' sin filtros, errores comunes del emprendedor."
+        };
+
+        const arquetiposRasgos = {
+            "El Sabio": { adjetivo: "analítica, rigurosa y profunda", contenido: "análisis detallados, desmitificaciones y data-storytelling" },
+            "El Bufón": { adjetivo: "irreverente, magnética y entretenida", contenido: "memes educativos, sketches de comedia (POV) y humor situacional" },
+            "El Mago": { adjetivo: "visionaria, sorprendente y transformadora", contenido: "demostraciones de 'efecto wow' y procesos complejos explicados mágicamente" },
+            "El Rebelde": { adjetivo: "disruptiva, provocadora y sin filtros", contenido: "opiniones impopulares (hot takes), debates intensos y ruptura de mitos de la industria" },
+            "El Héroe": { adjetivo: "inspiradora, disciplinada y valiente", contenido: "retos de superación personal, historias de fracaso/éxito y vlogs competitivos" },
+            "El Creador": { adjetivo: "innovadora, estructurada y estética", contenido: "tutoriales paso a paso, 'build in public' y detrás de escena del proceso creativo" },
+            "El Gobernante": { adjetivo: "autoritaria, asertiva y de alto nivel", contenido: "masterclasses, guías definitivas y estrategias metodológicas exclusivas" },
+            "El Amante": { adjetivo: "apasionada, sensorial y muy cercana", contenido: "storytimes emocionales, colaboraciones íntimas (1 a 1) y estética audiovisual cuidada" },
+            "El Cuidador": { adjetivo: "empática, protectora y altruista", contenido: "tips de bienestar, sesiones de Q&A resolviendo problemas de la audiencia y guías de soporte" },
+            "El Explorador": { adjetivo: "aventurera, curiosa y dinámica", contenido: "vlogs de laboratorio/campo, documentales cortos inmersivos y descubrimientos en tiempo real" },
+            "El Inocente": { adjetivo: "optimista, transparente y accesible", contenido: "explicaciones simples para principiantes (ELI5) y contenido puramente motivacional" },
+            "El Amigo": { adjetivo: "cercana, realista y confiable", contenido: "el 'día a día' sin filtros, charlas tipo podcast relajado y confesiones de errores comunes" }
+        };
+
         let ideas = JSON.parse(localStorage.getItem('contentIdeas')) || [];
         let ejesTags = JSON.parse(localStorage.getItem('ejesTags')) || [];
         let tasks = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
-        let calendarView = 'semana'; // 'dia' o 'semana'
 
-        const arquetiposInfo = {
-            "El Sabio": "Rigor científico y pedagogía.",
-            "El Bufón": "Viralidad y humor educativo.",
-            "El Mago": "Transformación y procesos complejos.",
-            "El Rebelde": "Disrupción y mitos académicos.",
-            "El Héroe": "Retos y superación técnica.",
-            "El Creador": "Innovación y 'Build in public'.",
-            "El Gobernante": "Liderazgo y autoridad máxima.",
-            "El Amante": "Pasión y estética visual.",
-            "El Cuidador": "Bienestar y soporte a la audiencia.",
-            "El Explorador": "Vlogs de campo y descubrimientos.",
-            "El Inocente": "Simplicidad y motivación.",
-            "El Amigo": "Realismo y conexión diaria."
-        };
-
-        // --- NAVEGACIÓN ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('aside button').forEach(btn => btn.classList.remove('bg-slate-800'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById('btn-' + tabId).classList.add('bg-slate-800');
-            if(tabId === 'planificador') renderCalendario();
-            if(tabId === 'ideas') renderIdeas();
+            if(tabId === 'planificador') renderCalendario('mes');
         }
 
-        // --- GESTIÓN ESTRATEGIA ---
-        function guardarEstrategia() {
-            localStorage.setItem('temaCentral', document.getElementById('temaCentral').value);
-            localStorage.setItem('obj_awareness', document.getElementById('obj_awareness').value);
-            localStorage.setItem('obj_consideracion', document.getElementById('obj_consideracion').value);
-            localStorage.setItem('obj_conversion', document.getElementById('obj_conversion').value);
-            localStorage.setItem('obj_fidelizacion', document.getElementById('obj_fidelizacion').value);
-            
-            const selectedArqs = Array.from(document.querySelectorAll('.arq-checkbox:checked')).map(cb => cb.value);
-            localStorage.setItem('arquetiposSeleccionados', JSON.stringify(selectedArqs));
-
-            const statusMsg = document.getElementById('tema-guardado');
-            statusMsg.classList.replace('opacity-0', 'opacity-100');
-            setTimeout(() => statusMsg.classList.replace('opacity-100', 'opacity-0'), 2000);
-        }
-
+        // ESTRATEGIA & ARQUETIPOS
         function initArquetipos() {
             const container = document.getElementById('arquetiposContainer');
             const seleccionados = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
+            container.innerHTML = '';
             Object.keys(arquetiposInfo).forEach(arq => {
                 const checked = seleccionados.includes(arq) ? 'checked' : '';
                 container.innerHTML += `
                     <label class="flex items-center space-x-2 text-sm cursor-pointer p-2 hover:bg-white rounded transition shadow-sm border border-transparent hover:border-indigo-200">
-                        <input type="checkbox" value="${arq}" ${checked} onchange="guardarEstrategia()" class="arq-checkbox rounded text-indigo-600">
+                        <input type="checkbox" value="${arq}" ${checked} onchange="updateArquetipoDesc()" class="arq-checkbox rounded text-indigo-600">
                         <span class="font-medium">${arq}</span>
                     </label>`;
             });
+            updateArquetipoDesc();
         }
 
-        // --- PLANIFICADOR MEJORADO ---
-        function changeCalendarView(view) {
-            calendarView = view;
-            document.getElementById('view-dia').classList.toggle('bg-white', view === 'dia');
-            document.getElementById('view-dia').classList.toggle('shadow', view === 'dia');
-            document.getElementById('view-semana').classList.toggle('bg-white', view === 'semana');
-            document.getElementById('view-semana').classList.toggle('shadow', view === 'semana');
-            renderCalendario();
-        }
-
-        function renderCalendario() {
-            const container = document.getElementById('calendarViewContent');
-            container.innerHTML = '';
-
-            if (calendarView === 'semana') {
-                const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-                let html = '<div class="calendar-grid">';
-                diasSemana.forEach(d => html += `<div class="bg-slate-800 text-white p-2 text-center text-xs font-bold">${d}</div>`);
-                
-                // Simulación de los próximos 14 días (2 semanas)
-                const hoy = new Date();
-                for (let i = 0; i < 14; i++) {
-                    const fecha = new Date();
-                    fecha.setDate(hoy.getDate() + i);
-                    const fechaISO = fecha.toISOString().split('T')[0];
-                    
-                    // Filtrar ideas de este día y ordenar por hora
-                    const contenidos = ideas.filter(id => id.fecha === fechaISO)
-                                           .sort((a, b) => a.hora.localeCompare(b.hora))
-                                           .slice(0, 3); // TOP 3
-
-                    html += `
-                        <div class="calendar-day border-r border-b">
-                            <div class="text-[10px] font-bold text-gray-400 mb-2">${fechaISO}</div>
-                            ${contenidos.map(c => `
-                                <div class="content-card">
-                                    <div class="font-bold truncate">${c.hora} - ${c.titulo}</div>
-                                    <div class="text-[9px] text-indigo-500 uppercase">${c.objetivo}</div>
-                                </div>
-                            `).join('')}
-                            ${contenidos.length === 0 ? '<div class="text-[10px] text-gray-300 italic">Sin contenido</div>' : ''}
+        function updateArquetipoDesc() {
+            const selected = Array.from(document.querySelectorAll('.arq-checkbox:checked')).map(cb => cb.value);
+            const descBox = document.getElementById('arquetipoDescripcion');
+            if(selected.length > 0) {
+                descBox.classList.remove('hidden');
+                if (selected.length === 1) {
+                    descBox.innerHTML = `<strong>${selected[0]}:</strong> ${arquetiposInfo[selected[0]]}`;
+                } else {
+                    let arq1 = selected[0], arq2 = selected[1];
+                    descBox.innerHTML = `
+                        <div class="font-bold border-b border-indigo-200 mb-2 uppercase text-indigo-800">Fusión: ${selected.join(' + ')}</div>
+                        <p class="mb-2 italic text-gray-700">Mezcla de ${arquetiposRasgos[arq1].adjetivo} y ${arquetiposRasgos[arq2].adjetivo}.</p>
+                        <div class="bg-indigo-100 p-3 rounded">
+                            <strong>Contenido Estrella:</strong> ${arquetiposRasgos[arq1].contenido} aplicados a ${arquetiposRasgos[arq2].contenido}.
                         </div>`;
                 }
-                html += '</div>';
-                container.innerHTML = html;
-            } else {
-                // VISTA DÍA (Timeline Vertical)
-                const hoy = new Date().toISOString().split('T')[0];
-                const contenidos = ideas.filter(id => id.fecha === hoy).sort((a, b) => a.hora.localeCompare(b.hora));
-                
-                let html = `<div class="p-6"><h3 class="font-bold mb-4 text-indigo-600 uppercase tracking-tighter">Agenda para hoy (${hoy})</h3>`;
-                if(contenidos.length === 0) html += '<p class="text-gray-400">No hay contenido programado para hoy.</p>';
-                
-                contenidos.forEach(c => {
-                    html += `
-                        <div class="flex gap-4 border-l-2 border-indigo-500 pl-4 mb-6">
-                            <div class="font-mono font-bold text-indigo-800">${c.hora}</div>
-                            <div>
-                                <h4 class="font-bold">${c.titulo}</h4>
-                                <p class="text-xs text-gray-500">${c.formato} • <strong>${c.objetivo}</strong></p>
-                            </div>
-                        </div>`;
-                });
-                html += '</div>';
-                container.innerHTML = html;
-            }
+            } else descBox.classList.add('hidden');
+            localStorage.setItem('arquetiposSeleccionados', JSON.stringify(selected));
         }
 
-        // --- REPOSITORIO DE IDEAS ---
-        function guardarIdea() {
-            const titulo = document.getElementById('ideaTitulo').value;
-            const fecha = document.getElementById('ideaFecha').value;
-            const hora = document.getElementById('ideaHora').value;
-            if(!titulo || !fecha) return alert('Pon al menos título y fecha.');
-
-            ideas.push({
-                id: Date.now(),
-                titulo, fecha, hora,
-                formato: document.getElementById('ideaFormato').value,
-                objetivo: document.getElementById('ideaObjetivo').value,
-                guion: document.getElementById('ideaGuion').value
-            });
-            localStorage.setItem('contentIdeas', JSON.stringify(ideas));
-            renderIdeas();
-            alert('¡Idea guardada!');
+        function guardarTemaCentralAuto() {
+            localStorage.setItem('temaCentral', document.getElementById('temaCentral').value);
+            const status = document.getElementById('tema-guardado');
+            status.style.opacity = 1;
+            setTimeout(() => status.style.opacity = 0, 2000);
         }
 
-        function renderIdeas() {
-            const container = document.getElementById('listaIdeas');
-            container.innerHTML = '';
-            [...ideas].reverse().forEach(idea => {
-                container.innerHTML += `
-                    <div class="bg-white p-4 rounded shadow border-l-4 border-indigo-500">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-lg">${idea.titulo}</h3>
-                            <button onclick="eliminarIdea(${idea.id})" class="text-red-400 text-xs">Eliminar</button>
-                        </div>
-                        <p class="text-xs font-bold text-slate-400 uppercase mt-1">${idea.fecha} @ ${idea.hora} | ${idea.formato}</p>
-                        <div class="mt-2 text-sm text-gray-600 bg-gray-50 p-2 rounded">${idea.guion.substring(0, 100)}...</div>
-                    </div>`;
-            });
+        function saveFunnel() {
+            localStorage.setItem('strat_awareness', document.getElementById('strat_awareness').value);
+            localStorage.setItem('strat_consideracion', document.getElementById('strat_consideracion').value);
+            localStorage.setItem('strat_conversion', document.getElementById('strat_conversion').value);
+            localStorage.setItem('strat_fidelizacion', document.getElementById('strat_fidelizacion').value);
         }
 
-        function eliminarIdea(id) {
-            ideas = ideas.filter(i => i.id !== id);
-            localStorage.setItem('contentIdeas', JSON.stringify(ideas));
-            renderIdeas();
-        }
-
-        // --- SISTEMA DE TAGS Y TAREAS (Original preservado) ---
-        function renderTags(listId, arrayVar, storageKey) {
-            const container = document.getElementById(listId);
-            container.innerHTML = '';
-            arrayVar.forEach((tag, index) => {
-                const tagEl = document.createElement('div');
-                tagEl.className = 'tag';
-                tagEl.innerHTML = `${tag} <button onclick="removeTag('${listId}', ${index}, '${storageKey}')">×</button>`;
-                container.appendChild(tagEl);
-            });
-            localStorage.setItem(storageKey, JSON.stringify(arrayVar));
-        }
-
+        // TAGS
         function setupTagsInput(inputId, listId, arrayVar, storageKey) {
             const input = document.getElementById(inputId);
             input.addEventListener('keypress', (e) => {
@@ -370,14 +292,24 @@
             });
         }
 
+        function renderTags(listId, arrayVar, storageKey) {
+            const container = document.getElementById(listId);
+            container.innerHTML = '';
+            arrayVar.forEach((tag, index) => {
+                container.innerHTML += `<div class="tag">${tag}<button onclick="removeTag('${listId}', ${index}, '${storageKey}')">×</button></div>`;
+            });
+            localStorage.setItem(storageKey, JSON.stringify(arrayVar));
+        }
+
         function removeTag(listId, index, storageKey) {
             ejesTags.splice(index, 1);
             renderTags(listId, ejesTags, storageKey);
         }
 
+        // TAREAS / NOTAS
         function addTask(cat) {
             const input = document.getElementById(`inputTarea_${cat}`);
-            if(!input.value) return;
+            if(!input.value.trim()) return;
             tasks[cat].push({ text: input.value, done: false });
             input.value = '';
             renderTasks();
@@ -389,22 +321,154 @@
                 const list = document.getElementById(`lista_${cat}`);
                 list.innerHTML = '';
                 tasks[cat].forEach((t, i) => {
-                    list.innerHTML += `<li class="p-1 border-b text-xs flex justify-between"><span>${t.text}</span></li>`;
+                    list.innerHTML += `<li class="flex justify-between items-start p-2 bg-slate-50 rounded border hover:bg-white transition cursor-default">
+                        <span onclick="tasks['${cat}'][${i}].done = !tasks['${cat}'][${i}].done; renderTasks();" class="flex-1 ${t.done ? 'task-done' : ''}">${t.text}</span>
+                        <button onclick="tasks['${cat}'].splice(${i}, 1); renderTasks(); localStorage.setItem('contentTasks', JSON.stringify(tasks));" class="text-red-400 font-bold ml-2">×</button>
+                    </li>`;
                 });
             });
+        }
+
+        // REPOSITORIO
+        function guardarIdea() {
+            const titulo = document.getElementById('ideaTitulo').value;
+            if(!titulo) return alert('Título requerido');
+            ideas.push({
+                id: Date.now(), titulo,
+                formato: document.getElementById('ideaFormato').value,
+                tipo: document.getElementById('ideaTipo').value,
+                objetivo: document.getElementById('ideaObjetivo').value,
+                fecha: document.getElementById('ideaFecha').value,
+                hora: document.getElementById('ideaHora').value,
+                guion: document.getElementById('ideaGuion').value,
+                copy: document.getElementById('ideaCopy').value,
+                hashtags: document.getElementById('ideaHashtags').value
+            });
+            localStorage.setItem('contentIdeas', JSON.stringify(ideas));
+            renderIdeas();
+            ['ideaTitulo','ideaGuion','ideaCopy','ideaHashtags','ideaFecha','ideaHora'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function renderIdeas() {
+            const container = document.getElementById('listaIdeas');
+            container.innerHTML = '';
+            [...ideas].reverse().forEach(idea => {
+                container.innerHTML += `<div class="bg-white p-4 rounded shadow border border-gray-200">
+                    <div class="flex justify-between"><h3 class="font-bold">${idea.titulo}</h3><button onclick="eliminarIdea(${idea.id})" class="text-red-500 text-xs">Eliminar</button></div>
+                    <p class="text-xs text-indigo-600 font-bold uppercase">${idea.fecha} | ${idea.objetivo}</p>
+                </div>`;
+            });
+        }
+
+        function eliminarIdea(id) {
+            ideas = ideas.filter(i => i.id !== id);
+            localStorage.setItem('contentIdeas', JSON.stringify(ideas));
+            renderIdeas();
+        }
+
+        // PLANIFICADOR AVANZADO
+        function renderCalendario(vista) {
+            const container = document.getElementById('plannerContainer');
+            container.innerHTML = '';
+            
+            if(vista === 'mes') {
+                const diasSemana = ['LUN','MAR','MIE','JUE','VIE','SAB','DOM'];
+                let html = '<div class="calendar-grid">';
+                diasSemana.forEach(d => html += `<div class="bg-slate-800 text-white text-[10px] text-center p-2 font-bold">${d}</div>`);
+                
+                let start = new Date();
+                start.setDate(1);
+                for(let i=0; i<30; i++) {
+                    let d = new Date(start);
+                    d.setDate(start.getDate() + i);
+                    let iso = d.toISOString().split('T')[0];
+                    let dailyIdeas = ideas.filter(id => id.fecha === iso).slice(0,3);
+                    
+                    html += `<div class="calendar-day border-r border-b">
+                        <div class="text-[9px] font-bold text-gray-400">${d.getDate()}</div>
+                        ${dailyIdeas.map(di => `<div class="content-item truncate" onclick="openModal(${di.id})">${di.titulo}</div>`).join('')}
+                    </div>`;
+                }
+                html += '</div>';
+                container.innerHTML = html;
+            } else if (vista === 'semana') {
+                let html = '<div class="flex gap-2 p-4">';
+                for(let i=0; i<7; i++) {
+                    let d = new Date();
+                    d.setDate(d.getDate() + i);
+                    let iso = d.toISOString().split('T')[0];
+                    let daily = ideas.filter(id => id.fecha === iso);
+                    html += `<div class="flex-1 min-w-[200px] bg-slate-50 p-4 rounded-lg border">
+                        <div class="font-bold text-indigo-600 mb-4 border-b">${iso}</div>
+                        ${daily.map(di => `<div class="content-item" onclick="openModal(${di.id})"><b>${di.hora}</b>: ${di.titulo}</div>`).join('')}
+                    </div>`;
+                }
+                html += '</div>';
+                container.innerHTML = html;
+            } else {
+                let hoy = new Date().toISOString().split('T')[0];
+                let daily = ideas.filter(id => id.fecha === hoy).sort((a,b) => a.hora.localeCompare(b.hora));
+                container.innerHTML = `<div class="p-8 max-w-lg mx-auto">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">Hoy: ${hoy}</h3>
+                    ${daily.map(di => `<div class="p-4 mb-2 bg-indigo-50 border rounded-lg cursor-pointer" onclick="openModal(${di.id})"><b>${di.hora}</b> - ${di.titulo}</div>`).join('')}
+                    ${daily.length === 0 ? '<p class="text-gray-400 italic">Sin agenda hoy</p>' : ''}
+                </div>`;
+            }
+        }
+
+        // MODAL Y COPIADO
+        function openModal(id) {
+            const idea = ideas.find(i => i.id === id);
+            if(!idea) return;
+            const overlay = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            
+            content.innerHTML = `
+                <h3 class="text-2xl font-bold text-indigo-600 mb-2">${idea.titulo}</h3>
+                <div class="flex flex-wrap gap-2 mb-4 text-xs">
+                    <span class="bg-gray-100 px-2 py-1 rounded">📅 ${idea.fecha}</span>
+                    <span class="bg-gray-100 px-2 py-1 rounded">⏰ ${idea.hora}</span>
+                    <span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-bold uppercase">${idea.objetivo}</span>
+                </div>
+                <div class="space-y-4">
+                    <div><label class="block text-xs font-bold text-gray-400 uppercase">Guion</label>
+                        <div class="p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap border">${idea.guion}</div>
+                    </div>
+                    <div><label class="block text-xs font-bold text-gray-400 uppercase">Copy</label>
+                        <div class="p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap border">${idea.copy}</div>
+                    </div>
+                    <div><label class="block text-xs font-bold text-gray-400 uppercase">Hashtags</label>
+                        <div class="p-3 bg-gray-50 rounded text-sm border font-mono text-xs text-indigo-600">${idea.hashtags}</div>
+                    </div>
+                </div>
+                <button onclick="copyToClipboard('${idea.id}')" class="mt-6 w-full bg-slate-900 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    Copiar Información Completa
+                </button>
+            `;
+            overlay.style.display = 'flex';
+        }
+
+        function closeModal(e) { document.getElementById('modalOverlay').style.display = 'none'; }
+
+        function copyToClipboard(id) {
+            const idea = ideas.find(i => i.id == id);
+            const text = `TITULO: ${idea.titulo}\nGUION:\n${idea.guion}\n\nCOPY:\n${idea.copy}\n\nHASHTAGS:\n${idea.hashtags}`;
+            navigator.clipboard.writeText(text).then(() => alert('¡Copiado al portapapeles!'));
         }
 
         window.onload = () => {
             initArquetipos();
             document.getElementById('temaCentral').value = localStorage.getItem('temaCentral') || '';
-            document.getElementById('obj_awareness').value = localStorage.getItem('obj_awareness') || '';
-            document.getElementById('obj_consideracion').value = localStorage.getItem('obj_consideracion') || '';
-            document.getElementById('obj_conversion').value = localStorage.getItem('obj_conversion') || '';
-            document.getElementById('obj_fidelizacion').value = localStorage.getItem('obj_fidelizacion') || '';
+            document.getElementById('strat_awareness').value = localStorage.getItem('strat_awareness') || '';
+            document.getElementById('strat_consideracion').value = localStorage.getItem('strat_consideracion') || '';
+            document.getElementById('strat_conversion').value = localStorage.getItem('strat_conversion') || '';
+            document.getElementById('strat_fidelizacion').value = localStorage.getItem('strat_fidelizacion') || '';
             
             renderTags('listaEjes', ejesTags, 'ejesTags');
             setupTagsInput('inputEjes', 'listaEjes', ejesTags, 'ejesTags');
             renderTasks();
+            renderIdeas();
         };
     </script>
 </body>
