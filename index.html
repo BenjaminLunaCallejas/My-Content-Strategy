@@ -723,50 +723,72 @@
         }
 
         // LÓGICA DE ESTRATEGIA RESUMIDA
-        function renderEstrategiaResumen() {
-            const container = document.getElementById('resumenContent');
-            const promptArea = document.getElementById('aiPromptArea');
-            
-            const tema = localStorage.getItem('temaCentral') || 'No definido';
-            const nicho = localStorage.getItem('nichoContenido') || 'No definido';
-            const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
-            const creador = localStorage.getItem('descCreador') || 'No definido';
-            const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
-            const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
-            
-            const notasActuales = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
-            
-            let lineasInsumos = [];
-            if (notasActuales.ideas?.length) lineasInsumos.push(`- Ideas específicas: ${notasActuales.ideas.map(t => t.text).join(', ')}`);
-            if (notasActuales.audios?.length) lineasInsumos.push(`- Audios/Referencias: ${notasActuales.audios.map(t => t.text).join(', ')}`);
-            if (notasActuales.tendencias?.length) lineasInsumos.push(`- Tendencias: ${notasActuales.tendencias.map(t => t.text).join(', ')}`);
-            if (notasActuales.proximos?.length) lineasInsumos.push(`- Próximos: ${notasActuales.proximos.map(t => t.text).join(', ')}`);
+       function renderEstrategiaResumen() {
+            const container = document.getElementById('resumenContent');
+            const promptArea = document.getElementById('aiPromptArea');
+            
+            // Recuperación de datos de todas las fuentes
+            const tema = localStorage.getItem('temaCentral') || 'No definido';
+            const nicho = localStorage.getItem('nichoContenido') || 'No definido';
+            const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
+            const creador = localStorage.getItem('descCreador') || 'No definido';
+            const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
+            const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
+            const notasActuales = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
+            const repositorioCount = (JSON.parse(localStorage.getItem('contentIdeas')) || []).length;
 
-            const seccionInsumos = lineasInsumos.length > 0 ? `\nDATOS DEL PANEL "NOTAS Y TENDENCIAS":\n${lineasInsumos.join('\n')}\n` : "";
+            // Lógica para generar la Narrativa Estratégica basada en Ejes
+            const generarNarrativaEje = (eje) => {
+                const e = eje.toLowerCase();
+                if (e.includes('fit')) return `<span class="font-bold text-indigo-700">${eje} inteligente:</span> Ciencia aplicada al cuerpo (rápido, útil, accionable).`;
+                if (e.includes('juego') || e.includes('gam')) return `<span class="font-bold text-indigo-700">${eje} social:</span> No es enseñar ciencia... es simplemente ser tú mientras juegas.`;
+                if (e.includes('diver') || e.includes('sexo') || e.includes('opin') || e.includes('cultura')) 
+                    return `<span class="font-bold text-indigo-700">${eje} + Argumentos:</span> Justicia social y cultura pop con base científica (genera identidad fuerte).`;
+                return `<span class="font-bold text-indigo-700">${eje}:</span> Divulgación transmedia para conectar con la audiencia.`;
+            };
 
-            const aw = localStorage.getItem('strat_awareness') || 'Generar visibilidad masiva.';
-            const co = localStorage.getItem('strat_consideracion') || 'Establecer autoridad y confianza.';
-            const cv = localStorage.getItem('strat_conversion') || 'Llamado a la acción directa.';
-            const fi = localStorage.getItem('strat_fidelizacion') || 'Mantener a la comunidad activa.';
+            const listaNarrativa = ejes.map(e => `<li>→ ${generarNarrativaEje(e)}</li>`).join('');
 
-            if (container) {
-                container.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div class="p-4 bg-slate-50 rounded-lg border">
-                            <h4 class="text-xs font-bold text-gray-400 uppercase">Perfil de Creador</h4>
-                            <p class="text-lg font-bold text-slate-800">${tema}</p>
-                            <p class="text-sm text-indigo-600 font-medium">${nicho} • ${arq.join(' + ')}</p>
-                        </div>
-                        <div class="p-4 bg-slate-50 rounded-lg border">
-                            <h4 class="text-xs font-bold text-gray-400 uppercase">Audiencia Clave</h4>
-                            <p class="text-sm text-slate-700 mt-1">${publico}</p>
-                        </div>
-                        <div class="p-4 bg-slate-50 rounded-lg border md:col-span-2">
-                            <h4 class="text-xs font-bold text-gray-400 uppercase">Descripción del Creador (Talentos, Hobbies)</h4>
-                            <p class="text-sm text-slate-700 mt-1">${creador}</p>
-                        </div>
-                    </div>`;
-            }
+            if (container) {
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                            <h4 class="text-[10px] font-bold text-gray-400 uppercase">Estatus del Repositorio</h4>
+                            <p class="text-2xl font-black text-indigo-600">${repositorioCount}</p>
+                            <p class="text-[10px] text-gray-500">Guiones listos para grabar</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                            <h4 class="text-[10px] font-bold text-gray-400 uppercase">Insumos Pendientes</h4>
+      0.875rem              <p class="text-2xl font-black text-emerald-600">${notasActuales.ideas.length + notasActuales.tendencias.length}</p>
+                            <p class="text-[10px] text-gray-500">Ideas y tendencias sin procesar</p>
+                        </div>
+                        <div class="p-4 bg-indigo-600 rounded-lg shadow-md text-white">
+                            <h4 class="text-[10px] font-bold opacity-70 uppercase">Pilar de Autoridad</h4>
+                            <p class="text-lg font-bold truncate">${tema}</p>
+                            <p class="text-[10px] opacity-90">${nicho}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border-2 border-indigo-100 shadow-sm mb-6">
+                        <h3 class="text-indigo-900 font-black text-xl mb-4 flex items-center gap-2">
+                            🧭 Manifiesto Narrativo de la Estrategia
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            Como creador bajo la identidad de <strong>${arq.join(' / ')}</strong>, mi misión principal es la <strong>${tema}</strong>. 
+                            Mi contenido está diseñado para atraer a <strong>${publico}</strong>, logrando que 
+                            <span class="bg-yellow-100 px-1 font-bold">se sientan más inteligentes al verlo</span>.
+                        </p>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            ${listaNarrativa || '<li>→ No se han definido ejes secundarios todavía.</li>'}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Generación del Prompt Global para IA
+            let lineasInsumos = [];
+            if (notasActuales.ideas?.length) lineasInsumos.push(`- Ideas crudas: ${notasActuales.ideas.map(t => t.text).join(', ')}`);
+            if (notasActuales.tendencias?.length) lineasInsumos.push(`- Tendencias: ${notasActuales.tendencias.map(t => t.text).join(', ')}`);
 
             const prompt = `Actúa como un estratega de contenido profesional.
 CONTEXTO:
