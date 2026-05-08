@@ -22,8 +22,10 @@
         .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: 1px; background-color: #e2e8f0; border: 1px solid #e2e8f0; }
         .calendar-day { background-color: white; min-height: 120px; padding: 0.5rem; overflow-y: auto; }
         .calendar-day.today { background-color: #f0f7ff; border: 2px solid #6366f1; }
-        .content-item { font-size: 0.7rem; padding: 4px; margin-bottom: 3px; border-radius: 4px; background: #eef2ff; border-left: 3px solid #6366f1; cursor: pointer; transition: all 0.2s; }
+        .content-item { font-size: 0.7rem; padding: 4px; margin-bottom: 3px; border-radius: 4px; background: #eef2ff; border-left: 3px solid #6366f1; cursor: pointer; transition: all 0.2s; position: relative; }
         .content-item:hover { background: #e0e7ff; transform: scale(1.02); }
+        .edit-mini-btn { position: absolute; right: 2px; top: 2px; opacity: 0; transition: opacity 0.2s; }
+        .content-item:hover .edit-mini-btn { opacity: 1; }
 
         /* Modal */
         #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
@@ -192,7 +194,7 @@
                         
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Formato Digital</label>
-                            <select id="ideaFormato" class="w-full p-3 border rounded-lg outline-none">
+                            <select id="ideaFormato" onchange="updateLivePrompt()" class="w-full p-3 border rounded-lg outline-none">
                                 <option value="Short Content">Short Content</option>
                                 <option value="Long Content">Long Content</option>
                                 <option value="Podcast">Podcast</option>
@@ -208,7 +210,7 @@
                         
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Tipo de Contenido</label>
-                            <select id="ideaTipo" class="w-full p-3 border rounded-lg outline-none">
+                            <select id="ideaTipo" onchange="updateLivePrompt()" class="w-full p-3 border rounded-lg outline-none">
                                 <option value="Divulgación">Divulgación</option>
                                 <option value="Opiniones">Opiniones</option>
                                 <option value="Tutoriales">Tutoriales</option>
@@ -232,7 +234,7 @@
                         
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Objetivo del Contenido</label>
-                            <select id="ideaObjetivo" class="w-full p-3 border rounded-lg outline-none">
+                            <select id="ideaObjetivo" onchange="updateLivePrompt()" class="w-full p-3 border rounded-lg outline-none">
                                 <option value="Awareness">Awareness</option>
                                 <option value="Consideración">Consideración</option>
                                 <option value="Conversión">Conversión</option>
@@ -242,7 +244,7 @@
 
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Tipo según Objetivo</label>
-                            <select id="ideaTipoEstrategico" class="w-full p-3 border rounded-lg outline-none">
+                            <select id="ideaTipoEstrategico" onchange="updateLivePrompt()" class="w-full p-3 border rounded-lg outline-none">
                                 <option value="Genérica">Genérica (Alcance superficial/Likes fugaces)</option>
                                 <option value="Estratégica: Presencia">Estratégica: Presencia</option>
                                 <option value="Estratégica: Marca">Estratégica: Marca</option>
@@ -255,7 +257,7 @@
 
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Tipo de Colaboración</label>
-                            <select id="ideaColaboracion" class="w-full p-3 border rounded-lg outline-none">
+                            <select id="ideaColaboracion" onchange="updateLivePrompt()" class="w-full p-3 border rounded-lg outline-none">
                                 <option value="Independiente">Independiente</option>
                                 <option value="Con otros creadores">Colaboración con otros creadores</option>
                                 <option value="Con marcas u ONGs">Colaboraciones con marcas u ONGs</option>
@@ -264,7 +266,7 @@
 
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Tipo de Publicación</label>
-                            <select id="ideaPublicacion" class="w-full p-3 border rounded-lg outline-none">
+                            <select id="ideaPublicacion" onchange="updateLivePrompt()" class="w-full p-3 border rounded-lg outline-none">
                                 <option value="Orgánica">Orgánica</option>
                                 <option value="Pautada">Pautada</option>
                             </select>
@@ -278,6 +280,11 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Hora</label>
                             <input type="time" id="ideaHora" class="w-full p-3 border rounded-lg outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-indigo-600 mb-2">Idea de Gancho (HOOK)</label>
+                            <input type="text" id="ideaHook" oninput="updateLivePrompt()" placeholder="Ej: ¿Sabías que...?" class="w-full p-3 border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400 bg-indigo-50/30">
                         </div>
                     </div>
 
@@ -301,7 +308,22 @@
                         <input type="text" id="ideaHashtags" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-400" placeholder="#tag1 #tag2 #tag3 #tag4">
                     </div>
 
-                    <button onclick="guardarIdea()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Guion Estructurado</button>
+                    <div class="flex gap-4">
+                        <button id="btnGuardarGuion" onclick="guardarIdea()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition flex-1">Guardar Guion Estructurado</button>
+                        <button id="btnCancelarEdicion" onclick="cancelarEdicion()" class="bg-gray-200 text-gray-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition hidden">Cancelar</button>
+                    </div>
+
+                    <!-- NUEVA SECCIÓN: AI SCRIPT PROMPT -->
+                    <div class="mt-8 border-t-2 border-dashed pt-6 bg-slate-50 p-6 rounded-xl">
+                        <h3 class="text-sm font-bold text-indigo-900 mb-3 uppercase tracking-wider flex items-center gap-2">
+                            ✨ AI SCRIPT PROMPT (Basado en tu selección)
+                        </h3>
+                        <div class="relative">
+                            <textarea id="aiScriptPromptArea" rows="5" class="w-full p-4 bg-white text-slate-700 font-mono text-[11px] rounded-lg border border-slate-200 leading-relaxed shadow-inner" readonly></textarea>
+                            <button onclick="copyToClipboardElement('aiScriptPromptArea')" class="absolute top-2 right-2 bg-slate-800 text-white px-3 py-1 rounded text-[10px] hover:bg-slate-700 transition">Copiar Prompt</button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2 italic">Este prompt se actualiza automáticamente según los selectores de arriba.</p>
+                    </div>
                 </div>
                 
                 <div id="listaIdeas" class="grid grid-cols-1 gap-4"></div>
@@ -380,6 +402,7 @@
         let ideas = JSON.parse(localStorage.getItem('contentIdeas')) || [];
         let ejesTags = JSON.parse(localStorage.getItem('ejesTags')) || [];
         let tasks = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
+        let editandoId = null;
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -512,8 +535,9 @@
         function guardarIdea() {
             const titulo = document.getElementById('ideaTitulo').value;
             if(!titulo) return alert('Título requerido');
-            ideas.push({
-                id: Date.now(),
+            
+            const datos = {
+                id: editandoId || Date.now(),
                 titulo,
                 formato: document.getElementById('ideaFormato').value,
                 tipo: document.getElementById('ideaTipo').value,
@@ -523,13 +547,59 @@
                 publicacion: document.getElementById('ideaPublicacion').value,
                 fecha: document.getElementById('ideaFecha').value,
                 hora: document.getElementById('ideaHora').value,
+                hook: document.getElementById('ideaHook').value,
                 guion: document.getElementById('ideaGuion').value,
                 copy: document.getElementById('ideaCopy').value,
                 hashtags: document.getElementById('ideaHashtags').value
-            });
+            };
+
+            if (editandoId) {
+                const index = ideas.findIndex(i => i.id === editandoId);
+                ideas[index] = datos;
+                alert('¡Guion actualizado correctamente!');
+            } else {
+                ideas.push(datos);
+            }
+
             localStorage.setItem('contentIdeas', JSON.stringify(ideas));
+            cancelarEdicion();
             renderIdeas();
-            ['ideaTitulo','ideaGuion','ideaCopy','ideaHashtags','ideaFecha','ideaHora'].forEach(id => document.getElementById(id).value = '');
+            if (editandoId) renderCalendario('mes');
+        }
+
+        function editarIdea(id) {
+            const idea = ideas.find(i => i.id === id);
+            if (!idea) return;
+
+            editandoId = id;
+            document.getElementById('ideaTitulo').value = idea.titulo || '';
+            document.getElementById('ideaFormato').value = idea.formato || '';
+            document.getElementById('ideaTipo').value = idea.tipo || '';
+            document.getElementById('ideaObjetivo').value = idea.objetivo || '';
+            document.getElementById('ideaTipoEstrategico').value = idea.tipoEstrategico || '';
+            document.getElementById('ideaColaboracion').value = idea.colaboracion || '';
+            document.getElementById('ideaPublicacion').value = idea.publicacion || '';
+            document.getElementById('ideaFecha').value = idea.fecha || '';
+            document.getElementById('ideaHora').value = idea.hora || '';
+            document.getElementById('ideaHook').value = idea.hook || '';
+            document.getElementById('ideaGuion').value = idea.guion || '';
+            document.getElementById('ideaCopy').value = idea.copy || '';
+            document.getElementById('ideaHashtags').value = idea.hashtags || '';
+
+            document.getElementById('btnGuardarGuion').innerText = "Actualizar Guion Existente";
+            document.getElementById('btnCancelarEdicion').classList.remove('hidden');
+            
+            switchTab('ideas');
+            document.getElementById('ideaTitulo').scrollIntoView({ behavior: 'smooth' });
+            updateLivePrompt();
+        }
+
+        function cancelarEdicion() {
+            editandoId = null;
+            document.getElementById('btnGuardarGuion').innerText = "Guardar Guion Estructurado";
+            document.getElementById('btnCancelarEdicion').classList.add('hidden');
+            ['ideaTitulo','ideaGuion','ideaCopy','ideaHashtags','ideaFecha','ideaHora', 'ideaHook'].forEach(id => document.getElementById(id).value = '');
+            updateLivePrompt();
         }
 
         function renderIdeas() {
@@ -537,30 +607,35 @@
             container.innerHTML = '';
             [...ideas].reverse().forEach(idea => {
                 container.innerHTML += `<div class="bg-white p-4 rounded shadow border border-gray-200 cursor-pointer hover:border-indigo-400 transition" onclick="openModal(${idea.id})">
-                    <div class="flex justify-between"><h3 class="font-bold">${idea.titulo}</h3><button onclick="event.stopPropagation(); eliminarIdea(${idea.id})" class="text-red-500 text-xs">Eliminar</button></div>
-                    <p class="text-xs text-indigo-600 font-bold uppercase">${idea.fecha} | ${idea.objetivo}</p>
-                    <div class="text-[9px] mt-2 text-gray-400">Haga clic para ver detalles y copiar</div>
+                    <div class="flex justify-between">
+                        <h3 class="font-bold text-slate-700">${idea.titulo}</h3>
+                        <div class="flex gap-2">
+                            <button onclick="event.stopPropagation(); editarIdea(${idea.id})" class="text-indigo-500 text-xs hover:bg-indigo-50 px-2 py-1 rounded">✏️ Editar</button>
+                            <button onclick="event.stopPropagation(); eliminarIdea(${idea.id})" class="text-red-500 text-xs hover:bg-red-50 px-2 py-1 rounded">Eliminar</button>
+                        </div>
+                    </div>
+                    <p class="text-xs text-indigo-600 font-bold uppercase mt-1">${idea.fecha || 'Sin fecha'} | ${idea.objetivo}</p>
+                    <div class="text-[9px] mt-2 text-gray-400">Clic para detalles | ✏️ para editar</div>
                 </div>`;
             });
         }
 
         function eliminarIdea(id) {
+            if(!confirm('¿Seguro que quieres eliminar este guion?')) return;
             ideas = ideas.filter(i => i.id !== id);
             localStorage.setItem('contentIdeas', JSON.stringify(ideas));
             renderIdeas();
         }
 
-        // PLANIFICADOR AVANZADO CORREGIDO
         function renderCalendario(vista) {
             const container = document.getElementById('plannerContainer');
             const header = document.getElementById('calendarHeader');
             container.innerHTML = '';
             
-            // UI Actives
             document.querySelectorAll('#planificador button').forEach(b => b.classList.remove('bg-white', 'shadow'));
             document.getElementById(`view-${vista}`).classList.add('bg-white', 'shadow');
 
-            const dActual = new Date(2026, 4, 7); // Fija para este caso: Mayo 7, 2026
+            const dActual = new Date(2026, 4, 7);
             const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
             if(vista === 'mes') {
@@ -571,12 +646,10 @@
                 
                 let firstDay = new Date(2026, 4, 1);
                 let startDay = firstDay.getDay(); 
-                startDay = (startDay === 0) ? 6 : startDay - 1; // Ajuste a Lunes
+                startDay = (startDay === 0) ? 6 : startDay - 1;
 
-                // Espacios vacíos mes anterior
                 for(let e=0; e<startDay; e++) html += `<div class="calendar-day bg-gray-50 border-r border-b"></div>`;
 
-                // Días del mes (Mayo tiene 31)
                 for(let i=1; i<=31; i++) {
                     let d = new Date(2026, 4, i);
                     let iso = d.toISOString().split('T')[0];
@@ -585,7 +658,11 @@
 
                     html += `<div class="calendar-day border-r border-b ${isToday ? 'today' : ''}">
                         <div class="text-[9px] font-bold ${isToday ? 'text-indigo-600' : 'text-gray-400'}">${i}</div>
-                        ${dailyIdeas.map(di => `<div class="content-item truncate" onclick="openModal(${di.id})">${di.titulo}</div>`).join('')}
+                        ${dailyIdeas.map(di => `
+                            <div class="content-item truncate" onclick="openModal(${di.id})">
+                                ${di.titulo}
+                                <button class="edit-mini-btn" onclick="event.stopPropagation(); editarIdea(${di.id})">✏️</button>
+                            </div>`).join('')}
                     </div>`;
                 }
                 html += '</div>';
@@ -593,8 +670,6 @@
             } else if (vista === 'semana') {
                 header.innerText = `Semana del 4 al 10 de Mayo`;
                 let html = '<div class="flex gap-2 p-4">';
-                
-                // Lunes 4 de Mayo es el inicio de esta semana
                 let lunesRef = new Date(2026, 4, 4);
 
                 for(let i=0; i<7; i++) {
@@ -607,7 +682,11 @@
 
                     html += `<div class="flex-1 min-w-[200px] ${isToday ? 'bg-indigo-50 border-indigo-300' : 'bg-slate-50'} p-4 rounded-lg border">
                         <div class="font-bold text-indigo-600 mb-4 border-b pb-1 text-xs capitalize">${nombreDia}</div>
-                        ${daily.map(di => `<div class="content-item" onclick="openModal(${di.id})"><b>${di.hora}</b>: ${di.titulo}</div>`).join('')}
+                        ${daily.map(di => `
+                            <div class="content-item" onclick="openModal(${di.id})">
+                                <b>${di.hora}</b>: ${di.titulo}
+                                <button class="edit-mini-btn" onclick="event.stopPropagation(); editarIdea(${di.id})">✏️</button>
+                            </div>`).join('')}
                         ${daily.length === 0 ? '<p class="text-[10px] text-gray-300 italic">Sin contenido</p>' : ''}
                     </div>`;
                 }
@@ -620,117 +699,107 @@
                 let daily = ideas.filter(id => id.fecha === hoyISO).sort((a,b) => a.hora.localeCompare(b.hora));
                 container.innerHTML = `<div class="p-8 max-w-lg mx-auto">
                     <h3 class="text-xl font-bold mb-4 border-b pb-2 capitalize">${nombreHoy}</h3>
-                    ${daily.map(di => `<div class="p-4 mb-2 bg-indigo-50 border border-indigo-200 rounded-lg cursor-pointer" onclick="openModal(${di.id})"><b>${di.hora}</b> - ${di.titulo}</div>`).join('')}
+                    ${daily.map(di => `<div class="p-4 mb-2 bg-indigo-50 border border-indigo-200 rounded-lg cursor-pointer flex justify-between items-center" onclick="openModal(${di.id})">
+                        <span><b>${di.hora}</b> - ${di.titulo}</span>
+                        <button onclick="event.stopPropagation(); editarIdea(${di.id})" class="text-indigo-500">✏️</button>
+                    </div>`).join('')}
                     ${daily.length === 0 ? '<p class="text-gray-400 italic">No tienes actividades programadas para hoy.</p>' : ''}
                 </div>`;
             }
         }
 
-        // LÓGICA DE LA NUEVA PESTAÑA: ESTRATEGIA DE CONTENIDO ACTUALIZADA
-function renderEstrategiaResumen() {
-    const container = document.getElementById('resumenContent');
-    const promptArea = document.getElementById('aiPromptArea');
-    
-    // 1. Recuperar Contexto de Marca
-    const tema = localStorage.getItem('temaCentral') || 'No definido';
-    const nicho = localStorage.getItem('nichoContenido') || 'No definido';
-    const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
-    const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
-    const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
-    
-    // 2. Recuperar Insumos y generar bloque dinámico
-    const notasActuales = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
-    
-    // Creamos un array con las líneas que SÍ tienen datos
-    let lineasInsumos = [];
-    
-    if (notasActuales.ideas?.length) 
-        lineasInsumos.push(`- Ideas específicas: ${notasActuales.ideas.map(t => t.text).join(', ')}`);
-    
-    if (notasActuales.audios?.length) 
-        lineasInsumos.push(`- Audios/Referencias virales: ${notasActuales.audios.map(t => t.text).join(', ')}`);
-    
-    if (notasActuales.tendencias?.length) 
-        lineasInsumos.push(`- Tendencias actuales: ${notasActuales.tendencias.map(t => t.text).join(', ')}`);
-    
-    if (notasActuales.proximos?.length) 
-        lineasInsumos.push(`- Próximos contenidos: ${notasActuales.proximos.map(t => t.text).join(', ')}`);
+        // LÓGICA DE ESTRATEGIA RESUMIDA
+        function renderEstrategiaResumen() {
+            const container = document.getElementById('resumenContent');
+            const promptArea = document.getElementById('aiPromptArea');
+            
+            const tema = localStorage.getItem('temaCentral') || 'No definido';
+            const nicho = localStorage.getItem('nichoContenido') || 'No definido';
+            const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
+            const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
+            const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
+            
+            const notasActuales = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
+            
+            let lineasInsumos = [];
+            if (notasActuales.ideas?.length) lineasInsumos.push(`- Ideas específicas: ${notasActuales.ideas.map(t => t.text).join(', ')}`);
+            if (notasActuales.audios?.length) lineasInsumos.push(`- Audios/Referencias: ${notasActuales.audios.map(t => t.text).join(', ')}`);
+            if (notasActuales.tendencias?.length) lineasInsumos.push(`- Tendencias: ${notasActuales.tendencias.map(t => t.text).join(', ')}`);
+            if (notasActuales.proximos?.length) lineasInsumos.push(`- Próximos: ${notasActuales.proximos.map(t => t.text).join(', ')}`);
 
-    // Solo creamos la sección si hay al menos una línea con datos
-    const seccionInsumos = lineasInsumos.length > 0 
-        ? `\nDATOS DEL PANEL "NOTAS Y TENDENCIAS" (INSUMOS OBLIGATORIOS):\n${lineasInsumos.join('\n')}\n` 
-        : "";
+            const seccionInsumos = lineasInsumos.length > 0 ? `\nDATOS DEL PANEL "NOTAS Y TENDENCIAS":\n${lineasInsumos.join('\n')}\n` : "";
 
-    // 3. Funnel Data
-    const aw = localStorage.getItem('strat_awareness') || 'Generar visibilidad masiva.';
-    const co = localStorage.getItem('strat_consideracion') || 'Establecer autoridad y confianza.';
-    const cv = localStorage.getItem('strat_conversion') || 'Llamado a la acción directa.';
-    const fi = localStorage.getItem('strat_fidelizacion') || 'Mantener a la comunidad activa.';
+            const aw = localStorage.getItem('strat_awareness') || 'Generar visibilidad masiva.';
+            const co = localStorage.getItem('strat_consideracion') || 'Establecer autoridad y confianza.';
+            const cv = localStorage.getItem('strat_conversion') || 'Llamado a la acción directa.';
+            const fi = localStorage.getItem('strat_fidelizacion') || 'Mantener a la comunidad activa.';
 
-    // 4. Renderizado en Interfaz
-    if (container) {
-        container.innerHTML = `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div class="p-4 bg-slate-50 rounded-lg border">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase">Perfil de Creador</h4>
-                    <p class="text-lg font-bold text-slate-800">${tema}</p>
-                    <p class="text-sm text-indigo-600 font-medium">${nicho} • ${arq.join(' + ')}</p>
-                </div>
-                <div class="p-4 bg-slate-50 rounded-lg border">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase">Audiencia Clave</h4>
-                    <p class="text-sm text-slate-700 mt-1">${publico}</p>
-                </div>
-            </div>
-            <div class="bg-indigo-50 p-6 rounded-lg border border-indigo-100">
-                <h4 class="font-bold text-indigo-900 mb-2">Estado del Prompt</h4>
-                <p class="text-sm text-indigo-800">
-                    ${lineasInsumos.length > 0 
-                        ? `Se han integrado ${lineasInsumos.length} categorías de tendencias al calendario.` 
-                        : "No hay tendencias activas. El calendario se generará basado puramente en tu estrategia de marca."}
-                </p>
-            </div>
-        `;
-    }
+            if (container) {
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="p-4 bg-slate-50 rounded-lg border">
+                            <h4 class="text-xs font-bold text-gray-400 uppercase">Perfil de Creador</h4>
+                            <p class="text-lg font-bold text-slate-800">${tema}</p>
+                            <p class="text-sm text-indigo-600 font-medium">${nicho} • ${arq.join(' + ')}</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg border">
+                            <h4 class="text-xs font-bold text-gray-400 uppercase">Audiencia Clave</h4>
+                            <p class="text-sm text-slate-700 mt-1">${publico}</p>
+                        </div>
+                    </div>`;
+            }
 
-    // 5. Generación del Prompt Maestro
-    const prompt = `Actúa como un estratega de contenido profesional.
-
-CONTEXTO ESTRATÉGICO DE MI MARCA:
-- Nicho: ${nicho}
-- Tema de Autoridad: ${tema}
-- Personalidad (Arquetipos): ${arq.join(', ')}
-- Público Objetivo: ${publico}
-- Ejes Transversales: ${ejes.join(', ')}
-
-ESTRATEGIA SEGÚN FUNNEL:
-- Awareness: ${aw}
-- Consideración: ${co}
-- Conversión: ${cv}
-- Fidelización: ${fi}
+            const prompt = `Actúa como un estratega de contenido profesional.
+CONTEXTO:
+- Nicho: ${nicho} | Tema: ${tema}
+- Personalidad: ${arq.join(', ')} | Público: ${publico}
+- Ejes: ${ejes.join(', ')}
+FUNNEL:
+- Awareness: ${aw} | Consideración: ${co} | Conversión: ${cv} | Fidelización: ${fi}
 ${seccionInsumos}
-TU TAREA:
-Genera un calendario de 90 días (una idea por día) combinando mi autoridad con mis ejes transversales. NO ME HAGAS PREGUNTAS.
+TAREA: Genera calendario de 90 días (una idea/día). Formato: Tabla (Día, Tipo, Gancho, Mensaje Principal, Guion Breve, CTA).`;
+            if (promptArea) promptArea.value = prompt;
+        }
 
-FORMATO DE SALIDA:
-Una tabla con las columnas: Día | Tipo (Presencia, Marca o Valor) | Gancho (Máx 8 palabras) | Contenido (Mensaje Principal) | Propuesta de guión (breve) | Llamado a la acción (CTA) | Tipo de contenido sugerido
+        // NUEVA FUNCIÓN: ACTUALIZAR PROMPT DE GUIÓN EN VIVO
+        function updateLivePrompt() {
+            const area = document.getElementById('aiScriptPromptArea');
+            const formato = document.getElementById('ideaFormato').value;
+            const tipo = document.getElementById('ideaTipo').value;
+            const obj = document.getElementById('ideaObjetivo').value;
+            const est = document.getElementById('ideaTipoEstrategico').value;
+            const col = document.getElementById('ideaColaboracion').value;
+            const pub = document.getElementById('ideaPublicacion').value;
+            const hook = document.getElementById('ideaHook').value || "[INSERTAR GANCHO AQUÍ]";
+            
+            const tema = localStorage.getItem('temaCentral') || "mi nicho científico/profesional";
+            const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || ["El Sabio"];
 
-REGLAS CRÍTICAS:
-1. PRIORIDAD TÉCNICA: ${lineasInsumos.length > 0 ? "Debes integrar de forma prioritaria las ideas y tendencias listadas arriba." : "Genera ideas creativas e innovadoras basadas en mi nicho y ejes transversales."}
-2. SEO & ENGAGEMENT: Los ganchos deben estar optimizados para SEO.
-3. El contenido debe resolver algún problema o dar un tema de interés para mi público objetivo. Además debe ser lógico, preciso y entretenido.
-4. DURACIÓN: Contenido diseñado para videos de máximo 39 segundos.
-5. TONO: Coherente con los arquetipos ${arq.join(' y ')}.`;
+            area.value = `Actúa como un guionista experto en redes sociales. 
+MI PERFIL: Mi tema central es ${tema} y mis arquetipos son ${arq.join(' y ')}.
 
-    if (promptArea) {
-        promptArea.value = prompt;
-    }
-}
+TAREA: Redacta un guion completo para un contenido de tipo "${formato}".
+ESPECIFICACIONES TÉCNICAS:
+- Estilo de contenido: ${tipo}
+- Objetivo estratégico: ${obj}
+- Enfoque de valor: ${est}
+- Colaboración: ${col}
+- Tipo de publicación: ${pub}
+
+GANCHO (Hook) PROPUESTO: "${hook}"
+
+INSTRUCCIONES: El guion debe ser dinámico, con un lenguaje profesional pero accesible. Incluye indicaciones de cámara (B-roll), texto en pantalla y un llamado a la acción (CTA) potente. Duración estimada: 30-45 segundos.`;
+        }
 
         function copyPrompt() {
-            const area = document.getElementById('aiPromptArea');
+            copyToClipboardElement('aiPromptArea');
+            alert('Prompt estratégico copiado con éxito.');
+        }
+
+        function copyToClipboardElement(elementId) {
+            const area = document.getElementById(elementId);
             area.select();
             document.execCommand('copy');
-            alert('Prompt estratégico copiado con éxito. ¡Pégalo en tu IA!');
         }
 
         // MODAL Y COPIADO
@@ -742,7 +811,10 @@ REGLAS CRÍTICAS:
             
             content.innerHTML = `
                 <div class="mb-6">
-                    <h3 class="text-2xl font-bold text-indigo-600 mb-2">${idea.titulo}</h3>
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-2xl font-bold text-indigo-600 mb-2">${idea.titulo}</h3>
+                        <button onclick="editarIdea(${idea.id}); closeModal(null)" class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-lg text-xs font-bold border border-indigo-200">✏️ EDITAR</button>
+                    </div>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-4 text-[11px] border-b pb-4 mt-4">
                         <div><span class="text-gray-400 font-bold uppercase block">📅 Publicación:</span> ${idea.fecha} | ${idea.hora}</div>
                         <div><span class="text-gray-400 font-bold uppercase block">📱 Formato:</span> ${idea.formato}</div>
@@ -750,8 +822,8 @@ REGLAS CRÍTICAS:
                         <div><span class="text-gray-400 font-bold uppercase block">🎯 Objetivo:</span> ${idea.objetivo}</div>
                         <div><span class="text-gray-400 font-bold uppercase block">⚡ Estrategia:</span> ${idea.tipoEstrategico}</div>
                         <div><span class="text-gray-400 font-bold uppercase block">🤝 Colab:</span> ${idea.colaboracion}</div>
-                        <div><span class="text-gray-400 font-bold uppercase block">📢 Difusión:</span> ${idea.publicacion}</div>
                     </div>
+                    ${idea.hook ? `<div class="mt-4 p-3 bg-indigo-50 border-l-4 border-indigo-500 text-xs italic"><b>Gancho:</b> "${idea.hook}"</div>` : ''}
                 </div>
                 <div class="space-y-6">
                     <div>
@@ -762,13 +834,9 @@ REGLAS CRÍTICAS:
                         <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Copy para Redes</label>
                         <div class="p-4 bg-indigo-50/50 rounded-lg text-sm whitespace-pre-wrap border border-indigo-100 leading-relaxed italic text-gray-700">"${idea.copy}"</div>
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Hashtags Seleccionados</label>
-                        <div class="p-3 bg-slate-900 rounded-lg border font-mono text-[11px] text-indigo-300 tracking-wide">${idea.hashtags}</div>
-                    </div>
                 </div>
                 <div class="flex gap-3 mt-8">
-                    <button onclick="copyToClipboard('${idea.id}')" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-indigo-700 transition font-bold text-sm shadow-lg shadow-indigo-100">
+                    <button onclick="copyToClipboardData(${idea.id})" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl hover:bg-indigo-700 transition font-bold text-sm shadow-lg shadow-indigo-100">
                         Copiar Información Completa
                     </button>
                     <button onclick="closeModal(null)" class="bg-gray-100 text-gray-500 px-6 rounded-xl hover:bg-gray-200 transition font-bold text-sm">Cerrar</button>
@@ -779,9 +847,9 @@ REGLAS CRÍTICAS:
 
         function closeModal(e) { document.getElementById('modalOverlay').style.display = 'none'; }
 
-        function copyToClipboard(id) {
+        function copyToClipboardData(id) {
             const idea = ideas.find(i => i.id == id);
-            const text = `ESTRATEGIA DE CONTENIDO: ${idea.titulo}\nFECHA: ${idea.fecha} ${idea.hora}\nFORMATO: ${idea.formato}\nGUIÓN:\n${idea.guion}\n\nCOPY:\n${idea.copy}`;
+            const text = `ESTRATEGIA: ${idea.titulo}\nGANCHO: ${idea.hook}\nGUIÓN:\n${idea.guion}\n\nCOPY:\n${idea.copy}`;
             navigator.clipboard.writeText(text).then(() => alert('Copiado!'));
         }
 
@@ -799,6 +867,7 @@ REGLAS CRÍTICAS:
             setupTagsInput('inputEjes', 'listaEjes', ejesTags, 'ejesTags');
             renderTasks();
             renderIdeas();
+            updateLivePrompt();
         };
     </script>
 </body>
