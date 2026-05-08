@@ -26,13 +26,13 @@
 
         /* Modal */
         #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-card { background: white; width: 90%; max-width: 600px; border-radius: 12px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-card { background: white; width: 90%; max-width: 650px; border-radius: 12px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
 
     <div id="modalOverlay" onclick="closeModal(event)">
-        <div class="modal-card shadow-2xl" onclick="event.stopPropagation()">
+        <div class="modal-card shadow-2xl custom-scroll" onclick="event.stopPropagation()">
             <button onclick="closeModal(null)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             <div id="modalContent"></div>
         </div>
@@ -153,19 +153,127 @@
             <section id="ideas" class="tab-content max-w-5xl mx-auto">
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-8">
                     <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Generador de Ideas y Guiones</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-                        <div class="md:col-span-5"><label class="block text-sm font-semibold text-gray-600 mb-2">Título de la Idea</label><input type="text" id="ideaTitulo" class="w-full p-3 border rounded-lg outline-none"></div>
-                        <div><label class="block text-sm font-semibold text-gray-600 mb-2">Formato</label><select id="ideaFormato" class="w-full p-3 border rounded-lg outline-none"><option value="Short Content">Short Content</option><option value="Long Form">Long Form</option><option value="Carrusel">Carrusel</option></select></div>
-                        <div><label class="block text-sm font-semibold text-gray-600 mb-2">Tipo</label><select id="ideaTipo" class="w-full p-3 border rounded-lg outline-none"><option value="Divulgación">Divulgación</option><option value="Tutorial">Tutorial</option></select></div>
-                        <div><label class="block text-sm font-semibold text-gray-600 mb-2">Objetivo</label><select id="ideaObjetivo" class="w-full p-3 border rounded-lg outline-none"><option value="Awareness">Awareness</option><option value="Consideración">Consideración</option><option value="Conversión">Conversión</option><option value="Fidelización">Fidelización</option></select></div>
-                        <div><label class="block text-sm font-semibold text-gray-600 mb-2">Fecha</label><input type="date" id="ideaFecha" class="w-full p-3 border rounded-lg outline-none"></div>
-                        <div><label class="block text-sm font-semibold text-gray-600 mb-2">Hora</label><input type="time" id="ideaHora" class="w-full p-3 border rounded-lg outline-none"></div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div class="md:col-span-4">
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Título de la Idea</label>
+                            <input type="text" id="ideaTitulo" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-400">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Formato Digital</label>
+                            <select id="ideaFormato" class="w-full p-3 border rounded-lg outline-none">
+                                <option value="Short Content">Short Content</option>
+                                <option value="Long Content">Long Content</option>
+                                <option value="Podcast">Podcast</option>
+                                <option value="Infografías">Infografías</option>
+                                <option value="Fotos">Fotos</option>
+                                <option value="Memes">Memes</option>
+                                <option value="Blogs">Blogs</option>
+                                <option value="Lives">Lives</option>
+                                <option value="Carruseles">Carruseles</option>
+                                <option value="Ponencias">Ponencias</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Tipo de Contenido</label>
+                            <select id="ideaTipo" class="w-full p-3 border rounded-lg outline-none">
+                                <option value="Divulgación">Divulgación</option>
+                                <option value="Opiniones">Opiniones</option>
+                                <option value="Tutoriales">Tutoriales</option>
+                                <option value="POV">POV</option>
+                                <option value="Bailes/Trends">Bailes/Trends</option>
+                                <option value="Videoreeacciones">Videoreeacciones</option>
+                                <option value="Videoblogs">Videoblogs</option>
+                                <option value="Visitas a lugares">Visitas a lugares</option>
+                                <option value="Recomendaciones">Recomendaciones</option>
+                                <option value="Misterio">Misterio</option>
+                                <option value="Viajes">Viajes</option>
+                                <option value="Storytime">Storytime</option>
+                                <option value="Trivias">Trivias</option>
+                                <option value="Dinámicas">Dinámicas</option>
+                                <option value="Entrevistas">Entrevistas</option>
+                                <option value="Gameplays">Gameplays</option>
+                                <option value="GRWM">GRWM</option>
+                                <option value="Actuación">Actuación</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Objetivo del Contenido</label>
+                            <select id="ideaObjetivo" class="w-full p-3 border rounded-lg outline-none">
+                                <option value="Awareness">Awareness</option>
+                                <option value="Consideración">Consideración</option>
+                                <option value="Conversión">Conversión</option>
+                                <option value="Fidelización">Fidelización</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Tipo según Objetivo</label>
+                            <select id="ideaTipoEstrategico" class="w-full p-3 border rounded-lg outline-none">
+                                <option value="Genérica">Genérica (Alcance superficial/Likes fugaces)</option>
+                                <option value="Estratégica: Presencia">Estratégica: Presencia</option>
+                                <option value="Estratégica: Marca">Estratégica: Marca</option>
+                                <option value="Estratégica: Valor Entretenimiento">Estratégica: Valor Entretenimiento</option>
+                                <option value="Estratégica: Valor Enseñanza">Estratégica: Valor Enseñanza</option>
+                                <option value="Estratégica: Valor Conversión">Estratégica: Valor Conversión</option>
+                                <option value="Estratégica: Valor Inspiracional">Estratégica: Valor Inspiracional</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Tipo de Colaboración</label>
+                            <select id="ideaColaboracion" class="w-full p-3 border rounded-lg outline-none">
+                                <option value="Independiente">Independiente</option>
+                                <option value="Con otros creadores">Colaboración con otros creadores</option>
+                                <option value="Con marcas u ONGs">Colaboraciones con marcas u ONGs</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Tipo de Publicación</label>
+                            <select id="ideaPublicacion" class="w-full p-3 border rounded-lg outline-none">
+                                <option value="Orgánica">Orgánica</option>
+                                <option value="Pautada">Pautada</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Fecha de Publicación</label>
+                            <input type="date" id="ideaFecha" class="w-full p-3 border rounded-lg outline-none">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Hora</label>
+                            <input type="time" id="ideaHora" class="w-full p-3 border rounded-lg outline-none">
+                        </div>
                     </div>
-                    <div class="mb-4"><label class="block text-sm font-semibold text-gray-600 mb-2">Guion</label><textarea id="ideaGuion" rows="5" class="w-full p-3 border rounded-lg outline-none"></textarea></div>
-                    <div class="mb-4"><label class="block text-sm font-semibold text-gray-600 mb-2">Copy</label><textarea id="ideaCopy" rows="3" class="w-full p-3 border rounded-lg outline-none"></textarea></div>
-                    <div class="mb-6"><label class="block text-sm font-semibold text-gray-600 mb-2">Hashtags</label><input type="text" id="ideaHashtags" class="w-full p-3 border rounded-lg outline-none"></div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Guion</label>
+                        <p class="text-[10px] text-gray-400 mb-2">💡 Estructura: [HOOK] -> [FRASE DE REFUERZO] -> [CUERPO] -> [CIERRE]</p>
+                        <textarea id="ideaGuion" rows="5" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Escribe aquí la estructura de tu guion..."></textarea>
+                    </div>
+
+                    <div class="mb-4 bg-slate-50 p-4 rounded-lg border border-slate-100">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Copy</label>
+                        <div class="text-[10px] text-indigo-500 mb-3 leading-tight">
+                            🔑 <b>Copy Efectivo:</b> Resumir guion • Dato adicional relevante • Cero faltas de ortografía • Palabras clave SEO • CTA claro • Máx. 4 líneas.
+                        </div>
+                        <textarea id="ideaCopy" rows="3" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Escribe el copy de la publicación..."></textarea>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Hashtags</label>
+                        <p class="text-[10px] text-gray-400 mb-2">🏷️ Usa 4: #TipoContenido #Tema #Nicho #ProgramaTiktok (Ej: #tutorial #Bioestadistica #LGBT #STEAM)</p>
+                        <input type="text" id="ideaHashtags" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-400" placeholder="#tag1 #tag2 #tag3 #tag4">
+                    </div>
+
                     <button onclick="guardarIdea()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Guion Estructurado</button>
                 </div>
+                
                 <div id="listaIdeas" class="grid grid-cols-1 gap-4"></div>
             </section>
 
@@ -338,10 +446,14 @@
             const titulo = document.getElementById('ideaTitulo').value;
             if(!titulo) return alert('Título requerido');
             ideas.push({
-                id: Date.now(), titulo,
+                id: Date.now(),
+                titulo,
                 formato: document.getElementById('ideaFormato').value,
                 tipo: document.getElementById('ideaTipo').value,
                 objetivo: document.getElementById('ideaObjetivo').value,
+                tipoEstrategico: document.getElementById('ideaTipoEstrategico').value,
+                colaboracion: document.getElementById('ideaColaboracion').value,
+                publicacion: document.getElementById('ideaPublicacion').value,
                 fecha: document.getElementById('ideaFecha').value,
                 hora: document.getElementById('ideaHora').value,
                 guion: document.getElementById('ideaGuion').value,
@@ -357,9 +469,10 @@
             const container = document.getElementById('listaIdeas');
             container.innerHTML = '';
             [...ideas].reverse().forEach(idea => {
-                container.innerHTML += `<div class="bg-white p-4 rounded shadow border border-gray-200">
-                    <div class="flex justify-between"><h3 class="font-bold">${idea.titulo}</h3><button onclick="eliminarIdea(${idea.id})" class="text-red-500 text-xs">Eliminar</button></div>
+                container.innerHTML += `<div class="bg-white p-4 rounded shadow border border-gray-200 cursor-pointer hover:border-indigo-400 transition" onclick="openModal(${idea.id})">
+                    <div class="flex justify-between"><h3 class="font-bold">${idea.titulo}</h3><button onclick="event.stopPropagation(); eliminarIdea(${idea.id})" class="text-red-500 text-xs">Eliminar</button></div>
                     <p class="text-xs text-indigo-600 font-bold uppercase">${idea.fecha} | ${idea.objetivo}</p>
+                    <div class="text-[9px] mt-2 text-gray-400">Haga clic para ver detalles y copiar</div>
                 </div>`;
             });
         }
@@ -433,27 +546,39 @@
             const content = document.getElementById('modalContent');
             
             content.innerHTML = `
-                <h3 class="text-2xl font-bold text-indigo-600 mb-2">${idea.titulo}</h3>
-                <div class="flex flex-wrap gap-2 mb-4 text-xs">
-                    <span class="bg-gray-100 px-2 py-1 rounded">📅 ${idea.fecha}</span>
-                    <span class="bg-gray-100 px-2 py-1 rounded">⏰ ${idea.hora}</span>
-                    <span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-bold uppercase">${idea.objetivo}</span>
-                </div>
-                <div class="space-y-4">
-                    <div><label class="block text-xs font-bold text-gray-400 uppercase">Guion</label>
-                        <div class="p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap border">${idea.guion}</div>
-                    </div>
-                    <div><label class="block text-xs font-bold text-gray-400 uppercase">Copy</label>
-                        <div class="p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap border">${idea.copy}</div>
-                    </div>
-                    <div><label class="block text-xs font-bold text-gray-400 uppercase">Hashtags</label>
-                        <div class="p-3 bg-gray-50 rounded text-sm border font-mono text-xs text-indigo-600">${idea.hashtags}</div>
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold text-indigo-600 mb-2">${idea.titulo}</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-4 text-[11px] border-b pb-4 mt-4">
+                        <div><span class="text-gray-400 font-bold uppercase block">📅 Publicación:</span> ${idea.fecha} | ${idea.hora}</div>
+                        <div><span class="text-gray-400 font-bold uppercase block">📱 Formato:</span> ${idea.formato}</div>
+                        <div><span class="text-gray-400 font-bold uppercase block">📂 Tipo:</span> ${idea.tipo}</div>
+                        <div><span class="text-gray-400 font-bold uppercase block">🎯 Objetivo:</span> ${idea.objetivo}</div>
+                        <div><span class="text-gray-400 font-bold uppercase block">⚡ Estrategia:</span> ${idea.tipoEstrategico}</div>
+                        <div><span class="text-gray-400 font-bold uppercase block">🤝 Colab:</span> ${idea.colaboracion}</div>
+                        <div><span class="text-gray-400 font-bold uppercase block">📢 Difusión:</span> ${idea.publicacion}</div>
                     </div>
                 </div>
-                <button onclick="copyToClipboard('${idea.id}')" class="mt-6 w-full bg-slate-900 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-slate-800">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                    Copiar Información Completa
-                </button>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Guion Estructurado</label>
+                        <div class="p-4 bg-gray-50 rounded-lg text-sm whitespace-pre-wrap border border-gray-100 leading-relaxed">${idea.guion}</div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Copy para Redes</label>
+                        <div class="p-4 bg-indigo-50/50 rounded-lg text-sm whitespace-pre-wrap border border-indigo-100 leading-relaxed italic text-gray-700">"${idea.copy}"</div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Hashtags Seleccionados</label>
+                        <div class="p-3 bg-slate-900 rounded-lg border font-mono text-[11px] text-indigo-300 tracking-wide">${idea.hashtags}</div>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-8">
+                    <button onclick="copyToClipboard('${idea.id}')" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-indigo-700 transition font-bold text-sm shadow-lg shadow-indigo-100">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        Copiar Información Completa
+                    </button>
+                    <button onclick="closeModal(null)" class="bg-gray-100 text-gray-500 px-6 rounded-xl hover:bg-gray-200 transition font-bold text-sm">Cerrar</button>
+                </div>
             `;
             overlay.style.display = 'flex';
         }
@@ -462,8 +587,25 @@
 
         function copyToClipboard(id) {
             const idea = ideas.find(i => i.id == id);
-            const text = `TITULO: ${idea.titulo}\nGUION:\n${idea.guion}\n\nCOPY:\n${idea.copy}\n\nHASHTAGS:\n${idea.hashtags}`;
-            navigator.clipboard.writeText(text).then(() => alert('¡Copiado al portapapeles!'));
+            const text = `ESTRATEGIA DE CONTENIDO: ${idea.titulo}\n` +
+                         `FECHA: ${idea.fecha} ${idea.hora}\n` +
+                         `FORMATO: ${idea.formato}\n` +
+                         `ESTRATEGIA: ${idea.tipoEstrategico}\n` +
+                         `OBJETIVO: ${idea.objetivo}\n\n` +
+                         `GUIÓN:\n${idea.guion}\n\n` +
+                         `COPY:\n${idea.copy}\n\n` +
+                         `HASHTAGS:\n${idea.hashtags}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.currentTarget;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "¡Copiado con éxito!";
+                btn.classList.replace('bg-indigo-600', 'bg-green-600');
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.replace('bg-green-600', 'bg-indigo-600');
+                }, 2000);
+            });
         }
 
         window.onload = () => {
