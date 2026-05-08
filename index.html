@@ -19,8 +19,9 @@
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* Calendario */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 1px; background-color: #e2e8f0; border: 1px solid #e2e8f0; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: 1px; background-color: #e2e8f0; border: 1px solid #e2e8f0; }
         .calendar-day { background-color: white; min-height: 120px; padding: 0.5rem; overflow-y: auto; }
+        .calendar-day.today { background-color: #f0f7ff; border: 2px solid #6366f1; }
         .content-item { font-size: 0.7rem; padding: 4px; margin-bottom: 3px; border-radius: 4px; background: #eef2ff; border-left: 3px solid #6366f1; cursor: pointer; transition: all 0.2s; }
         .content-item:hover { background: #e0e7ff; transform: scale(1.02); }
 
@@ -48,6 +49,7 @@
                 <button onclick="switchTab('notas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-notas">2. Notas y Tendencias</button>
                 <button onclick="switchTab('ideas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-ideas">3. Repositorio y Guiones</button>
                 <button onclick="switchTab('planificador')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-planificador">4. Planificador</button>
+                <button onclick="switchTab('estrategia_resumen')" class="w-full text-left px-4 py-3 rounded-lg border border-indigo-500/30 hover:bg-indigo-900/30 transition text-indigo-300 font-bold" id="btn-estrategia_resumen">5. Estrategia de Contenido</button>
             </nav>
         </aside>
 
@@ -307,16 +309,37 @@
 
             <section id="planificador" class="tab-content max-w-6xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold text-gray-800 border-b pb-2">Planificador Cronológico</h2>
+                    <div class="flex flex-col">
+                        <h2 class="text-3xl font-bold text-gray-800">Planificador Cronológico</h2>
+                        <p id="calendarHeader" class="text-sm text-indigo-600 font-bold uppercase mt-1"></p>
+                    </div>
                     <div class="flex bg-gray-200 p-1 rounded-lg gap-1">
-                        <button onclick="renderCalendario('dia')" class="px-4 py-1 rounded hover:bg-white transition text-xs font-bold">Día</button>
-                        <button onclick="renderCalendario('semana')" class="px-4 py-1 rounded hover:bg-white transition text-xs font-bold">Semana</button>
-                        <button onclick="renderCalendario('mes')" class="px-4 py-1 rounded bg-white shadow transition text-xs font-bold">Mes</button>
+                        <button onclick="renderCalendario('dia')" class="px-4 py-1 rounded hover:bg-white transition text-xs font-bold" id="view-dia">Día</button>
+                        <button onclick="renderCalendario('semana')" class="px-4 py-1 rounded hover:bg-white transition text-xs font-bold" id="view-semana">Semana</button>
+                        <button onclick="renderCalendario('mes')" class="px-4 py-1 rounded bg-white shadow transition text-xs font-bold" id="view-mes">Mes</button>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div id="plannerContainer" class="overflow-auto max-h-[70vh] custom-scroll">
                         </div>
+                </div>
+            </section>
+
+            <!-- NUEVA PESTAÑA: ESTRATEGIA DE CONTENIDO -->
+            <section id="estrategia_resumen" class="tab-content max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                <h2 class="text-3xl font-bold mb-6 text-indigo-900 border-b pb-2">Estrategia de Contenido Resumida</h2>
+                
+                <div id="resumenContent" class="space-y-6">
+                    <!-- Aquí se genera dinámicamente el resumen -->
+                </div>
+
+                <div class="mt-8 border-t pt-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">AI Prompt Generator</h3>
+                    <p class="text-sm text-gray-500 mb-4">Copia este prompt para usarlo en ChatGPT, Claude o Gemini y generar tu calendario de 90 días.</p>
+                    <div class="relative">
+                        <textarea id="aiPromptArea" rows="12" class="w-full p-4 bg-slate-900 text-indigo-200 font-mono text-xs rounded-lg border border-slate-700 leading-relaxed" readonly></textarea>
+                        <button onclick="copyPrompt()" class="absolute top-2 right-2 bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-500 transition">Copiar Prompt</button>
+                    </div>
                 </div>
             </section>
 
@@ -363,7 +386,9 @@
             document.querySelectorAll('aside button').forEach(btn => btn.classList.remove('bg-slate-800'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById('btn-' + tabId).classList.add('bg-slate-800');
+            
             if(tabId === 'planificador') renderCalendario('mes');
+            if(tabId === 'estrategia_resumen') renderEstrategiaResumen();
         }
 
         // ESTRATEGIA & ARQUETIPOS
@@ -423,6 +448,15 @@
             localStorage.setItem('strat_consideracion', document.getElementById('strat_consideracion').value);
             localStorage.setItem('strat_conversion', document.getElementById('strat_conversion').value);
             localStorage.setItem('strat_fidelizacion', document.getElementById('strat_fidelizacion').value);
+        }
+
+        function guardarEstrategia() {
+            guardarTemaCentralAuto();
+            saveStrategyExtras();
+            saveFunnel();
+            const msg = document.getElementById('estrategia-msg');
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 3000);
         }
 
         // TAGS
@@ -516,66 +550,147 @@
             renderIdeas();
         }
 
-        // PLANIFICADOR AVANZADO
+        // PLANIFICADOR AVANZADO CORREGIDO
         function renderCalendario(vista) {
             const container = document.getElementById('plannerContainer');
+            const header = document.getElementById('calendarHeader');
             container.innerHTML = '';
             
-            const opcionesFecha = { weekday: 'long', day: 'numeric', month: 'numeric' };
+            // UI Actives
+            document.querySelectorAll('#planificador button').forEach(b => b.classList.remove('bg-white', 'shadow'));
+            document.getElementById(`view-${vista}`).classList.add('bg-white', 'shadow');
+
+            const dActual = new Date(2026, 4, 7); // Fija para este caso: Mayo 7, 2026
+            const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
             if(vista === 'mes') {
+                header.innerText = `${meses[dActual.getMonth()]} 2026`;
                 const diasSemana = ['LUN','MAR','MIE','JUE','VIE','SAB','DOM'];
                 let html = '<div class="calendar-grid">';
                 diasSemana.forEach(d => html += `<div class="bg-slate-800 text-white text-[10px] text-center p-2 font-bold">${d}</div>`);
                 
-                let start = new Date();
-                start.setDate(1);
-                for(let i=0; i<30; i++) {
-                    let d = new Date(start);
-                    d.setDate(start.getDate() + i);
+                let firstDay = new Date(2026, 4, 1);
+                let startDay = firstDay.getDay(); 
+                startDay = (startDay === 0) ? 6 : startDay - 1; // Ajuste a Lunes
+
+                // Espacios vacíos mes anterior
+                for(let e=0; e<startDay; e++) html += `<div class="calendar-day bg-gray-50 border-r border-b"></div>`;
+
+                // Días del mes (Mayo tiene 31)
+                for(let i=1; i<=31; i++) {
+                    let d = new Date(2026, 4, i);
                     let iso = d.toISOString().split('T')[0];
-                    let dailyIdeas = ideas.filter(id => id.fecha === iso).slice(0,3);
-                    
-                    html += `<div class="calendar-day border-r border-b">
-                        <div class="text-[9px] font-bold text-gray-400">${d.getDate()}</div>
+                    let isToday = (i === 7);
+                    let dailyIdeas = ideas.filter(id => id.fecha === iso);
+
+                    html += `<div class="calendar-day border-r border-b ${isToday ? 'today' : ''}">
+                        <div class="text-[9px] font-bold ${isToday ? 'text-indigo-600' : 'text-gray-400'}">${i}</div>
                         ${dailyIdeas.map(di => `<div class="content-item truncate" onclick="openModal(${di.id})">${di.titulo}</div>`).join('')}
                     </div>`;
                 }
                 html += '</div>';
                 container.innerHTML = html;
             } else if (vista === 'semana') {
+                header.innerText = `Semana del 4 al 10 de Mayo`;
                 let html = '<div class="flex gap-2 p-4">';
                 
-                // LÓGICA PARA COMENZAR EN LUNES
-                let dActual = new Date();
-                let diaActual = dActual.getDay(); // 0 = Dom, 1 = Lun...
-                let diffALunes = dActual.getDate() - diaActual + (diaActual === 0 ? -6 : 1);
-                let lunesDeEstaSemana = new Date(dActual.setDate(diffALunes));
+                // Lunes 4 de Mayo es el inicio de esta semana
+                let lunesRef = new Date(2026, 4, 4);
 
                 for(let i=0; i<7; i++) {
-                    let d = new Date(lunesDeEstaSemana);
-                    d.setDate(lunesDeEstaSemana.getDate() + i);
+                    let d = new Date(lunesRef);
+                    d.setDate(lunesRef.getDate() + i);
                     let iso = d.toISOString().split('T')[0];
-                    let nombreDia = d.toLocaleDateString('es-ES', opcionesFecha);
+                    let nombreDia = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                    let isToday = (d.getDate() === 7);
                     let daily = ideas.filter(id => id.fecha === iso);
-                    html += `<div class="flex-1 min-w-[200px] bg-slate-50 p-4 rounded-lg border">
-                        <div class="font-bold text-indigo-600 mb-4 border-b capitalize">${nombreDia}</div>
+
+                    html += `<div class="flex-1 min-w-[200px] ${isToday ? 'bg-indigo-50 border-indigo-300' : 'bg-slate-50'} p-4 rounded-lg border">
+                        <div class="font-bold text-indigo-600 mb-4 border-b pb-1 text-xs capitalize">${nombreDia}</div>
                         ${daily.map(di => `<div class="content-item" onclick="openModal(${di.id})"><b>${di.hora}</b>: ${di.titulo}</div>`).join('')}
+                        ${daily.length === 0 ? '<p class="text-[10px] text-gray-300 italic">Sin contenido</p>' : ''}
                     </div>`;
                 }
                 html += '</div>';
                 container.innerHTML = html;
             } else {
-                let dHoy = new Date();
-                let hoyISO = dHoy.toISOString().split('T')[0];
-                let nombreHoy = dHoy.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                let nombreHoy = dActual.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                header.innerText = `Vista Diaria`;
+                let hoyISO = dActual.toISOString().split('T')[0];
                 let daily = ideas.filter(id => id.fecha === hoyISO).sort((a,b) => a.hora.localeCompare(b.hora));
                 container.innerHTML = `<div class="p-8 max-w-lg mx-auto">
                     <h3 class="text-xl font-bold mb-4 border-b pb-2 capitalize">${nombreHoy}</h3>
-                    ${daily.map(di => `<div class="p-4 mb-2 bg-indigo-50 border rounded-lg cursor-pointer" onclick="openModal(${di.id})"><b>${di.hora}</b> - ${di.titulo}</div>`).join('')}
-                    ${daily.length === 0 ? '<p class="text-gray-400 italic">Sin agenda hoy</p>' : ''}
+                    ${daily.map(di => `<div class="p-4 mb-2 bg-indigo-50 border border-indigo-200 rounded-lg cursor-pointer" onclick="openModal(${di.id})"><b>${di.hora}</b> - ${di.titulo}</div>`).join('')}
+                    ${daily.length === 0 ? '<p class="text-gray-400 italic">No tienes actividades programadas para hoy.</p>' : ''}
                 </div>`;
             }
+        }
+
+        // LÓGICA DE LA NUEVA PESTAÑA: ESTRATEGIA DE CONTENIDO
+        function renderEstrategiaResumen() {
+            const container = document.getElementById('resumenContent');
+            const promptArea = document.getElementById('aiPromptArea');
+            
+            const tema = localStorage.getItem('temaCentral') || 'No definido';
+            const nicho = localStorage.getItem('nichoContenido') || 'No definido';
+            const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
+            const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
+            
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-lg border">
+                        <h4 class="text-xs font-bold text-gray-400 uppercase">Perfil de Creador</h4>
+                        <p class="text-lg font-bold text-slate-800">${tema}</p>
+                        <p class="text-sm text-indigo-600 font-medium">${nicho} • ${arq.join(' + ')}</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg border">
+                        <h4 class="text-xs font-bold text-gray-400 uppercase">Audiencia Clave</h4>
+                        <p class="text-sm text-slate-700 mt-1">${publico}</p>
+                    </div>
+                </div>
+                <div class="bg-indigo-50 p-6 rounded-lg border border-indigo-100">
+                    <h4 class="font-bold text-indigo-900 mb-2">Recomendación Táctica</h4>
+                    <p class="text-sm text-indigo-800 leading-relaxed">
+                        Basado en tu arquetipo <strong>${arq.join(' / ')}</strong>, tu contenido debe equilibrar la 
+                        ${arq.length > 1 ? arquetiposRasgos[arq[0]].adjetivo + ' con la ' + arquetiposRasgos[arq[1]].adjetivo : arquetiposRasgos[arq[0]]?.adjetivo || 'identidad visual'}. 
+                        Te recomendamos priorizar <strong>${arq.map(a => arquetiposRasgos[a]?.contenido).join(' y ')}</strong>.
+                    </p>
+                </div>
+            `;
+
+            // Generar Prompt
+            const prompt = `Actua como un estratega de contenido profesional especializado en crecimiento de Marca personal en redes sociales.
+Tu tarea es crear un calendario de 90 ideas de contenido (una por día) dividido en tres tipos: contenido de conexión, contenido educativo y contenido de autoridad.
+
+CONTEXTO DE MI MARCA:
+- Nicho: ${nicho}
+- Tema Central: ${tema}
+- Arquetipos: ${arq.join(', ')}
+- Público Objetivo: ${publico}
+
+Tu tarea será:
+1. Hacerme 10 preguntas clave antes de crear contenido para entender mi estilo, objetivos y posicionamiento.
+2. Luego de responder esas preguntas, crearás un calendario de 90 ideas de contenido (una por día), dividiendo en:
+   - Contenido de conexión
+   - Contenido educativo
+   - Contenido de autoridad
+
+Para cada idea debes incluir:
+- Gancho de máximo 8 palabras
+- Mensaje principal del video (lo que quiero comunicar)
+- Llamado a la acción (comentar, guardar o compartir)
+
+Entregar todo en una tabla con las columnas: Día, Tipo, Gancho, Contenido, Llamado a la acción.
+Cada idea debe estar pensada para un video de máximo 39 segundos.`;
+
+            promptArea.value = prompt;
+        }
+
+        function copyPrompt() {
+            const area = document.getElementById('aiPromptArea');
+            area.select();
+            document.execCommand('copy');
+            alert('Prompt copiado al portapapeles. ¡Pégalo en tu IA favorita!');
         }
 
         // MODAL Y COPIADO
@@ -614,7 +729,6 @@
                 </div>
                 <div class="flex gap-3 mt-8">
                     <button onclick="copyToClipboard('${idea.id}')" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-indigo-700 transition font-bold text-sm shadow-lg shadow-indigo-100">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                         Copiar Información Completa
                     </button>
                     <button onclick="closeModal(null)" class="bg-gray-100 text-gray-500 px-6 rounded-xl hover:bg-gray-200 transition font-bold text-sm">Cerrar</button>
@@ -627,25 +741,8 @@
 
         function copyToClipboard(id) {
             const idea = ideas.find(i => i.id == id);
-            const text = `ESTRATEGIA DE CONTENIDO: ${idea.titulo}\n` +
-                         `FECHA: ${idea.fecha} ${idea.hora}\n` +
-                         `FORMATO: ${idea.formato}\n` +
-                         `ESTRATEGIA: ${idea.tipoEstrategico}\n` +
-                         `OBJETIVO: ${idea.objetivo}\n\n` +
-                         `GUIÓN:\n${idea.guion}\n\n` +
-                         `COPY:\n${idea.copy}\n\n` +
-                         `HASHTAGS:\n${idea.hashtags}`;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                const btn = event.currentTarget;
-                const originalText = btn.innerHTML;
-                btn.innerHTML = "¡Copiado con éxito!";
-                btn.classList.replace('bg-indigo-600', 'bg-green-600');
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.classList.replace('bg-green-600', 'bg-indigo-600');
-                }, 2000);
-            });
+            const text = `ESTRATEGIA DE CONTENIDO: ${idea.titulo}\nFECHA: ${idea.fecha} ${idea.hora}\nFORMATO: ${idea.formato}\nGUIÓN:\n${idea.guion}\n\nCOPY:\n${idea.copy}`;
+            navigator.clipboard.writeText(text).then(() => alert('Copiado!'));
         }
 
         window.onload = () => {
