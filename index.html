@@ -762,7 +762,7 @@
                             <p class="text-sm text-slate-700 mt-1">${publico}</p>
                         </div>
                         <div class="p-4 bg-slate-50 rounded-lg border md:col-span-2">
-                            <h4 class="text-xs font-bold text-gray-400 uppercase">Descripción del Creador (Talentos, Hobbies)</h4>
+                            <h4 class="text-xs font-bold text-gray-400 uppercase">Nombre y descripción del Creador (Talentos, Hobbies)</h4>
                             <p class="text-sm text-slate-700 mt-1">${creador}</p>
                         </div>
                     </div>`;
@@ -777,7 +777,10 @@ CONTEXTO:
 FUNNEL:
 - Reconocimiento: ${aw} | Consideración: ${co} | Conversión: ${cv} | Fidelización: ${fi}
 ${seccionInsumos}
-TAREA: Genera calendario de 90 días (una idea/día). Combinando mi autoridad con mis ejes transversales y considerando los detalles descritos anteriormente. Una tabla con las columnas: Día | Tipo (Presencia, Marca o Valor) | Gancho (Máx 8 palabras) | Contenido (Mensaje Principal) | Propuesta de guión (breve) | Llamado a la acción (CTA) | Tipo de contenido sugerido
+TAREA: 
+1. Genera calendario de 90 días (una idea/día). Combinando mi autoridad con mis ejes transversales y considerando los detalles descritos anteriormente. Una tabla con las columnas: Día | Tipo (Presencia, Marca o Valor) | Gancho (Máx 8 palabras) | Contenido (Mensaje Principal) | Propuesta de guión (breve) | Llamado a la acción (CTA) | Tipo de contenido sugerido
+2. 2. Al finalizar el calendario, genera una sección titulada "SÍNTESIS DE NARRATIVA ESTRATÉGICA" siguiendo este formato exacto:
+   "Yo soy [Nombre del Creador], con mi tema principal ${tema} y mis ejes transversales ${ejes.join(', ')}. Por ello, mi narrativa de contenido es: [Aquí define para cada eje cómo se cruza con tu tema de autoridad de forma única, rápida y accionable, similar a: 'Fitness inteligente: ciencia aplicada al cuerpo']".
 
 REGLAS CRÍTICAS:
 1. PRIORIDAD TÉCNICA: ${lineasInsumos.length > 0 ? "Debes integrar de forma prioritaria las ideas y tendencias listadas arriba." : "Genera ideas creativas e innovadoras basadas en mi nicho y ejes transversales."}
@@ -785,7 +788,8 @@ REGLAS CRÍTICAS:
 3. El contenido debe resolver algún problema o dar un tema de interés para mi público objetivo. Además debe ser lógico, preciso y entretenido.
 4. DURACIÓN: Contenido diseñado para videos de máximo 39 segundos.
 5. El contenido total debe distribuirse en 70% de contenido de valor, 20% de contenido de marca y 10% de contenido de presencia.
-6. TONO: Coherente con los arquetipos ${arq.join(' y ')}.`;
+6. NARRATIVA DE EJES: En la síntesis final, define cada eje no como un tema aislado, sino como una extensión de mi autoridad (Ej: No es solo 'Gaming', es 'Gaming Social' donde el objetivo es ser uno mismo mientras juega).
+7. TONO: Coherente con los arquetipos ${arq.join(' y ')}.`;
             if (promptArea) promptArea.value = prompt;
         }
 
