@@ -40,8 +40,12 @@
                 
                 <div class="grid grid-cols-1 gap-6 mb-6">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-2">Tema Central</label>
-                        <input type="text" id="temaCentral" placeholder="Ej. Emprendimiento STEAM y Ciencia" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <div class="flex justify-between items-end mb-1">
+                            <label class="block text-sm font-semibold text-gray-600">Tema Central (Pilar de Autoridad)</label>
+                            <span id="tema-guardado" class="text-xs text-green-600 font-bold opacity-0 transition-opacity duration-300">¡Guardado automáticamente!</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-2">Representa tu nicho principal y área de mayor rigor o <em>expertise</em>. Es el núcleo primario por el que tu audiencia te reconocerá como referente. <br><span class="font-medium">Ejemplo:</span> <em>Emprendimiento STEAM, Astrofísica Aplicada, Biotecnología.</em></p>
+                        <input type="text" id="temaCentral" onblur="guardarTemaCentralAuto()" placeholder="Ej. Emprendimiento STEAM y Ciencia" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                     
                     <div>
@@ -53,20 +57,22 @@
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold text-gray-600 mb-2">Ejes Transversales</label>
-                    <input type="text" id="inputEjes" placeholder="Escribe un eje y presiona Enter..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none mb-2">
+                <div class="mb-6 border-t pt-6">
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Ejes Transversales (Pilares Secundarios)</label>
+                    <p class="text-xs text-gray-500 mb-2">Temáticas complementarias que cruzan tu contenido principal para humanizar la marca, generar afinidad o alcanzar a una audiencia más amplia. <br><span class="font-medium">Ejemplo:</span> <em>Productividad para académicos, Salud mental en el laboratorio, Análisis de herramientas digitales.</em></p>
+                    <input type="text" id="inputEjes" placeholder="Escribe un eje secundario y presiona Enter..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none mb-2">
                     <div id="listaEjes" class="flex flex-wrap"></div>
                 </div>
 
                 <div class="mb-6">
-                    <label class="block text-sm font-semibold text-gray-600 mb-2">Pilares de Contenido</label>
-                    <input type="text" id="inputPilares" placeholder="Escribe un pilar y presiona Enter..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none mb-2">
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Tipos de Contenido (Formatos o Ángulos)</label>
+                    <p class="text-xs text-gray-500 mb-2">Las estructuras lógicas o categorías funcionales mediante las cuales presentarás la información de tus pilares. <br><span class="font-medium">Ejemplo:</span> <em>Mitos desmentidos (Divulgación), Tutoriales paso a paso, Entrevistas a expertos, Detrás de escena (Vlog).</em></p>
+                    <input type="text" id="inputPilares" placeholder="Escribe un formato/categoría y presiona Enter..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none mb-2">
                     <div id="listaPilares" class="flex flex-wrap"></div>
                 </div>
 
-                <button onclick="guardarEstrategia()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Estrategia</button>
-                <span id="estrategia-msg" class="ml-4 text-green-600 font-semibold hidden">¡Estrategia guardada!</span>
+                <button onclick="guardarEstrategia()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Toda la Estrategia</button>
+                <span id="estrategia-msg" class="ml-4 text-green-600 font-semibold hidden">¡Configuración general guardada con éxito!</span>
             </section>
 
             <section id="notas" class="tab-content w-full">
@@ -182,7 +188,7 @@
         if (!tasks.ideas) tasks.ideas = [];
         if (!tasks.audios) tasks.audios = [];
         if (!tasks.tendencias) tasks.tendencias = [];
-        if (!tasks.proximos) tasks.proximos = []; // <--- Esto repara el bug de la columna 4
+        if (!tasks.proximos) tasks.proximos = [];
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -214,7 +220,7 @@
             updateArquetipoDesc();
         }
 
-        // --- ACTUALIZACIÓN DINÁMICA DE ARQUETIPOS (COMBINACIÓN INTELIGENTE) ---
+        // --- ACTUALIZACIÓN DINÁMICA DE ARQUETIPOS ---
         function updateArquetipoDesc() {
             const selected = Array.from(document.querySelectorAll('.arq-checkbox:checked')).map(cb => cb.value);
             const descBox = document.getElementById('arquetipoDescripcion');
@@ -223,10 +229,8 @@
                 descBox.classList.remove('hidden');
                 
                 if (selected.length === 1) {
-                    // Solo 1 arquetipo: Descripción independiente
                     descBox.innerHTML = `<div class="space-y-2"><strong>${selected[0]}:</strong> ${arquetiposInfo[selected[0]]}</div>`;
                 } else {
-                    // Fusión dinámica de personalidades
                     let arq1 = selected[0];
                     let arq2 = selected[1];
                     let rasgo1 = arquetiposRasgos[arq1].adjetivo;
@@ -260,6 +264,19 @@
             } else {
                 descBox.classList.add('hidden');
             }
+        }
+
+        // --- SISTEMA DE AUTOGUARDADO TEMA CENTRAL ---
+        function guardarTemaCentralAuto() {
+            localStorage.setItem('temaCentral', document.getElementById('temaCentral').value);
+            const statusMsg = document.getElementById('tema-guardado');
+            statusMsg.classList.remove('opacity-0');
+            statusMsg.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                statusMsg.classList.remove('opacity-100');
+                statusMsg.classList.add('opacity-0');
+            }, 2500);
         }
 
         // --- TAGS (ENTER PARA AGREGAR) ---
@@ -334,12 +351,14 @@
         function saveTasks() { localStorage.setItem('contentTasks', JSON.stringify(tasks)); }
 
         function guardarEstrategia() {
+            // Guarda manualmente el tema central por si no se disparó el onblur
             localStorage.setItem('temaCentral', document.getElementById('temaCentral').value);
             const selectedArqs = Array.from(document.querySelectorAll('.arq-checkbox:checked')).map(cb => cb.value);
             localStorage.setItem('arquetiposSeleccionados', JSON.stringify(selectedArqs));
+            
             const msg = document.getElementById('estrategia-msg');
             msg.classList.remove('hidden');
-            setTimeout(() => msg.classList.add('hidden'), 2000);
+            setTimeout(() => msg.classList.add('hidden'), 3000);
         }
 
         // --- FUNCIONES DE IDEA/CALENDARIO ---
