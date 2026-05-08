@@ -70,6 +70,13 @@
                         <input type="text" id="temaCentral" onblur="guardarTemaCentralAuto()" placeholder="Ej. Emprendimiento STEAM y Ciencia" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
 
+                    <!-- SECCIÓN AÑADIDA: Descripción del Creador -->
+                    <div class="border-t pt-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Descripción del Creador de Contenido</label>
+                        <p class="text-xs text-gray-500 mb-2">Para conocer más de ti: tus intereses, hobbies, talentos y características personales. Esta información humanizará tu estrategia y se integrará en el prompt de la IA.</p>
+                        <textarea id="descCreador" onblur="saveStrategyExtras()" rows="2" placeholder="Ej. Me encanta tocar la guitarra, soy fan de la ciencia ficción, y disfruto el diseño digital..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none custom-scroll"></textarea>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Nicho de Contenido</label>
@@ -116,7 +123,8 @@
                     <label class="block text-sm font-semibold text-gray-800 mb-4 bg-slate-100 p-2 rounded">Objetivos del Contenido (Redacción obligatoria)</label>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="p-4 border rounded-lg border-blue-200 bg-blue-50">
-                            <h4 class="font-bold text-blue-800">Awareness</h4>
+                            <!-- CAMBIO: Awareness a Reconocimiento -->
+                            <h4 class="font-bold text-blue-800">Reconocimiento</h4>
                             <p class="text-[10px] text-blue-600 mb-2 italic">Alcance masivo y descubrimiento.</p>
                             <textarea id="strat_awareness" onblur="saveFunnel()" class="w-full p-2 text-sm border rounded" placeholder="Estrategia de alcance..."></textarea>
                         </div>
@@ -235,7 +243,8 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Objetivo del Contenido</label>
                             <select id="ideaObjetivo" onchange="updateLivePrompt()" class="w-full p-3 border rounded-lg outline-none">
-                                <option value="Awareness">Awareness</option>
+                                <!-- CAMBIO: Awareness a Reconocimiento -->
+                                <option value="Reconocimiento">Reconocimiento</option>
                                 <option value="Consideración">Consideración</option>
                                 <option value="Conversión">Conversión</option>
                                 <option value="Fidelización">Fidelización</option>
@@ -313,7 +322,7 @@
                         <button id="btnCancelarEdicion" onclick="cancelarEdicion()" class="bg-gray-200 text-gray-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition hidden">Cancelar</button>
                     </div>
 
-                    <!-- NUEVA SECCIÓN: AI SCRIPT PROMPT -->
+                    <!-- SECCIÓN: AI SCRIPT PROMPT -->
                     <div class="mt-8 border-t-2 border-dashed pt-6 bg-slate-50 p-6 rounded-xl">
                         <h3 class="text-sm font-bold text-indigo-900 mb-3 uppercase tracking-wider flex items-center gap-2">
                             ✨ AI SCRIPT PROMPT (Basado en tu selección)
@@ -347,7 +356,7 @@
                 </div>
             </section>
 
-            <!-- NUEVA PESTAÑA: ESTRATEGIA DE CONTENIDO -->
+            <!-- PESTAÑA: ESTRATEGIA DE CONTENIDO -->
             <section id="estrategia_resumen" class="tab-content max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                 <h2 class="text-3xl font-bold mb-6 text-indigo-900 border-b pb-2">Estrategia de Contenido Resumida</h2>
                 
@@ -391,7 +400,7 @@
             "El Rebelde": { adjetivo: "disruptiva, provocadora y sin filtros", contenido: "opiniones impopulares (hot takes), debates intensos y ruptura de mitos de la industria" },
             "El Héroe": { adjetivo: "inspiradora, disciplinada y valiente", contenido: "retos de superación personal, historias de fracaso/éxito y vlogs competitivos" },
             "El Creador": { adjetivo: "innovadora, estructurada y estética", contenido: "tutoriales paso a paso, 'build in public' y detrás de escena del proceso creativo" },
-            "El Gobernante": { adjetivo: "autoritaria, asertiva y de alto nivel", contenido: "masterclasses, guías definitivas y estrategias metodológicas exclusivas" },
+            "El Gobernante": { adjetivo: "autoritaria, asertiva y de alto nivel", contenido: "masterclasses, guías definitivas y strategies metodológicas exclusivas" },
             "El Amante": { adjetivo: "apasionada, sensorial y muy cercana", contenido: "storytimes emocionales, colaboraciones íntimas (1 a 1) y estética audiovisual cuidada" },
             "El Cuidador": { adjetivo: "empática, protectora y altruista", contenido: "tips de bienestar, sesiones de Q&A resolviendo problemas de la audiencia y guías de soporte" },
             "El Explorador": { adjetivo: "aventurera, curiosa y dinámica", contenido: "vlogs de laboratorio/campo, documentales cortos inmersivos y descubrimientos en tiempo real" },
@@ -464,6 +473,7 @@
         function saveStrategyExtras() {
             localStorage.setItem('nichoContenido', document.getElementById('nichoContenido').value);
             localStorage.setItem('publicoObjetivo', document.getElementById('publicoObjetivo').value);
+            localStorage.setItem('descCreador', document.getElementById('descCreador').value); // ACTUALIZADO PARA NUEVO CAMPO
         }
 
         function saveFunnel() {
@@ -716,6 +726,7 @@
             const tema = localStorage.getItem('temaCentral') || 'No definido';
             const nicho = localStorage.getItem('nichoContenido') || 'No definido';
             const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
+            const creador = localStorage.getItem('descCreador') || 'No definido'; // INTEGRACIÓN DEL CREADOR
             const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
             const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
             
@@ -746,22 +757,28 @@
                             <h4 class="text-xs font-bold text-gray-400 uppercase">Audiencia Clave</h4>
                             <p class="text-sm text-slate-700 mt-1">${publico}</p>
                         </div>
+                        <div class="p-4 bg-slate-50 rounded-lg border md:col-span-2">
+                            <h4 class="text-xs font-bold text-gray-400 uppercase">Descripción del Creador (Talentos, Hobbies)</h4>
+                            <p class="text-sm text-slate-700 mt-1">${creador}</p>
+                        </div>
                     </div>`;
             }
 
+            // MODIFICACIÓN DEL PROMPT PARA INCLUIR "DESCRIPCIÓN DEL CREADOR" Y "RECONOCIMIENTO"
             const prompt = `Actúa como un estratega de contenido profesional.
 CONTEXTO:
 - Nicho: ${nicho} | Tema: ${tema}
+- Descripción del Creador: ${creador}
 - Personalidad: ${arq.join(', ')} | Público: ${publico}
 - Ejes: ${ejes.join(', ')}
 FUNNEL:
-- Awareness: ${aw} | Consideración: ${co} | Conversión: ${cv} | Fidelización: ${fi}
+- Reconocimiento: ${aw} | Consideración: ${co} | Conversión: ${cv} | Fidelización: ${fi}
 ${seccionInsumos}
 TAREA: Genera calendario de 90 días (una idea/día). Formato: Tabla (Día, Tipo, Gancho, Mensaje Principal, Guion Breve, CTA).`;
             if (promptArea) promptArea.value = prompt;
         }
 
-        // NUEVA FUNCIÓN: ACTUALIZAR PROMPT DE GUIÓN EN VIVO
+        // ACTUALIZAR PROMPT DE GUIÓN EN VIVO
         function updateLivePrompt() {
             const area = document.getElementById('aiScriptPromptArea');
             
@@ -877,6 +894,7 @@ ENTREGABLES ADICIONALES (Debajo del guion):
         window.onload = () => {
             initArquetipos();
             document.getElementById('temaCentral').value = localStorage.getItem('temaCentral') || '';
+            document.getElementById('descCreador').value = localStorage.getItem('descCreador') || ''; // CARGA DE NUEVA VARIABLE
             document.getElementById('nichoContenido').value = localStorage.getItem('nichoContenido') || '';
             document.getElementById('publicoObjetivo').value = localStorage.getItem('publicoObjetivo') || '';
             document.getElementById('strat_awareness').value = localStorage.getItem('strat_awareness') || '';
