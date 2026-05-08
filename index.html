@@ -67,7 +67,7 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-2">Arquetipos de Marca (Mínimo 2 para perfil híbrido)</label>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Arquetipos de Marca (Selecciona máximo 2 para evitar dilución de mensaje)</label>
                         <div id="arquetiposContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg bg-gray-50 max-h-64 overflow-y-auto custom-scroll"></div>
                         <div id="arquetipoDescripcion" class="mt-4 p-5 bg-indigo-50 border-l-4 border-indigo-500 text-sm text-indigo-900 hidden"></div>
                     </div>
@@ -252,15 +252,19 @@
             if(selected.length > 0) {
                 descBox.classList.remove('hidden');
                 if (selected.length === 1) {
-                    descBox.innerHTML = `<strong>${selected[0]}:</strong> ${arquetiposInfo[selected[0]]}`;
-                } else {
+                    descBox.innerHTML = `<div class="font-bold text-indigo-800 mb-2 uppercase">Identidad Pura: ${selected[0]}</div>
+                                         <p>${arquetiposInfo[selected[0]]}</p>`;
+                } else if (selected.length === 2) {
                     let arq1 = selected[0], arq2 = selected[1];
                     descBox.innerHTML = `
-                        <div class="font-bold border-b border-indigo-200 mb-2 uppercase text-indigo-800">Fusión: ${selected.join(' + ')}</div>
-                        <p class="mb-2 italic text-gray-700">Mezcla de ${arquetiposRasgos[arq1].adjetivo} y ${arquetiposRasgos[arq2].adjetivo}.</p>
-                        <div class="bg-indigo-100 p-3 rounded">
-                            <strong>Contenido Estrella:</strong> ${arquetiposRasgos[arq1].contenido} aplicados a ${arquetiposRasgos[arq2].contenido}.
+                        <div class="font-bold border-b border-indigo-200 mb-2 uppercase text-indigo-800">Fusión de Marca: ${selected.join(' + ')}</div>
+                        <p class="mb-3"><strong>Personalidad Resultante:</strong> Proyectas una voz que es simultáneamente <em>${arquetiposRasgos[arq1].adjetivo}</em> y <em>${arquetiposRasgos[arq2].adjetivo}</em>. Esta combinación es ideal para audiencias que buscan rigor pero exigen una narrativa envolvente o disruptiva.</p>
+                        <div class="bg-indigo-100 p-3 rounded border border-indigo-200">
+                            <strong>Contenido de Alto Impacto:</strong> Tu ventaja competitiva reside en crear <strong>${arquetiposRasgos[arq1].contenido}</strong> presentados bajo la óptica de <strong>${arquetiposRasgos[arq2].contenido}</strong>.
                         </div>`;
+                } else {
+                    descBox.innerHTML = `<div class="text-amber-600 font-bold">⚠️ Atención: Has seleccionado ${selected.length} arquetipos.</div>
+                                         <p class="text-xs">Para mantener una identidad clara y no confundir a tu audiencia, se recomienda elegir máximo 2. Seleccionar demasiados diluye tu autoridad y personalidad.</p>`;
                 }
             } else descBox.classList.add('hidden');
             localStorage.setItem('arquetiposSeleccionados', JSON.stringify(selected));
@@ -371,6 +375,8 @@
             const container = document.getElementById('plannerContainer');
             container.innerHTML = '';
             
+            const opcionesFecha = { weekday: 'long', day: 'numeric', month: 'numeric' };
+
             if(vista === 'mes') {
                 const diasSemana = ['LUN','MAR','MIE','JUE','VIE','SAB','DOM'];
                 let html = '<div class="calendar-grid">';
@@ -397,19 +403,22 @@
                     let d = new Date();
                     d.setDate(d.getDate() + i);
                     let iso = d.toISOString().split('T')[0];
+                    let nombreDia = d.toLocaleDateString('es-ES', opcionesFecha);
                     let daily = ideas.filter(id => id.fecha === iso);
                     html += `<div class="flex-1 min-w-[200px] bg-slate-50 p-4 rounded-lg border">
-                        <div class="font-bold text-indigo-600 mb-4 border-b">${iso}</div>
+                        <div class="font-bold text-indigo-600 mb-4 border-b capitalize">${nombreDia}</div>
                         ${daily.map(di => `<div class="content-item" onclick="openModal(${di.id})"><b>${di.hora}</b>: ${di.titulo}</div>`).join('')}
                     </div>`;
                 }
                 html += '</div>';
                 container.innerHTML = html;
             } else {
-                let hoy = new Date().toISOString().split('T')[0];
-                let daily = ideas.filter(id => id.fecha === hoy).sort((a,b) => a.hora.localeCompare(b.hora));
+                let dHoy = new Date();
+                let hoyISO = dHoy.toISOString().split('T')[0];
+                let nombreHoy = dHoy.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                let daily = ideas.filter(id => id.fecha === hoyISO).sort((a,b) => a.hora.localeCompare(b.hora));
                 container.innerHTML = `<div class="p-8 max-w-lg mx-auto">
-                    <h3 class="text-xl font-bold mb-4 border-b pb-2">Hoy: ${hoy}</h3>
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2 capitalize">${nombreHoy}</h3>
                     ${daily.map(di => `<div class="p-4 mb-2 bg-indigo-50 border rounded-lg cursor-pointer" onclick="openModal(${di.id})"><b>${di.hora}</b> - ${di.titulo}</div>`).join('')}
                     ${daily.length === 0 ? '<p class="text-gray-400 italic">Sin agenda hoy</p>' : ''}
                 </div>`;
