@@ -626,7 +626,7 @@
             }
         }
 
-        // LÓGICA DE LA NUEVA PESTAÑA: ESTRATEGIA DE CONTENIDO
+        // LÓGICA DE LA NUEVA PESTAÑA: ESTRATEGIA DE CONTENIDO ACTUALIZADA
         function renderEstrategiaResumen() {
             const container = document.getElementById('resumenContent');
             const promptArea = document.getElementById('aiPromptArea');
@@ -635,7 +635,14 @@
             const nicho = localStorage.getItem('nichoContenido') || 'No definido';
             const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
             const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
+            const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
             
+            // Funnel Data
+            const aw = localStorage.getItem('strat_awareness') || 'Generar visibilidad masiva.';
+            const co = localStorage.getItem('strat_consideracion') || 'Establecer autoridad y confianza.';
+            const cv = localStorage.getItem('strat_conversion') || 'Llamado a la acción directa.';
+            const fi = localStorage.getItem('strat_fidelizacion') || 'Mantener a la comunidad activa.';
+
             container.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="p-4 bg-slate-50 rounded-lg border">
@@ -651,37 +658,41 @@
                 <div class="bg-indigo-50 p-6 rounded-lg border border-indigo-100">
                     <h4 class="font-bold text-indigo-900 mb-2">Recomendación Táctica</h4>
                     <p class="text-sm text-indigo-800 leading-relaxed">
-                        Basado en tu arquetipo <strong>${arq.join(' / ')}</strong>, tu contenido debe equilibrar la 
-                        ${arq.length > 1 ? arquetiposRasgos[arq[0]].adjetivo + ' con la ' + arquetiposRasgos[arq[1]].adjetivo : arquetiposRasgos[arq[0]]?.adjetivo || 'identidad visual'}. 
-                        Te recomendamos priorizar <strong>${arq.map(a => arquetiposRasgos[a]?.contenido).join(' y ')}</strong>.
+                        Tu marca se apoya en los ejes transversales: <strong>${ejes.join(', ')}</strong>. 
+                        Basado en tu arquetipo <strong>${arq.join(' / ')}</strong>, tu tono debe ser ${arq.map(a => arquetiposRasgos[a]?.adjetivo).join(' y ')}.
                     </p>
                 </div>
             `;
 
-            // Generar Prompt
-            const prompt = `Actua como un estratega de contenido profesional especializado en crecimiento de Marca personal en redes sociales.
-Tu tarea es crear un calendario de 90 ideas de contenido (una por día) dividido en tres tipos: contenido de conexión, contenido educativo y contenido de autoridad.
+            // Generar Prompt Actualizado
+            const prompt = `Actua como un estratega de contenido profesional especializado en crecimiento de Marca personal en redes sociales. 
 
-CONTEXTO DE MI MARCA:
-- Nicho: ${nicho}
-- Tema Central: ${tema}
-- Arquetipos: ${arq.join(', ')}
+MI ECOSISTEMA DE MARCA:
+- Nicho/Industria: ${nicho}
+- Tema Central (Autoridad): ${tema}
+- Mi Personalidad (Arquetipos): ${arq.join(' y ')}
 - Público Objetivo: ${publico}
+- Ejes Transversales (Temas secundarios): ${ejes.join(', ')}
 
-Tu tarea será:
-1. Hacerme 10 preguntas clave antes de crear contenido para entender mi estilo, objetivos y posicionamiento.
-2. Luego de responder esas preguntas, crearás un calendario de 90 ideas de contenido (una por día), dividiendo en:
-   - Contenido de conexión
-   - Contenido educativo
-   - Contenido de autoridad
+MIS OBJETIVOS ESTRATÉGICOS (Fases del Funnel):
+1. AWARENESS (Alcance): ${aw}
+2. CONSIDERACIÓN (Confianza): ${co}
+3. CONVERSIÓN (Venta/Acción): ${cv}
+4. FIDELIZACIÓN (Comunidad): ${fi}
 
-Para cada idea debes incluir:
-- Gancho de máximo 8 palabras
-- Mensaje principal del video (lo que quiero comunicar)
-- Llamado a la acción (comentar, guardar o compartir)
+TU TAREA:
+1. Hazme 10 preguntas clave para profundizar en mi estilo visual y tono de voz antes de empezar.
+2. Tras mi respuesta, genera un calendario de 90 ideas de contenido (una por día) distribuidas equilibradamente entre las 4 fases de mi funnel mencionadas arriba.
+3. El contenido debe entrelazar mi Tema Central con mis Ejes Transversales.
 
-Entregar todo en una tabla con las columnas: Día, Tipo, Gancho, Contenido, Llamado a la acción.
-Cada idea debe estar pensada para un video de máximo 39 segundos.`;
+PARA CADA IDEA INCLUYE:
+- Día y Fase del Funnel correspondiente.
+- Gancho (Máximo 8 palabras).
+- Mensaje Principal del video (Concepto central).
+- Llamado a la Acción (CTA específico).
+- Tipo de Eje Transversal utilizado.
+
+ENTREGA TODO EN UNA TABLA. Cada idea es para un video corto de máximo 39 segundos.`;
 
             promptArea.value = prompt;
         }
@@ -690,7 +701,7 @@ Cada idea debe estar pensada para un video de máximo 39 segundos.`;
             const area = document.getElementById('aiPromptArea');
             area.select();
             document.execCommand('copy');
-            alert('Prompt copiado al portapapeles. ¡Pégalo en tu IA favorita!');
+            alert('Prompt estratégico copiado con éxito. ¡Pégalo en tu IA!');
         }
 
         // MODAL Y COPIADO
