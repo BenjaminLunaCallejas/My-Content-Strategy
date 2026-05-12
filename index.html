@@ -806,21 +806,23 @@ CONTEXTO:
 - Nombre y descripción del Creador: ${creador}
 - Personalidad (Arquetipos): ${arq.join(', ')} | Público: ${publico}
 - Ejes Transversales: ${ejes.join(', ')}
+${seccionFormatos}
 FUNNEL:
 - Reconocimiento: ${aw} | Consideración: ${co} | Conversión: ${cv} | Fidelización: ${fi}
 ${seccionInsumos}
 TAREA: 
-1. Genera calendario de 90 días (una idea/día). Combinando mi autoridad con mis ejes transversales y considerando los detalles descritos anteriormente. Una tabla con las columnas: Día | Tipo (Presencia, Marca o Valor) | Gancho (Máx 8 palabras) | Contenido (Mensaje Principal) | Propuesta de guión (breve) | Llamado a la acción (CTA) | Tipo de contenido sugerido
+1. Genera calendario de 90 días (una idea/día). Combinando mi autoridad con mis ejes transversales, mis formatos estrella y considerando los detalles descritos anteriormente. Una tabla con las columnas: Día | Tipo (Presencia, Marca o Valor) | Gancho (Máx 8 palabras) | Contenido (Mensaje Principal) | Propuesta de guión (breve) | Llamado a la acción (CTA) | Tipo de contenido sugerido
 2. Al finalizar el calendario, genera una sección titulada "Narrativa de Contenido" siguiendo este formato exacto:
    "Yo soy ${creador}, con mi tema principal ${tema} y mis ejes transversales ${ejes.join(', ')}. Por ello, mi narrativa de contenido es: [Aquí define para cada eje cómo se cruza con tu tema de autoridad de forma única, rápida y accionable, que sea lógico y coherente con narrativas de contenido contemporáneas.
 
 REGLAS CRÍTICAS:
 1. PRIORIDAD TÉCNICA: ${lineasInsumos.length > 0 ? "Debes integrar de forma prioritaria las ideas y tendencias listadas arriba." : "Genera ideas creativas e innovadoras basadas en mi nicho y ejes transversales."}
-2. SEO & ENGAGEMENT: Los ganchos deben estar optimizados para SEO pero deben ser frases que llamen la atención de mi público en los primeros 3-5 segundos del video (incluyen la promesa del video).
-3. El contenido debe resolver algún problema o dar un tema de interés para mi público objetivo. Además debe ser lógico, preciso y entretenido.
-4. DURACIÓN: Contenido diseñado para videos de máximo 39 segundos.
-5. El contenido total debe distribuirse en 70% de contenido de valor, 20% de contenido de marca y 10% de contenido de presencia.
-6. TONO: Coherente con los arquetipos ${arq.join(' y ')}.`;
+2. FORMATOS ESTRELLA: Si utilizas un formato estrella listado arriba, asegúrate de que la descripción y el contenido del día sigan estrictamente la estructura de ese formato estrella específico.
+3. SEO & ENGAGEMENT: Los ganchos deben estar optimizados para SEO pero deben ser frases que llamen la atención de mi público en los primeros 3-5 segundos del video (incluyen la promesa del video).
+4. El contenido debe resolver algún problema o dar un tema de interés para mi público objetivo. Además debe ser lógico, preciso y entretenido.
+5. DURACIÓN: Contenido diseñado para videos de máximo 39 segundos.
+6. El contenido total debe distribuirse en 70% de contenido de valor, 20% de contenido de marca y 10% de contenido de presencia.
+7. TONO: Coherente con los arquetipos ${arq.join(' y ')}.`;
             if (promptArea) promptArea.value = prompt;
         }
 
