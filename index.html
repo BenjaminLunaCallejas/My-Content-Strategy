@@ -198,7 +198,25 @@
                 <div id="resumenContent" class="space-y-6">
                     <!-- Aquí se genera dinámicamente el resumen -->
                 </div>
-
+<div class="mt-8 border-t pt-6 bg-indigo-50/30 p-6 rounded-xl border border-indigo-100">
+    <h3 class="text-xl font-bold mb-2 text-indigo-800 flex items-center gap-2">⭐ Formatos Estrella</h3>
+    <p class="text-xs text-gray-500 mb-4 italic">Define hasta 3 formatos ganadores para que la IA los considere en el calendario.</p>
+    
+    <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input type="text" id="starFormat1_name" onblur="saveStarFormats()" placeholder="Nombre (Ej: Qué tan probable es?)" class="p-3 border rounded-lg text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-indigo-400">
+            <textarea id="starFormat1_desc" onblur="saveStarFormats()" placeholder="Descripción del formato estrella 1..." class="p-3 border rounded-lg text-xs md:col-span-2 shadow-sm outline-none focus:ring-2 focus:ring-indigo-400" rows="2"></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input type="text" id="starFormat2_name" onblur="saveStarFormats()" placeholder="Nombre Formato Estrella 2" class="p-3 border rounded-lg text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-indigo-400">
+            <textarea id="starFormat2_desc" onblur="saveStarFormats()" placeholder="Descripción del formato estrella 2..." class="p-3 border rounded-lg text-xs md:col-span-2 shadow-sm outline-none focus:ring-2 focus:ring-indigo-400" rows="2"></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input type="text" id="starFormat3_name" onblur="saveStarFormats()" placeholder="Nombre Formato Estrella 3" class="p-3 border rounded-lg text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-indigo-400">
+            <textarea id="starFormat3_desc" onblur="saveStarFormats()" placeholder="Descripción del formato estrella 3..." class="p-3 border rounded-lg text-xs md:col-span-2 shadow-sm outline-none focus:ring-2 focus:ring-indigo-400" rows="2"></textarea>
+        </div>
+    </div>
+</div>
                 <div class="mt-8 border-t pt-6">
                     <h3 class="text-xl font-bold mb-4 text-gray-800">AI Prompt Generator</h3>
                     <p class="text-sm text-gray-500 mb-4">Copia este prompt para usarlo en ChatGPT, Claude o Gemini y generar tu calendario de 90 días.</p>
@@ -495,7 +513,13 @@
             msg.classList.remove('hidden');
             setTimeout(() => msg.classList.add('hidden'), 3000);
         }
-
+function saveStarFormats() {
+    for(let i=1; i<=3; i++) {
+        localStorage.setItem(`starFormat${i}_name`, document.getElementById(`starFormat${i}_name`).value);
+        localStorage.setItem(`starFormat${i}_desc`, document.getElementById(`starFormat${i}_desc`).value);
+    }
+    renderEstrategiaResumen(); // Esto actualiza el prompt en tiempo real
+}
         // TAGS
         function setupTagsInput(inputId, listId, arrayVar, storageKey) {
             const input = document.getElementById(inputId);
@@ -733,6 +757,14 @@
             const creador = localStorage.getItem('descCreador') || 'No definido';
             const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
             const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
+            // Carga de Formatos Estrella para el Prompt
+let lineasFormatos = [];
+for(let i=1; i<=3; i++) {
+    const fn = localStorage.getItem(`starFormat${i}_name`);
+    const fd = localStorage.getItem(`starFormat${i}_desc`);
+    if(fn) lineasFormatos.push(`- Formato "${fn}": ${fd}`);
+}
+const seccionFormatos = lineasFormatos.length > 0 ? `\nMIS FORMATOS ESTRELLA (Úsalos para generar las ideas):\n${lineasFormatos.join('\n')}\n` : "";
             
             const notasActuales = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
             
@@ -915,7 +947,10 @@ ENTREGABLES ADICIONALES (Debajo del guion):
             document.getElementById('strat_consideracion').value = localStorage.getItem('strat_consideracion') || '';
             document.getElementById('strat_conversion').value = localStorage.getItem('strat_conversion') || '';
             document.getElementById('strat_fidelizacion').value = localStorage.getItem('strat_fidelizacion') || '';
-            
+            for(let i=1; i<=3; i++) {
+    document.getElementById(`starFormat${i}_name`).value = localStorage.getItem(`starFormat${i}_name`) || '';
+    document.getElementById(`starFormat${i}_desc`).value = localStorage.getItem(`starFormat${i}_desc`) || '';
+}
             renderTags('listaEjes', ejesTags, 'ejesTags');
             setupTagsInput('inputEjes', 'listaEjes', ejesTags, 'ejesTags');
             renderTasks();
