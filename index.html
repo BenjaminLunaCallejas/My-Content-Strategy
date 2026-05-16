@@ -596,16 +596,17 @@ function saveStarFormats() {
             localStorage.setItem('contentTasks', JSON.stringify(tasks));
         }
 
-       function renderTasks() {
+   function renderTasks() {
             ['ideas', 'audios', 'tendencias', 'proximos'].forEach(cat => {
                 const list = document.getElementById(`lista_${cat}`);
                 list.innerHTML = '';
                 tasks[cat].forEach((t, i) => {
                     list.innerHTML += `<li draggable="true" ondragstart="dragTask(event, '${cat}', ${i})" class="flex justify-between items-start p-2 bg-slate-50 rounded border hover:bg-white transition cursor-default">
                         <span onclick="tasks['${cat}'][${i}].done = !tasks['${cat}'][${i}].done; renderTasks();" class="flex-1 ${t.done ? 'task-done' : ''}">${t.text}</span>
-                        <div class="flex gap-1 ml-2">
-                            <button onclick="editTask('${cat}', ${i})" class="text-indigo-400 hover:text-indigo-600 font-bold">✏️</button>
-                            <button onclick="tasks['${cat}'].splice(${i}, 1); renderTasks(); localStorage.setItem('contentTasks', JSON.stringify(tasks));" class="text-red-400 font-bold hover:text-red-600">×</button>
+                        <div class="flex gap-2 ml-2 shrink-0">
+                            <button onclick="copyTaskText('${cat}', ${i})" class="text-emerald-500 hover:text-emerald-700 font-bold" title="Copiar al portapapeles">📋</button>
+                            <button onclick="editTask('${cat}', ${i})" class="text-indigo-400 hover:text-indigo-600 font-bold" title="Editar nota">✏️</button>
+                            <button onclick="tasks['${cat}'].splice(${i}, 1); renderTasks(); localStorage.setItem('contentTasks', JSON.stringify(tasks));" class="text-red-400 font-bold hover:text-red-600" title="Eliminar nota">×</button>
                         </div>
                     </li>`;
                 });
@@ -1021,6 +1022,15 @@ function allowDrop(ev) {
                 renderTasks();
                 if (typeof renderEstrategiaResumen === "function") renderEstrategiaResumen();
             }
+        }
+        function copyTaskText(cat, index) {
+            const textoNota = tasks[cat][index].text;
+            navigator.clipboard.writeText(textoNota).then(() => {
+                // Alerta nativa consistente con la función copyToClipboardData
+                alert('¡Nota copiada al portapapeles!');
+            }).catch(err => {
+                console.error('Error al intentar copiar el texto: ', err);
+            });
         }
         window.onload = () => {
             initArquetipos();
