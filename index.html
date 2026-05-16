@@ -27,6 +27,44 @@
         .edit-mini-btn { position: absolute; right: 2px; top: 2px; opacity: 0; transition: opacity 0.2s; }
         .content-item:hover .edit-mini-btn { opacity: 1; }
 
+       /* --- Ajuste Columnas Notas (Estilo Trello Perfeccionado) --- */
+        #notas .flex.gap-6 {
+            min-width: max-content !important; 
+            align-items: stretch !important; /* Fuerza a que todas midan lo mismo de alto */
+            display: flex !important;
+            padding-bottom: 1rem;
+        }
+        #notas .flex.gap-6 > div {
+            flex: 0 0 290px !important; /* Ancho rígido por columna */
+            background-color: #f1f5f9 !important; /* Fondo gris de tablero */
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.75rem !important;
+            min-height: 520px !important; /* Altura mínima idéntica para todas */
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        #notas ul {
+            flex-grow: 1 !important; /* Permite soltar elementos en zonas vacías */
+            min-height: 250px !important;
+        }
+        #notas ul li {
+            max-width: 100% !important;
+            background-color: #ffffff !important; /* Tarjetas blancas */
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.5rem !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+            padding: 0.75rem !important;
+            margin-bottom: 0.5rem !important;
+            cursor: grab !important;
+        }
+        #notas ul li:active { cursor: grabbing !important; }
+        #notas ul li span {
+            white-space: normal !important;
+            word-break: break-word !important;
+            overflow-wrap: break-word !important;
+            display: block !important;
+        }
+
         /* Modal */
         #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
         .modal-card { background: white; width: 90%; max-width: 650px; border-radius: 12px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
@@ -154,7 +192,7 @@
                 <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Panel de Notas y Tendencias</h2>
                 <div class="overflow-x-auto pb-4 custom-scroll">
                     <div class="flex gap-6 min-w-[1200px]">
-                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-[500px]" onclick="if(event.target === this) document.getElementById('inputTarea_ideas').focus()">
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-[500px]" ondragover="allowDrop(event)" ondrop="dropTask(event, 'ideas')">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Ideas Crudas</h3>
                             <div class="flex gap-2 mb-4">
                                 <input type="text" id="inputTarea_ideas" class="flex-1 p-2 border rounded text-sm" placeholder="Nueva idea..." onkeypress="if(event.key === 'Enter') addTask('ideas')">
@@ -162,7 +200,8 @@
                             </div>
                             <ul id="lista_ideas" class="space-y-2 text-sm"></ul>
                         </div>
-                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                        
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col" ondragover="allowDrop(event)" ondrop="dropTask(event, 'audios')">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Audios y Referencias</h3>
                             <div class="flex gap-2 mb-4">
                                 <input type="text" id="inputTarea_audios" class="flex-1 p-2 border rounded text-sm" placeholder="Link..." onkeypress="if(event.key === 'Enter') addTask('audios')">
@@ -170,7 +209,8 @@
                             </div>
                             <ul id="lista_audios" class="space-y-2 text-sm"></ul>
                         </div>
-                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                        
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col" ondragover="allowDrop(event)" ondrop="dropTask(event, 'tendencias')">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Tendencias</h3>
                             <div class="flex gap-2 mb-4">
                                 <input type="text" id="inputTarea_tendencias" class="flex-1 p-2 border rounded text-sm" placeholder="Tendencia..." onkeypress="if(event.key === 'Enter') addTask('tendencias')">
@@ -178,7 +218,8 @@
                             </div>
                             <ul id="lista_tendencias" class="space-y-2 text-sm"></ul>
                         </div>
-                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                        
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col" ondragover="allowDrop(event)" ondrop="dropTask(event, 'proximos')">
                             <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Próximos Videos</h3>
                             <div class="flex gap-2 mb-4">
                                 <input type="text" id="inputTarea_proximos" class="flex-1 p-2 border rounded text-sm" placeholder="Video..." onkeypress="if(event.key === 'Enter') addTask('proximos')">
@@ -555,12 +596,12 @@ function saveStarFormats() {
             localStorage.setItem('contentTasks', JSON.stringify(tasks));
         }
 
-        function renderTasks() {
+       function renderTasks() {
             ['ideas', 'audios', 'tendencias', 'proximos'].forEach(cat => {
                 const list = document.getElementById(`lista_${cat}`);
                 list.innerHTML = '';
                 tasks[cat].forEach((t, i) => {
-                    list.innerHTML += `<li class="flex justify-between items-start p-2 bg-slate-50 rounded border hover:bg-white transition cursor-default">
+                    list.innerHTML += `<li draggable="true" ondragstart="dragTask(event, '${cat}', ${i})" class="flex justify-between items-start p-2 bg-slate-50 rounded border hover:bg-white transition cursor-default">
                         <span onclick="tasks['${cat}'][${i}].done = !tasks['${cat}'][${i}].done; renderTasks();" class="flex-1 ${t.done ? 'task-done' : ''}">${t.text}</span>
                         <button onclick="tasks['${cat}'].splice(${i}, 1); renderTasks(); localStorage.setItem('contentTasks', JSON.stringify(tasks));" class="text-red-400 font-bold ml-2">×</button>
                     </li>`;
@@ -937,7 +978,35 @@ ENTREGABLES ADICIONALES (Debajo del guion):
             const text = `ESTRATEGIA: ${idea.titulo}\nGANCHO: ${idea.hook}\nGUIÓN:\n${idea.guion}\n\nCOPY:\n${idea.copy}`;
             navigator.clipboard.writeText(text).then(() => alert('Copiado!'));
         }
+function allowDrop(ev) {
+            ev.preventDefault();
+        }
 
+        function dragTask(ev, cat, index) {
+            ev.dataTransfer.setData("text/plain", JSON.stringify({ sourceCat: cat, taskIndex: index }));
+        }
+
+        function dropTask(ev, destCat) {
+            ev.preventDefault();
+            const dataStr = ev.dataTransfer.getData("text/plain");
+            if (!dataStr) return;
+            
+            try {
+                const { sourceCat, taskIndex } = JSON.parse(dataStr);
+                if (sourceCat === destCat) return;
+                
+                // Mueve el objeto de una columna a otra en los arrays de memoria
+                const [taskMoved] = tasks[sourceCat].splice(taskIndex, 1);
+                tasks[destCat].push(taskMoved);
+                
+                // Guarda de forma persistente en LocalStorage y refresca la vista
+                localStorage.setItem('contentTasks', JSON.stringify(tasks));
+                renderTasks();
+                if (typeof renderEstrategiaResumen === "function") renderEstrategiaResumen();
+            } catch (err) {
+                console.error("Error al mover la tarjeta:", err);
+            }
+        }
         window.onload = () => {
             initArquetipos();
             document.getElementById('temaCentral').value = localStorage.getItem('temaCentral') || '';
