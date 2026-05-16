@@ -150,7 +150,39 @@
                 <button onclick="guardarEstrategia()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Toda la Estrategia</button>
                 <span id="estrategia-msg" class="ml-4 text-green-600 font-semibold hidden">¡Configuración guardada!</span>
             </section>
+/* --- Optimizaciones para el Panel de Notas (Estilo Trello) --- */
+        #notas .flex.gap-6 {
+            min-width: 100% !important;
+            align-items: flex-start !important;
+        }
 
+        #notas .flex.gap-6 > div {
+            flex: 1 1 280px !important;
+            min-width: 260px !important;
+            max-w: 320px !important;
+        }
+
+        #notas ul li {
+            max-width: 100% !important;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        #notas ul li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        #notas ul li span {
+            white-space: normal !important;
+            word-break: break-word !important;
+            overflow-wrap: break-word !important;
+            display: block !important;
+        }
+
+        /* Indicador visual de arrastre */
+        .cursor-grab:active {
+            cursor: grabbing !important;
+        }
             <section id="notas" class="tab-content w-full">
                 <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Panel de Notas y Tendencias</h2>
                 <div class="overflow-x-auto pb-4 custom-scroll">
