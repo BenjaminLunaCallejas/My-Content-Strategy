@@ -603,7 +603,10 @@ function saveStarFormats() {
                 tasks[cat].forEach((t, i) => {
                     list.innerHTML += `<li draggable="true" ondragstart="dragTask(event, '${cat}', ${i})" class="flex justify-between items-start p-2 bg-slate-50 rounded border hover:bg-white transition cursor-default">
                         <span onclick="tasks['${cat}'][${i}].done = !tasks['${cat}'][${i}].done; renderTasks();" class="flex-1 ${t.done ? 'task-done' : ''}">${t.text}</span>
-                        <button onclick="tasks['${cat}'].splice(${i}, 1); renderTasks(); localStorage.setItem('contentTasks', JSON.stringify(tasks));" class="text-red-400 font-bold ml-2">×</button>
+                        <div class="flex gap-1 ml-2">
+                            <button onclick="editTask('${cat}', ${i})" class="text-indigo-400 hover:text-indigo-600 font-bold">✏️</button>
+                            <button onclick="tasks['${cat}'].splice(${i}, 1); renderTasks(); localStorage.setItem('contentTasks', JSON.stringify(tasks));" class="text-red-400 font-bold hover:text-red-600">×</button>
+                        </div>
                     </li>`;
                 });
             });
@@ -1005,6 +1008,18 @@ function allowDrop(ev) {
                 if (typeof renderEstrategiaResumen === "function") renderEstrategiaResumen();
             } catch (err) {
                 console.error("Error al mover la tarjeta:", err);
+            }
+        }
+        function editTask(cat, index) {
+            const tareaActual = tasks[cat][index].text;
+            const nuevoTexto = prompt("Editar nota:", tareaActual);
+            
+            // Si el usuario escribe algo y no cancela el prompt, actualizamos
+            if (nuevoTexto !== null && nuevoTexto.trim() !== "") {
+                tasks[cat][index].text = nuevoTexto.trim();
+                localStorage.setItem('contentTasks', JSON.stringify(tasks));
+                renderTasks();
+                if (typeof renderEstrategiaResumen === "function") renderEstrategiaResumen();
             }
         }
         window.onload = () => {
