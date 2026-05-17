@@ -374,7 +374,15 @@
                         <label class="block text-sm font-semibold text-indigo-600 mb-2">Idea de Gancho (HOOK)</label>
                         <textarea id="ideaHook" oninput="updateLivePrompt()" placeholder="Ej: ¿Sabías que...?" class="w-full p-3 border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400 bg-indigo-50/30 custom-scroll" rows="3"></textarea>
                     </div>
+<div class="mb-6">
+    <label class="block text-sm font-semibold text-indigo-600 mb-2">Enlaces de Referencia (Información relevante) <span class="text-xs text-gray-400 font-normal">(Opcional)</span></label>
+    <textarea id="ideaEnlaces" oninput="updateLivePrompt()" placeholder="Ej: https://ejemplo.com/articulo-cientifico (Deja vacío si no aplica)" class="w-full p-3 border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400 bg-indigo-50/30 custom-scroll" rows="3"></textarea>
+</div>
 
+<div class="mb-6">
+    <label class="block text-sm font-semibold text-indigo-600 mb-2">Idea Inicial o Guion Base para el Video <span class="text-xs text-gray-400 font-normal">(Opcional)</span></label>
+    <textarea id="ideaGuionBase" oninput="updateLivePrompt()" placeholder="Ej: Deseo explicar los 3 pilares del desarrollo celular... (Deja vacío si no aplica)" class="w-full p-3 border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400 bg-indigo-50/30 custom-scroll" rows="3"></textarea>
+</div>
                     <!-- AI SCRIPT PROMPT REUBICADO -->
                     <div class="mb-8 border-t-2 border-dashed pt-6 bg-slate-50 p-6 rounded-xl">
                         <h3 class="text-sm font-bold text-indigo-900 mb-3 uppercase tracking-wider flex items-center gap-2">
@@ -617,24 +625,27 @@ function saveStarFormats() {
         function guardarIdea() {
             const titulo = document.getElementById('ideaTitulo').value;
             if(!titulo) return alert('Título requerido');
-            
-            const datos = {
-                id: editandoId || Date.now(),
-                titulo,
-                formato: document.getElementById('ideaFormato').value,
-                tipo: document.getElementById('ideaTipo').value,
-                objetivo: document.getElementById('ideaObjetivo').value,
-                tipoEstrategico: document.getElementById('ideaTipoEstrategico').value,
-                colaboracion: document.getElementById('ideaColaboracion').value,
-                publicacion: document.getElementById('ideaPublicacion').value,
-                fecha: document.getElementById('ideaFecha').value,
-                hora: document.getElementById('ideaHora').value,
-                hook: document.getElementById('ideaHook').value,
-                guion: document.getElementById('ideaGuion').value,
-                copy: document.getElementById('ideaCopy').value,
-                hashtags: document.getElementById('ideaHashtags').value
-            };
 
+const datos = {
+    id: editandoId || Date.now(),
+    titulo,
+    formato: document.getElementById('ideaFormato').value,
+    tipo: document.getElementById('ideaTipo').value,
+    objetivo: document.getElementById('ideaObjetivo').value,
+    tipoEstrategico: document.getElementById('ideaTipoEstrategico').value,
+    colaboracion: document.getElementById('ideaColaboracion').value,
+    publicacion: document.getElementById('ideaPublicacion').value,
+    fecha: document.getElementById('ideaFecha').value,
+    hora: document.getElementById('ideaHora').value,
+    hook: document.getElementById('ideaHook').value,
+    // LINEAS A ADICIONAR:
+    enlaces: document.getElementById('ideaEnlaces').value,
+    guionBase: document.getElementById('ideaGuionBase').value,
+    
+    guion: document.getElementById('ideaGuion').value,
+    copy: document.getElementById('ideaCopy').value,
+    hashtags: document.getElementById('ideaHashtags').value
+};
             if (editandoId) {
                 const index = ideas.findIndex(i => i.id === editandoId);
                 ideas[index] = datos;
@@ -664,6 +675,8 @@ function saveStarFormats() {
             document.getElementById('ideaFecha').value = idea.fecha || '';
             document.getElementById('ideaHora').value = idea.hora || '';
             document.getElementById('ideaHook').value = idea.hook || '';
+            document.getElementById('ideaEnlaces').value = idea.enlaces || '';
+            document.getElementById('ideaGuionBase').value = idea.guionBase || '';
             document.getElementById('ideaGuion').value = idea.guion || '';
             document.getElementById('ideaCopy').value = idea.copy || '';
             document.getElementById('ideaHashtags').value = idea.hashtags || '';
@@ -680,9 +693,9 @@ function saveStarFormats() {
             editandoId = null;
             document.getElementById('btnGuardarGuion').innerText = "Guardar Guion Estructurado";
             document.getElementById('btnCancelarEdicion').classList.add('hidden');
-            ['ideaTitulo','ideaGuion','ideaCopy','ideaHashtags','ideaFecha','ideaHora', 'ideaHook'].forEach(id => document.getElementById(id).value = '');
-            updateLivePrompt();
-        }
+            ['ideaTitulo','ideaGuion','ideaCopy','ideaHashtags','ideaFecha','ideaHora', 'ideaHook', 'ideaEnlaces', 'ideaGuionBase'].forEach(id => document.getElementById(id).value = '');
+    updateLivePrompt();
+}
 
         function renderIdeas() {
             const container = document.getElementById('listaIdeas');
@@ -882,6 +895,17 @@ REGLAS CRÍTICAS:
             const col = document.getElementById('ideaColaboracion').value;
             const pub = document.getElementById('ideaPublicacion').value;
             const hook = document.getElementById('ideaHook').value || "[INSERTAR GANCHO AQUÍ]";
+            const enlaces = document.getElementById('ideaEnlaces').value.trim();
+            const guionBase = document.getElementById('ideaGuionBase').value.trim();
+
+            // Construcción dinámica de especificaciones adicionales para evitar ruido en la IA
+            let especificacionesOpcionales = "";
+            if (enlaces) {
+                especificacionesOpcionales += `\n- ENLACES CON INFORMACIÓN RELEVANTE DE SOPORTE:\n${enlaces}`;
+            }
+            if (guionBase) {
+                especificacionesOpcionales += `\n- IDEA INICIAL / ESTRUCTURA BASE DESEADA:\n${guionBase}`;
+            }
             
             // Variables de Estrategia (Globales / LocalStorage)
             const tema = localStorage.getItem('temaCentral') || "mi pilar de autoridad";
@@ -905,7 +929,7 @@ ESPECIFICACIONES TÉCNICAS DEL VIDEO:
 - Enfoque de valor: ${est}
 - Colaboración: ${col}
 - Tipo de publicación: ${pub}
-- GANCHO (Hook) PROPUESTO: "${hook}"
+- GANCHO (Hook) PROPUESTO: "${hook}"${especificacionesOpcionales}
 
 INSTRUCCIONES DE REDACCIÓN:
 1. TONO: Dinámico, profesional pero accesible. DEBE SER MEMORABLE, EMOCIONAL Y ENTRETENIDO.
@@ -954,6 +978,8 @@ ENTREGABLES ADICIONALES (Debajo del guion):
                         <div><span class="text-gray-400 font-bold uppercase block">🤝 Colab:</span> ${idea.colaboracion}</div>
                     </div>
                     ${idea.hook ? `<div class="mt-4 p-3 bg-indigo-50 border-l-4 border-indigo-500 text-xs italic"><b>Gancho:</b> "${idea.hook}"</div>` : ''}
+                    ${idea.enlaces ? `<div class="mt-2 p-3 bg-slate-50 border border-gray-200 rounded-lg text-xs font-mono text-gray-600"><b>Enlaces de Referencia:</b><br>${idea.enlaces.replace(/\n/g, '<br>')}</div>` : ''}
+${idea.guionBase ? `<div class="mt-2 p-3 bg-indigo-50/30 border border-indigo-100 rounded-lg text-xs text-gray-700"><b>Idea Inicial / Guion Base:</b><br>${idea.guionBase}</div>` : ''}
                 </div>
                 <div class="space-y-6">
                     <div>
