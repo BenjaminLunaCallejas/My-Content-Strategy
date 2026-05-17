@@ -272,8 +272,8 @@
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-8">
                     <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Generador de Ideas y Guiones</h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                        <div class="md:col-span-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="md:col-span-3">
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Título de la Idea</label>
                             <input type="text" id="ideaTitulo" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-400">
                         </div>
@@ -367,6 +367,12 @@
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Hora</label>
                             <input type="time" id="ideaHora" class="w-full p-3 border rounded-lg outline-none">
                         </div>
+                        <div>
+    <label class="block text-sm font-semibold text-purple-600 mb-2">⭐ Formato Estrella <span class="text-xs text-gray-400 font-normal">(Opcional)</span></label>
+    <select id="ideaStarFormat" onchange="updateLivePrompt()" class="w-full p-3 border border-purple-200 rounded-lg outline-none bg-purple-50/20 font-medium text-purple-900">
+        <option value="">Ninguno / Formato Libre</option>
+    </select>
+</div>
                     </div> <!-- CIERRE DEL GRID DE ARRIBA -->
 
                     <!-- GANCHO EXPANDIDO Y REUBICADO -->
@@ -491,6 +497,7 @@
             
             if(tabId === 'planificador') renderCalendario('mes');
             if(tabId === 'estrategia_resumen') renderEstrategiaResumen();
+            if(tabId === 'ideas') actualizarSelectFormatosEstrella();
         }
 
         // ESTRATEGIA & ARQUETIPOS
@@ -621,31 +628,49 @@ function saveStarFormats() {
             });
         }
 
+       // SINCRO DINÁMICA DE OPCIONES PARA FORMATOS ESTRELLA
+        function actualizarSelectFormatosEstrella() {
+            const select = document.getElementById('ideaStarFormat');
+            if (!select) return;
+            const valorActual = select.value;
+            select.innerHTML = '<option value="">Ninguno / Formato Libre</option>';
+            
+            for(let i = 1; i <= 3; i++) {
+                const name = localStorage.getItem(`starFormat${i}_name`);
+                if(name && name.trim() !== "") {
+                    const option = document.createElement('option');
+                    option.value = name.trim();
+                    option.textContent = `⭐ ${name.trim()}`;
+                    select.appendChild(option);
+                }
+            }
+            select.value = valorActual;
+        }
+
         // REPOSITORIO
         function guardarIdea() {
             const titulo = document.getElementById('ideaTitulo').value;
             if(!titulo) return alert('Título requerido');
 
-const datos = {
-    id: editandoId || Date.now(),
-    titulo,
-    formato: document.getElementById('ideaFormato').value,
-    tipo: document.getElementById('ideaTipo').value,
-    objetivo: document.getElementById('ideaObjetivo').value,
-    tipoEstrategico: document.getElementById('ideaTipoEstrategico').value,
-    colaboracion: document.getElementById('ideaColaboracion').value,
-    publicacion: document.getElementById('ideaPublicacion').value,
-    fecha: document.getElementById('ideaFecha').value,
-    hora: document.getElementById('ideaHora').value,
-    hook: document.getElementById('ideaHook').value,
-    // LINEAS A ADICIONAR:
-    enlaces: document.getElementById('ideaEnlaces').value,
-    guionBase: document.getElementById('ideaGuionBase').value,
-    
-    guion: document.getElementById('ideaGuion').value,
-    copy: document.getElementById('ideaCopy').value,
-    hashtags: document.getElementById('ideaHashtags').value
-};
+            const datos = {
+                id: editandoId || Date.now(),
+                titulo,
+                formato: document.getElementById('ideaFormato').value,
+                tipo: document.getElementById('ideaTipo').value,
+                objetivo: document.getElementById('ideaObjetivo').value,
+                tipoEstrategico: document.getElementById('ideaTipoEstrategico').value,
+                colaboracion: document.getElementById('ideaColaboracion').value,
+                publicacion: document.getElementById('ideaPublicacion').value,
+                fecha: document.getElementById('ideaFecha').value,
+                hora: document.getElementById('ideaHora').value,
+                starFormat: document.getElementById('ideaStarFormat').value,
+                hook: document.getElementById('ideaHook').value,
+                enlaces: document.getElementById('ideaEnlaces').value,
+                guionBase: document.getElementById('ideaGuionBase').value,
+                guion: document.getElementById('ideaGuion').value,
+                copy: document.getElementById('ideaCopy').value,
+                hashtags: document.getElementById('ideaHashtags').value
+            };
             if (editandoId) {
                 const index = ideas.findIndex(i => i.id === editandoId);
                 ideas[index] = datos;
@@ -663,6 +688,7 @@ const datos = {
         function editarIdea(id) {
             const idea = ideas.find(i => i.id === id);
             if (!idea) return;
+            actualizarSelectFormatosEstrella();
 
             editandoId = id;
             document.getElementById('ideaTitulo').value = idea.titulo || '';
@@ -674,6 +700,7 @@ const datos = {
             document.getElementById('ideaPublicacion').value = idea.publicacion || '';
             document.getElementById('ideaFecha').value = idea.fecha || '';
             document.getElementById('ideaHora').value = idea.hora || '';
+            document.getElementById('ideaStarFormat').value = idea.starFormat || '';
             document.getElementById('ideaHook').value = idea.hook || '';
             document.getElementById('ideaEnlaces').value = idea.enlaces || '';
             document.getElementById('ideaGuionBase').value = idea.guionBase || '';
@@ -693,8 +720,9 @@ const datos = {
             editandoId = null;
             document.getElementById('btnGuardarGuion').innerText = "Guardar Guion Estructurado";
             document.getElementById('btnCancelarEdicion').classList.add('hidden');
-            ['ideaTitulo','ideaGuion','ideaCopy','ideaHashtags','ideaFecha','ideaHora', 'ideaHook', 'ideaEnlaces', 'ideaGuionBase'].forEach(id => document.getElementById(id).value = '');
+           ['ideaTitulo','ideaGuion','ideaCopy','ideaHashtags','ideaFecha','ideaHora', 'ideaHook', 'ideaEnlaces', 'ideaGuionBase', 'ideaStarFormat'].forEach(id => document.getElementById(id).value = '');
     updateLivePrompt();
+    
 }
 
         function renderIdeas() {
@@ -870,7 +898,7 @@ ${seccionInsumos}
 TAREA: 
 1. Genera calendario completo de 30 días (una idea/día). Combinando mi autoridad con mis ejes transversales, mis formatos estrella y considerando los detalles descritos anteriormente. Una tabla con las columnas: Día | Tipo (Presencia, Marca o Valor) | Gancho/hook (Máx 15 palabras) | Contenido (Mensaje Principal) | Propuesta de guión | Llamado a la acción (CTA) | Tipo de Formato (Estrella o Libre)
 2. Al finalizar el calendario, genera una sección titulada "Narrativa de Contenido" siguiendo este formato exacto:
-   "${creador}, con mi tema principal ${tema} y mis ejes transversales ${ejes.join(', ')}. Por ello, mi narrativa de contenido es: [Aquí define para cada eje cómo se cruza con tu tema de autoridad de forma única, rápida y accionable, que sea lógico y coherente con narrativas de contenido contemporáneas.
+   "Yo soy ${creador}, con mi tema principal ${tema} y mis ejes transversales ${ejes.join(', ')}. Por ello, mi narrativa de contenido es: [Aquí define para cada eje cómo se cruza con tu tema de autoridad de forma única, rápida y accionable, que sea lógico y coherente con narrativas de contenido contemporáneas.
 
 REGLAS CRÍTICAS:
 1. PRIORIDAD TÉCNICA: ${lineasInsumos.length > 0 ? "Debes integrar de forma prioritaria las ideas y tendencias listadas arriba." : "Genera ideas creativas e innovadoras basadas en mi nicho y ejes transversales."}
@@ -886,6 +914,7 @@ REGLAS CRÍTICAS:
         // ACTUALIZAR PROMPT DE GUIÓN EN VIVO
         function updateLivePrompt() {
             const area = document.getElementById('aiScriptPromptArea');
+            if (!area) return;
             
             // Variables de Formulario (Locales)
             const formato = document.getElementById('ideaFormato').value;
@@ -894,6 +923,7 @@ REGLAS CRÍTICAS:
             const est = document.getElementById('ideaTipoEstrategico').value;
             const col = document.getElementById('ideaColaboracion').value;
             const pub = document.getElementById('ideaPublicacion').value;
+            const starFormatSelect = document.getElementById('ideaStarFormat').value;
             const hook = document.getElementById('ideaHook').value || "[INSERTAR GANCHO AQUÍ]";
             const enlaces = document.getElementById('ideaEnlaces').value.trim();
             const guionBase = document.getElementById('ideaGuionBase').value.trim();
@@ -906,6 +936,16 @@ REGLAS CRÍTICAS:
             if (guionBase) {
                 especificacionesOpcionales += `\n- IDEA INICIAL / ESTRUCTURA BASE DESEADA:\n${guionBase}`;
             }
+            if (starFormatSelect) {
+                for (let i = 1; i <= 3; i++) {
+                    const name = localStorage.getItem(`starFormat${i}_name`);
+                    const desc = localStorage.getItem(`starFormat${i}_desc`);
+                    if (name && name.trim() === starFormatSelect.trim() && desc) {
+                        especificacionesOpcionales += `\n- REGLA DE ESTRUCTURA OBLIGATORIA (Formato Estrella): Este video debe estructurarse siguiendo fielmente el formato institucional "${name.trim()}", el cual consiste en: ${desc.trim()}`;
+                        break;
+                    }
+                }
+            }
             
             // Variables de Estrategia (Globales / LocalStorage)
             const tema = localStorage.getItem('temaCentral') || "mi pilar de autoridad";
@@ -913,7 +953,7 @@ REGLAS CRÍTICAS:
             const publico = localStorage.getItem('publicoObjetivo') || "mi audiencia objetivo";
             const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || ["El Sabio"];
             const ejes = JSON.parse(localStorage.getItem('ejesTags')) || ["mis temas secundarios"];
-
+            
             area.value = `Actúa como un guionista experto en redes sociales. 
 MI PERFIL ESTRATÉGICO:
 - Tema central (Autoridad): ${tema}
@@ -1076,6 +1116,7 @@ function allowDrop(ev) {
             setupTagsInput('inputEjes', 'listaEjes', ejesTags, 'ejesTags');
             renderTasks();
             renderIdeas();
+            actualizarSelectFormatosEstrella();
             updateLivePrompt();
         };
     </script>
