@@ -86,7 +86,7 @@
             </div>
             <nav class="flex-1 px-4 space-y-2">
                 <button onclick="switchTab('estrategia')" class="w-full text-left px-4 py-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition" id="btn-estrategia">1. Estrategia y Marca</button>
-                <button onclick="switchTab('notas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-notas">2. Notas y Tendencias</button>
+                <button onclick="switchTab('notas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-notas">2. Ideas y Tendencias</button>
                 <!-- Pestaña 3 reordenada -->
                 <button onclick="switchTab('estrategia_resumen')" class="w-full text-left px-4 py-3 rounded-lg border border-indigo-500/30 hover:bg-indigo-900/30 transition text-indigo-300 font-bold" id="btn-estrategia_resumen">3. Estrategia de Contenido</button>
                 <!-- Pestaña 4 reordenada -->
@@ -189,7 +189,7 @@
                 <span id="estrategia-msg" class="ml-4 text-green-600 font-semibold hidden">¡Configuración guardada!</span>
             </section>
             <section id="notas" class="tab-content w-full">
-                <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Panel de Notas y Tendencias</h2>
+                <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Panel de Ideas y Tendencias</h2>
                 <div class="overflow-x-auto pb-4 custom-scroll">
                     <div class="flex gap-6 min-w-[1200px]">
                         <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-[500px]" ondragover="allowDrop(event)" ondrop="dropTask(event, 'ideas')">
@@ -859,7 +859,7 @@ const seccionFormatos = lineasFormatos.length > 0 ? `\nMIS FORMATOS ESTRELLA (Ú
             if (notasActuales.tendencias?.length) lineasInsumos.push(`- Tendencias: ${notasActuales.tendencias.map(t => t.text).join(', ')}`);
             if (notasActuales.proximos?.length) lineasInsumos.push(`- Próximos: ${notasActuales.proximos.map(t => t.text).join(', ')}`);
 
-            const seccionInsumos = lineasInsumos.length > 0 ? `\nDATOS DEL PANEL "NOTAS Y TENDENCIAS":\n${lineasInsumos.join('\n')}\n` : "";
+            const seccionInsumos = lineasInsumos.length > 0 ? `\nDATOS DEL PANEL "IDEAS Y TENDENCIAS":\n${lineasInsumos.join('\n')}\n` : "";
 
             const aw = localStorage.getItem('strat_awareness') || 'Generar visibilidad masiva.';
             const co = localStorage.getItem('strat_consideracion') || 'Establecer autoridad y confianza.';
