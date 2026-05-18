@@ -27,14 +27,14 @@
         .edit-mini-btn { position: absolute; right: 2px; top: 2px; opacity: 0; transition: opacity 0.2s; }
         .content-item:hover .edit-mini-btn { opacity: 1; }
 
-       /* --- Ajuste Columnas Notas (Estilo Trello Perfeccionado) --- */
-        #notas .flex.gap-6 {
+       /* --- Ajuste Columnas Notas y Blog de Notas (Estilo Trello Perfeccionado) --- */
+        #notas .flex.gap-6, #blog_notas .flex.gap-6 {
             min-width: max-content !important; 
             align-items: stretch !important; /* Fuerza a que todas midan lo mismo de alto */
             display: flex !important;
             padding-bottom: 1rem;
         }
-        #notas .flex.gap-6 > div {
+        #notas .flex.gap-6 > div, #blog_notas .flex.gap-6 > div {
             flex: 0 0 290px !important; /* Ancho rígido por columna */
             background-color: #f1f5f9 !important; /* Fondo gris de tablero */
             border: 1px solid #e2e8f0 !important;
@@ -43,11 +43,11 @@
             display: flex !important;
             flex-direction: column !important;
         }
-        #notas ul {
+        #notas ul, #blog_notas ul {
             flex-grow: 1 !important; /* Permite soltar elementos en zonas vacías */
             min-height: 250px !important;
         }
-        #notas ul li {
+        #notas ul li, #blog_notas ul li {
             max-width: 100% !important;
             background-color: #ffffff !important; /* Tarjetas blancas */
             border: 1px solid #e2e8f0 !important;
@@ -57,8 +57,8 @@
             margin-bottom: 0.5rem !important;
             cursor: grab !important;
         }
-        #notas ul li:active { cursor: grabbing !important; }
-        #notas ul li span {
+        #notas ul li:active, #blog_notas ul li:active { cursor: grabbing !important; }
+        #notas ul li span, #blog_notas ul li span {
             white-space: normal !important;
             word-break: break-word !important;
             overflow-wrap: break-word !important;
@@ -87,12 +87,11 @@
             <nav class="flex-1 px-4 space-y-2">
                 <button onclick="switchTab('estrategia')" class="w-full text-left px-4 py-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition" id="btn-estrategia">1. Estrategia y Marca</button>
                 <button onclick="switchTab('notas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-notas">2. Ideas y Tendencias</button>
-                <!-- Pestaña 3 reordenada -->
                 <button onclick="switchTab('estrategia_resumen')" class="w-full text-left px-4 py-3 rounded-lg border border-indigo-500/30 hover:bg-indigo-900/30 transition text-indigo-300 font-bold" id="btn-estrategia_resumen">3. Estrategia de Contenido</button>
-                <!-- Pestaña 4 reordenada -->
                 <button onclick="switchTab('ideas')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-ideas">4. Repositorio y Guiones</button>
-                <!-- Pestaña 5 reordenada -->
                 <button onclick="switchTab('planificador')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-700 transition" id="btn-planificador">5. Planificador</button>
+                <!-- NUEVA PESTAÑA 6 -->
+                <button onclick="switchTab('blog_notas')" class="w-full text-left px-4 py-3 rounded-lg border border-emerald-500/30 text-emerald-300 hover:bg-emerald-900/30 transition font-bold" id="btn-blog_notas">6. Blog de Notas</button>
             </nav>
         </aside>
 
@@ -188,6 +187,7 @@
                 <button onclick="guardarEstrategia()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Guardar Toda la Estrategia</button>
                 <span id="estrategia-msg" class="ml-4 text-green-600 font-semibold hidden">¡Configuración guardada!</span>
             </section>
+            
             <section id="notas" class="tab-content w-full">
                 <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Panel de Ideas y Tendencias</h2>
                 <div class="overflow-x-auto pb-4 custom-scroll">
@@ -450,6 +450,50 @@
                 </div>
             </section>
 
+            <!-- NUEVA PESTAÑA 6: BLOG DE NOTAS -->
+            <section id="blog_notas" class="tab-content w-full">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Blog de Notas Aislado</h2>
+                <div class="overflow-x-auto pb-4 custom-scroll">
+                    <div class="flex gap-6 min-w-[1200px]">
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-emerald-100 flex flex-col min-h-[500px]" ondragover="allowDrop(event)" ondrop="dropNota(event, 'rapidas')">
+                            <h3 class="text-xl font-bold text-emerald-700 mb-4 border-b pb-2">Notas Rápidas</h3>
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="inputNota_rapidas" class="flex-1 p-2 border border-emerald-200 rounded text-sm outline-none focus:ring-1 focus:ring-emerald-400" placeholder="Anotación..." onkeypress="if(event.key === 'Enter') addNota('rapidas')">
+                                <button onclick="addNota('rapidas')" class="bg-emerald-500 text-white px-3 rounded hover:bg-emerald-600 transition font-bold">+</button>
+                            </div>
+                            <ul id="lista_rapidas" class="space-y-2 text-sm"></ul>
+                        </div>
+                        
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-emerald-100 flex flex-col" ondragover="allowDrop(event)" ondrop="dropNota(event, 'borradores')">
+                            <h3 class="text-xl font-bold text-emerald-700 mb-4 border-b pb-2">Borradores Generales</h3>
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="inputNota_borradores" class="flex-1 p-2 border border-emerald-200 rounded text-sm outline-none focus:ring-1 focus:ring-emerald-400" placeholder="Borrador..." onkeypress="if(event.key === 'Enter') addNota('borradores')">
+                                <button onclick="addNota('borradores')" class="bg-emerald-500 text-white px-3 rounded hover:bg-emerald-600 transition font-bold">+</button>
+                            </div>
+                            <ul id="lista_borradores" class="space-y-2 text-sm"></ul>
+                        </div>
+                        
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-emerald-100 flex flex-col" ondragover="allowDrop(event)" ondrop="dropNota(event, 'recursos')">
+                            <h3 class="text-xl font-bold text-emerald-700 mb-4 border-b pb-2">Recursos y Enlaces</h3>
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="inputNota_recursos" class="flex-1 p-2 border border-emerald-200 rounded text-sm outline-none focus:ring-1 focus:ring-emerald-400" placeholder="Recurso..." onkeypress="if(event.key === 'Enter') addNota('recursos')">
+                                <button onclick="addNota('recursos')" class="bg-emerald-500 text-white px-3 rounded hover:bg-emerald-600 transition font-bold">+</button>
+                            </div>
+                            <ul id="lista_recursos" class="space-y-2 text-sm"></ul>
+                        </div>
+                        
+                        <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-emerald-100 flex flex-col" ondragover="allowDrop(event)" ondrop="dropNota(event, 'personales')">
+                            <h3 class="text-xl font-bold text-emerald-700 mb-4 border-b pb-2">Reflexiones / Otros</h3>
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="inputNota_personales" class="flex-1 p-2 border border-emerald-200 rounded text-sm outline-none focus:ring-1 focus:ring-emerald-400" placeholder="Reflexión..." onkeypress="if(event.key === 'Enter') addNota('personales')">
+                                <button onclick="addNota('personales')" class="bg-emerald-500 text-white px-3 rounded hover:bg-emerald-600 transition font-bold">+</button>
+                            </div>
+                            <ul id="lista_personales" class="space-y-2 text-sm"></ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
 
@@ -487,13 +531,23 @@
         let ideas = JSON.parse(localStorage.getItem('contentIdeas')) || [];
         let ejesTags = JSON.parse(localStorage.getItem('ejesTags')) || [];
         let tasks = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
+        
+        // ESTADO INDEPENDIENTE PARA EL BLOG DE NOTAS
+        let blocNotas = JSON.parse(localStorage.getItem('blocNotasTasks')) || { rapidas: [], borradores: [], recursos: [], personales: [] };
+        
         let editandoId = null;
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('aside button').forEach(btn => btn.classList.remove('bg-slate-800'));
             document.getElementById(tabId).classList.add('active');
-            document.getElementById('btn-' + tabId).classList.add('bg-slate-800');
+            
+            // Si no es el blog de notas, aplicamos el fondo estándar. Si es el blog de notas, mantenemos la coherencia de UI.
+            if(tabId !== 'blog_notas') {
+                document.getElementById('btn-' + tabId).classList.add('bg-slate-800');
+            } else {
+                document.getElementById('btn-' + tabId).classList.add('bg-slate-800');
+            }
             
             if(tabId === 'planificador') renderCalendario('mes');
             if(tabId === 'estrategia_resumen') renderEstrategiaResumen();
@@ -601,7 +655,7 @@ function saveStarFormats() {
             renderTags(listId, ejesTags, storageKey);
         }
 
-        // TAREAS / NOTAS
+        // TAREAS (PESTAÑA 2 ORIGINAL)
         function addTask(cat) {
             const input = document.getElementById(`inputTarea_${cat}`);
             if(!input.value.trim()) return;
@@ -611,7 +665,7 @@ function saveStarFormats() {
             localStorage.setItem('contentTasks', JSON.stringify(tasks));
         }
 
-   function renderTasks() {
+       function renderTasks() {
             ['ideas', 'audios', 'tendencias', 'proximos'].forEach(cat => {
                 const list = document.getElementById(`lista_${cat}`);
                 list.innerHTML = '';
@@ -625,6 +679,52 @@ function saveStarFormats() {
                         </div>
                     </li>`;
                 });
+            });
+        }
+
+        // LÓGICA AISLADA PARA BLOG DE NOTAS (PESTAÑA 6)
+        function addNota(cat) {
+            const input = document.getElementById(`inputNota_${cat}`);
+            if(!input.value.trim()) return;
+            blocNotas[cat].push({ text: input.value, done: false });
+            input.value = '';
+            renderNotas();
+            localStorage.setItem('blocNotasTasks', JSON.stringify(blocNotas));
+        }
+
+        function renderNotas() {
+            ['rapidas', 'borradores', 'recursos', 'personales'].forEach(cat => {
+                const list = document.getElementById(`lista_${cat}`);
+                list.innerHTML = '';
+                blocNotas[cat].forEach((t, i) => {
+                    list.innerHTML += `<li draggable="true" ondragstart="dragNota(event, '${cat}', ${i})" class="flex justify-between items-start p-2 bg-slate-50 rounded border hover:bg-white transition cursor-default">
+                        <span onclick="blocNotas['${cat}'][${i}].done = !blocNotas['${cat}'][${i}].done; renderNotas();" class="flex-1 ${t.done ? 'task-done' : ''}">${t.text}</span>
+                        <div class="flex gap-2 ml-2 shrink-0">
+                            <button onclick="copyNotaText('${cat}', ${i})" class="text-emerald-500 hover:text-emerald-700 font-bold" title="Copiar al portapapeles">📋</button>
+                            <button onclick="editNota('${cat}', ${i})" class="text-indigo-400 hover:text-indigo-600 font-bold" title="Editar nota">✏️</button>
+                            <button onclick="blocNotas['${cat}'].splice(${i}, 1); renderNotas(); localStorage.setItem('blocNotasTasks', JSON.stringify(blocNotas));" class="text-red-400 font-bold hover:text-red-600" title="Eliminar nota">×</button>
+                        </div>
+                    </li>`;
+                });
+            });
+        }
+
+        function editNota(cat, index) {
+            const tareaActual = blocNotas[cat][index].text;
+            const nuevoTexto = prompt("Editar nota del blog:", tareaActual);
+            if (nuevoTexto !== null && nuevoTexto.trim() !== "") {
+                blocNotas[cat][index].text = nuevoTexto.trim();
+                localStorage.setItem('blocNotasTasks', JSON.stringify(blocNotas));
+                renderNotas();
+            }
+        }
+
+        function copyNotaText(cat, index) {
+            const textoNota = blocNotas[cat][index].text;
+            navigator.clipboard.writeText(textoNota).then(() => {
+                alert('¡Anotación copiada al portapapeles!');
+            }).catch(err => {
+                console.error('Error al intentar copiar el texto: ', err);
             });
         }
 
@@ -831,7 +931,7 @@ function saveStarFormats() {
             }
         }
 
-        // LÓGICA DE ESTRATEGIA RESUMIDA
+        // LÓGICA DE ESTRATEGIA RESUMIDA (LA PESTAÑA 3 PERMANECE INTACTA DEL BLOG DE NOTAS)
         function renderEstrategiaResumen() {
             const container = document.getElementById('resumenContent');
             const promptArea = document.getElementById('aiPromptArea');
@@ -851,6 +951,7 @@ for(let i=1; i<=3; i++) {
 }
 const seccionFormatos = lineasFormatos.length > 0 ? `\nMIS FORMATOS ESTRELLA (Úsalos para generar las ideas):\n${lineasFormatos.join('\n')}\n` : "";
             
+            // ATENCIÓN AQUÍ: Solo recaba del LocalStorage original "contentTasks", excluyendo al "blocNotasTasks"
             const notasActuales = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
             
             let lineasInsumos = [];
@@ -1052,17 +1153,23 @@ function allowDrop(ev) {
             ev.preventDefault();
         }
 
+        // AISLAMIENTO DE EVENTOS DRAG AND DROP
+        // Modificación a dragTask para agregar identificador tipo "idea"
         function dragTask(ev, cat, index) {
-            ev.dataTransfer.setData("text/plain", JSON.stringify({ sourceCat: cat, taskIndex: index }));
+            ev.dataTransfer.setData("text/plain", JSON.stringify({ block: 'tarea_idea', sourceCat: cat, taskIndex: index }));
         }
 
+        // Modificación a dropTask para asegurar que no acepte tarjetas del "Blog de Notas"
         function dropTask(ev, destCat) {
             ev.preventDefault();
             const dataStr = ev.dataTransfer.getData("text/plain");
             if (!dataStr) return;
             
             try {
-                const { sourceCat, taskIndex } = JSON.parse(dataStr);
+                const parsed = JSON.parse(dataStr);
+                if (parsed.block !== 'tarea_idea') return; // Bloquea tarjetas de otras pestañas
+                
+                const { sourceCat, taskIndex } = parsed;
                 if (sourceCat === destCat) return;
                 
                 // Mueve el objeto de una columna a otra en los arrays de memoria
@@ -1074,9 +1181,37 @@ function allowDrop(ev) {
                 renderTasks();
                 if (typeof renderEstrategiaResumen === "function") renderEstrategiaResumen();
             } catch (err) {
-                console.error("Error al mover la tarjeta:", err);
+                console.error("Error al mover la tarjeta de ideas:", err);
             }
         }
+
+        // Nuevos eventos Drag And Drop exclusivos para el Blog de Notas
+        function dragNota(ev, cat, index) {
+            ev.dataTransfer.setData("text/plain", JSON.stringify({ block: 'nota_bloc', sourceCat: cat, taskIndex: index }));
+        }
+
+        function dropNota(ev, destCat) {
+            ev.preventDefault();
+            const dataStr = ev.dataTransfer.getData("text/plain");
+            if (!dataStr) return;
+            
+            try {
+                const parsed = JSON.parse(dataStr);
+                if (parsed.block !== 'nota_bloc') return; // Bloquea tarjetas que vengan de la pestaña 2
+                
+                const { sourceCat, taskIndex } = parsed;
+                if (sourceCat === destCat) return;
+                
+                const [taskMoved] = blocNotas[sourceCat].splice(taskIndex, 1);
+                blocNotas[destCat].push(taskMoved);
+                
+                localStorage.setItem('blocNotasTasks', JSON.stringify(blocNotas));
+                renderNotas();
+            } catch (err) {
+                console.error("Error al mover la tarjeta del blog:", err);
+            }
+        }
+
         function editTask(cat, index) {
             const tareaActual = tasks[cat][index].text;
             const nuevoTexto = prompt("Editar nota:", tareaActual);
@@ -1109,12 +1244,16 @@ function allowDrop(ev) {
             document.getElementById('strat_conversion').value = localStorage.getItem('strat_conversion') || '';
             document.getElementById('strat_fidelizacion').value = localStorage.getItem('strat_fidelizacion') || '';
             for(let i=1; i<=3; i++) {
-    document.getElementById(`starFormat${i}_name`).value = localStorage.getItem(`starFormat${i}_name`) || '';
-    document.getElementById(`starFormat${i}_desc`).value = localStorage.getItem(`starFormat${i}_desc`) || '';
-}
+                document.getElementById(`starFormat${i}_name`).value = localStorage.getItem(`starFormat${i}_name`) || '';
+                document.getElementById(`starFormat${i}_desc`).value = localStorage.getItem(`starFormat${i}_desc`) || '';
+            }
             renderTags('listaEjes', ejesTags, 'ejesTags');
             setupTagsInput('inputEjes', 'listaEjes', ejesTags, 'ejesTags');
+            
+            // Carga de Paneles Kanban
             renderTasks();
+            renderNotas(); // Renderizado inicial del nuevo Blog
+            
             renderIdeas();
             actualizarSelectFormatosEstrella();
             updateLivePrompt();
