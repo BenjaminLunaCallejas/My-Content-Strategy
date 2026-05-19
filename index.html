@@ -301,48 +301,6 @@
                         </div>
                     </div>
                 </div>
-                ```
-            tablaIAParsed.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                tr.className = "border-b hover:bg-slate-50 transition";
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-slate-700 whitespace-nowrap">${item.dia}</td>
-                    <td class="p-3 text-slate-600 whitespace-nowrap">${item.tipo}</td>
-                    <td class="p-3 font-medium text-indigo-700 min-w-[120px] whitespace-normal">${item.tema}</td>
-                    <td class="p-3 text-slate-600 text-[10px] uppercase font-bold whitespace-nowrap">${item.formato}</td>
-                    <td class="p-3 text-gray-800 min-w-[180px] whitespace-normal italic">${item.hook}</td>
-                    <td class="p-3 text-gray-600 min-w-[150px] whitespace-normal text-[11px]">${item.contenido}</td>
-                    <td class="p-3 text-gray-600 min-w-[200px] whitespace-normal">${item.guionBase}</td>
-                    <td class="p-3 text-indigo-600 min-w-[120px] whitespace-normal text-[11px] font-semibold">${item.cta}</td>
-                    <td class="p-3 text-center sticky right-0 bg-white shadow-[-5px_0_10px_-5px_rgba(0,0,0,0.1)] z-10 border-l border-gray-100">
-                        <button onclick="enviarARepositorio(${index})" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-[10px] font-bold hover:bg-indigo-700 shadow-sm transition whitespace-nowrap">
-                            Producir Guion 🚀
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            container.classList.remove('hidden');
-        }
-
-        function enviarARepositorio(index) {
-            const idea = tablaIAParsed[index];
-            if (!idea) return;
-
-            // Mapeo riguroso de variables según especificaciones técnicas
-            document.getElementById('ideaTitulo').value = idea.hook;
-            document.getElementById('ideaHook').value = idea.hook;
-            
-            // Concatenación estructurada: Propuesta + CTA + Tipo de Formato
-            document.getElementById('ideaGuionBase').value = `${idea.guionBase}\n\nCTA: ${idea.cta}\n(Tipo de Formato: ${idea.formato})`;
-
-            // Redirección y actualización del entorno
-            switchTab('ideas');
-            updateLivePrompt();
-            document.getElementById('ideaTitulo').scrollIntoView({ behavior: 'smooth' });
-        }
-        // --- FIN NUEVO MÓDULO LÓGICO ---
             </section>
 
             <!-- PESTAÑA 4 REUBICADA: REPOSITORIO Y GUIONES -->
