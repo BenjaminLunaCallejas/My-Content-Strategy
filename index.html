@@ -1299,17 +1299,29 @@ function allowDrop(ev) {
                 let columns = [];
                 let raw = row.trim();
                 
-                // Algoritmo de extracción para formato Markdown o Tabulado (Excel/Web)
+                // Algoritmo de extracción multidimensional: Markdown (|), Tabulaciones (\t) o CSV (,)
                 if (raw.includes('|')) {
                     if (raw.startsWith('|')) raw = raw.substring(1);
                     if (raw.endsWith('|')) raw = raw.substring(0, raw.length - 1);
                     columns = raw.split('|').map(c => c.trim());
                 } else if (raw.includes('\t')) {
                     columns = raw.split('\t').map(c => c.trim());
+                } else if (raw.includes(',')) {
+                    // Expresión regular para separar por comas evadiendo las internas en comillas
+                    columns = raw.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => {
+                        let val = c.trim();
+                        // Limpieza de caracteres de escape (comillas residuales)
+                        if (val.startsWith('"') && val.endsWith('"')) {
+                            val = val.substring(1, val.length - 1);
+                        }
+                        // Limpieza de dobles comillas internas de CSV
+                        return val.replace(/""/g, '"');
+                    });
                 }
 
-                // Filtrar descriptores estructurales de Markdown y filas incompletas
+                // Validación de integridad de la fila (mínimo 7 columnas) y omisión de líneas de formato
                 if (columns.length >= 7 && !columns[0].includes('---')) {
+                    // Exclusión del encabezado
                     if (columns[0].toLowerCase().includes('día') || columns[0].toLowerCase().includes('dia')) return;
 
                     tablaIAParsed.push({
@@ -1327,7 +1339,6 @@ function allowDrop(ev) {
 
             renderTablaCalendario();
         }
-
         function renderTablaCalendario() {
             const container = document.getElementById('calendarioTablaContainer');
             const tbody = document.getElementById('calendarioTablaBody');
