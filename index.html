@@ -302,16 +302,6 @@
                     </div>
                 </div>
                 ```
-                ### 2. Actualización de la Lógica de Procesamiento (JavaScript)
-
-Reemplaza la función `procesarTablaPaste()`, `renderTablaCalendario()` y `enviarARepositorio()` en tu sección de scripts por este nuevo bloque.
-
-**Mejoras aplicadas:**
-* Se almacena la matriz de la tabla en `localStorage`.
-* El renderizado ahora expone las 8 columnas completas sin cortar el texto (`truncate` eliminado).
-* Se modificó la asignación de variables en `enviarARepositorio` para cumplir estrictamente con el mapeo lógico solicitado.
-
-```javascript
 // --- NUEVO MÓDULO LÓGICO: PROCESAMIENTO DE TABLAS IA ---
         let tablaIAParsed = [];
 
