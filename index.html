@@ -271,6 +271,34 @@
                         <button onclick="copyPrompt()" class="absolute top-2 right-2 bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-500 transition">Copiar Prompt</button>
                     </div>
                 </div>
+                <!-- NUEVO MÓDULO: TABLA DINÁMICA DEL CALENDARIO GENERADO -->
+                <div class="mt-8 border-t-2 border-indigo-200 pt-6">
+                    <h3 class="text-xl font-bold mb-4 text-indigo-900">📥 Importar y Ejecutar Calendario de IA</h3>
+                    <p class="text-sm text-gray-500 mb-4">Pega en este cuadro la tabla generada por tu IA. El sistema la procesará automáticamente para permitir la exportación de variables al repositorio de guiones.</p>
+                    <textarea id="tablaIAPaste" rows="4" class="w-full p-3 border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400 text-xs custom-scroll bg-indigo-50/20" placeholder="Pega tu tabla aquí (Asegúrate de copiar los datos desde la fila de encabezados)..." oninput="procesarTablaPaste()"></textarea>
+
+                    <div id="calendarioTablaContainer" class="mt-6 hidden">
+                        <div class="overflow-x-auto custom-scroll border rounded-lg shadow-sm">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-indigo-100 text-indigo-900 border-b-2 border-indigo-200">
+                                        <th class="p-3">Día</th>
+                                        <th class="p-3">Tipo</th>
+                                        <th class="p-3">Tema (Título)</th>
+                                        <th class="p-3">Formato</th>
+                                        <th class="p-3">Hook</th>
+                                        <th class="p-3">Propuesta de Guion</th>
+                                        <th class="p-3 text-center">Exportación</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="calendarioTablaBody" class="bg-white">
+                                    <!-- Las filas se inyectarán dinámicamente mediante JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- FIN NUEVO MÓDULO -->
             </section>
 
             <!-- PESTAÑA 4 REUBICADA: REPOSITORIO Y GUIONES -->
@@ -1251,6 +1279,102 @@ function allowDrop(ev) {
                 console.error('Error al intentar copiar el texto: ', err);
             });
         }
+        // --- NUEVO MÓDULO LÓGICO: PROCESAMIENTO DE TABLAS IA ---
+        let tablaIAParsed = [];
+
+        function procesarTablaPaste() {
+            const textarea = document.getElementById('tablaIAPaste');
+            const content = textarea.value.trim();
+            const container = document.getElementById('calendarioTablaContainer');
+            
+            if (!content) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            const rows = content.split(/\r?\n/);
+            tablaIAParsed = [];
+
+            rows.forEach((row) => {
+                let columns = [];
+                let raw = row.trim();
+                
+                // Algoritmo de extracción para formato Markdown o Tabulado (Excel/Web)
+                if (raw.includes('|')) {
+                    if (raw.startsWith('|')) raw = raw.substring(1);
+                    if (raw.endsWith('|')) raw = raw.substring(0, raw.length - 1);
+                    columns = raw.split('|').map(c => c.trim());
+                } else if (raw.includes('\t')) {
+                    columns = raw.split('\t').map(c => c.trim());
+                }
+
+                // Filtrar descriptores estructurales de Markdown y filas incompletas
+                if (columns.length >= 7 && !columns[0].includes('---')) {
+                    if (columns[0].toLowerCase().includes('día') || columns[0].toLowerCase().includes('dia')) return;
+
+                    tablaIAParsed.push({
+                        dia: columns[0] || '',
+                        tipo: columns[1] || '',
+                        tema: columns[2] || '',
+                        formato: columns[3] || '',
+                        hook: columns[4] || '',
+                        contenido: columns[5] || '',
+                        guionBase: columns[6] || '',
+                        cta: columns[7] || ''
+                    });
+                }
+            });
+
+            renderTablaCalendario();
+        }
+
+        function renderTablaCalendario() {
+            const container = document.getElementById('calendarioTablaContainer');
+            const tbody = document.getElementById('calendarioTablaBody');
+            tbody.innerHTML = '';
+
+            if (tablaIAParsed.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            tablaIAParsed.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-3 whitespace-nowrap font-bold text-slate-700">${item.dia}</td>
+                    <td class="p-3 text-slate-600">${item.tipo}</td>
+                    <td class="p-3 font-medium text-indigo-700 max-w-[150px] truncate" title="${item.tema}">${item.tema}</td>
+                    <td class="p-3 text-slate-600 text-[10px] uppercase">${item.formato}</td>
+                    <td class="p-3 text-gray-500 truncate max-w-[150px]" title="${item.hook}">${item.hook}</td>
+                    <td class="p-3 text-gray-500 truncate max-w-[200px]" title="${item.guionBase}">${item.guionBase}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="enviarARepositorio(${index})" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-[10px] font-bold hover:bg-indigo-700 shadow-sm transition">
+                            Producir Guion 🚀
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            container.classList.remove('hidden');
+        }
+
+        function enviarARepositorio(index) {
+            const idea = tablaIAParsed[index];
+            if (!idea) return;
+
+            // Mapeo riguroso de variables de IA a la estructura de datos del repositorio
+            document.getElementById('ideaTitulo').value = `[${idea.dia}] ${idea.tema}`;
+            document.getElementById('ideaHook').value = idea.hook;
+            document.getElementById('ideaGuionBase').value = idea.guionBase;
+
+            // Redirección y actualización del entorno operativo
+            switchTab('ideas');
+            updateLivePrompt();
+            document.getElementById('ideaTitulo').scrollIntoView({ behavior: 'smooth' });
+        }
+        // --- FIN NUEVO MÓDULO LÓGICO ---
         window.onload = () => {
             initArquetipos();
             document.getElementById('temaCentral').value = localStorage.getItem('temaCentral') || '';
