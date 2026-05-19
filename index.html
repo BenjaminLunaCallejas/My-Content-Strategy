@@ -1281,16 +1281,16 @@ function allowDrop(ev) {
                 console.error('Error al intentar copiar el texto: ', err);
             });
         }
-        // --- NUEVO MÓDULO LÓGICO: PROCESAMIENTO DE TABLAS IA ---
+// --- NUEVO MÓDULO LÓGICO: PROCESAMIENTO DE TABLAS IA ---
         let tablaIAParsed = [];
 
-        function procesarTablaPaste() {
+        function guardarYProcesarTabla() {
             const textarea = document.getElementById('tablaIAPaste');
             const content = textarea.value.trim();
             const container = document.getElementById('calendarioTablaContainer');
             
             if (!content) {
-                container.classList.add('hidden');
+                alert("Por favor, ingresa los datos de la tabla antes de continuar.");
                 return;
             }
 
@@ -1301,7 +1301,7 @@ function allowDrop(ev) {
                 let columns = [];
                 let raw = row.trim();
                 
-                // Algoritmo de extracción multidimensional: Markdown (|), Tabulaciones (\t) o CSV (,)
+                // Análisis multidimensional de datos (Markdown, Tabulaciones o CSV)
                 if (raw.includes('|')) {
                     if (raw.startsWith('|')) raw = raw.substring(1);
                     if (raw.endsWith('|')) raw = raw.substring(0, raw.length - 1);
@@ -1309,21 +1309,14 @@ function allowDrop(ev) {
                 } else if (raw.includes('\t')) {
                     columns = raw.split('\t').map(c => c.trim());
                 } else if (raw.includes(',')) {
-                    // Expresión regular para separar por comas evadiendo las internas en comillas
                     columns = raw.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => {
                         let val = c.trim();
-                        // Limpieza de caracteres de escape (comillas residuales)
-                        if (val.startsWith('"') && val.endsWith('"')) {
-                            val = val.substring(1, val.length - 1);
-                        }
-                        // Limpieza de dobles comillas internas de CSV
+                        if (val.startsWith('"') && val.endsWith('"')) val = val.substring(1, val.length - 1);
                         return val.replace(/""/g, '"');
                     });
                 }
 
-                // Validación de integridad de la fila (mínimo 7 columnas) y omisión de líneas de formato
                 if (columns.length >= 7 && !columns[0].includes('---')) {
-                    // Exclusión del encabezado
                     if (columns[0].toLowerCase().includes('día') || columns[0].toLowerCase().includes('dia')) return;
 
                     tablaIAParsed.push({
@@ -1339,8 +1332,13 @@ function allowDrop(ev) {
                 }
             });
 
+            // Guardado persistente
+            localStorage.setItem('tablaIAGuardada', JSON.stringify(tablaIAParsed));
+            textarea.value = ''; // Limpiar el área de ingreso
             renderTablaCalendario();
+            alert("✅ Tabla procesada y guardada con éxito.");
         }
+
         function renderTablaCalendario() {
             const container = document.getElementById('calendarioTablaContainer');
             const tbody = document.getElementById('calendarioTablaBody');
@@ -1355,14 +1353,16 @@ function allowDrop(ev) {
                 const tr = document.createElement('tr');
                 tr.className = "border-b hover:bg-slate-50 transition";
                 tr.innerHTML = `
-                    <td class="p-3 whitespace-nowrap font-bold text-slate-700">${item.dia}</td>
-                    <td class="p-3 text-slate-600">${item.tipo}</td>
-                    <td class="p-3 font-medium text-indigo-700 max-w-[150px] truncate" title="${item.tema}">${item.tema}</td>
-                    <td class="p-3 text-slate-600 text-[10px] uppercase">${item.formato}</td>
-                    <td class="p-3 text-gray-500 truncate max-w-[150px]" title="${item.hook}">${item.hook}</td>
-                    <td class="p-3 text-gray-500 truncate max-w-[200px]" title="${item.guionBase}">${item.guionBase}</td>
-                    <td class="p-3 text-center">
-                        <button onclick="enviarARepositorio(${index})" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-[10px] font-bold hover:bg-indigo-700 shadow-sm transition">
+                    <td class="p-3 font-bold text-slate-700 whitespace-nowrap">${item.dia}</td>
+                    <td class="p-3 text-slate-600 whitespace-nowrap">${item.tipo}</td>
+                    <td class="p-3 font-medium text-indigo-700 min-w-[120px] whitespace-normal">${item.tema}</td>
+                    <td class="p-3 text-slate-600 text-[10px] uppercase font-bold whitespace-nowrap">${item.formato}</td>
+                    <td class="p-3 text-gray-800 min-w-[180px] whitespace-normal italic">${item.hook}</td>
+                    <td class="p-3 text-gray-600 min-w-[150px] whitespace-normal text-[11px]">${item.contenido}</td>
+                    <td class="p-3 text-gray-600 min-w-[200px] whitespace-normal">${item.guionBase}</td>
+                    <td class="p-3 text-indigo-600 min-w-[120px] whitespace-normal text-[11px] font-semibold">${item.cta}</td>
+                    <td class="p-3 text-center sticky right-0 bg-white shadow-[-5px_0_10px_-5px_rgba(0,0,0,0.1)] z-10 border-l border-gray-100">
+                        <button onclick="enviarARepositorio(${index})" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-[10px] font-bold hover:bg-indigo-700 shadow-sm transition whitespace-nowrap">
                             Producir Guion 🚀
                         </button>
                     </td>
@@ -1377,12 +1377,14 @@ function allowDrop(ev) {
             const idea = tablaIAParsed[index];
             if (!idea) return;
 
-            // Mapeo riguroso de variables de IA a la estructura de datos del repositorio
-            document.getElementById('ideaTitulo').value = `[${idea.dia}] ${idea.tema}`;
+            // Mapeo riguroso de variables según especificaciones técnicas
+            document.getElementById('ideaTitulo').value = idea.hook;
             document.getElementById('ideaHook').value = idea.hook;
-            document.getElementById('ideaGuionBase').value = idea.guionBase;
+            
+            // Concatenación estructurada: Propuesta + CTA + Tipo de Formato
+            document.getElementById('ideaGuionBase').value = `${idea.guionBase}\n\nCTA: ${idea.cta}\n(Tipo de Formato: ${idea.formato})`;
 
-            // Redirección y actualización del entorno operativo
+            // Redirección y actualización del entorno
             switchTab('ideas');
             updateLivePrompt();
             document.getElementById('ideaTitulo').scrollIntoView({ behavior: 'smooth' });
