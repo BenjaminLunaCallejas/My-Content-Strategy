@@ -532,6 +532,18 @@
         let ejesTags = JSON.parse(localStorage.getItem('ejesTags')) || [];
         let tasks = JSON.parse(localStorage.getItem('contentTasks')) || { ideas: [], audios: [], tendencias: [], proximos: [] };
         
+        // --- FUNCIÓN NUEVA: CONVIERTE TEXTO EN ENLACES CLICKEABLES ---
+        function linkify(text) {
+            const urlRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)/g;
+            return text.replace(urlRegex, function(url) {
+                let href = url;
+                if (!href.match('^https?:\/\/')) {
+                    href = 'http://' + href;
+                }
+                // event.stopPropagation() es la clave: evita que el clic en el enlace active el tachado
+                return `<a href="${href}" target="_blank" onclick="event.stopPropagation()" class="text-indigo-500 hover:text-indigo-700 underline font-bold">${url}</a>`;
+            });
+        }
         // ESTADO INDEPENDIENTE PARA EL BLOG DE NOTAS
         let blocNotas = JSON.parse(localStorage.getItem('blocNotasTasks')) || { rapidas: [], borradores: [], recursos: [], personales: [] };
         
@@ -671,7 +683,7 @@ function saveStarFormats() {
                 list.innerHTML = '';
                 tasks[cat].forEach((t, i) => {
                     list.innerHTML += `<li draggable="true" ondragstart="dragTask(event, '${cat}', ${i})" class="flex justify-between items-start p-2 bg-slate-50 rounded border hover:bg-white transition cursor-default">
-                        <span onclick="tasks['${cat}'][${i}].done = !tasks['${cat}'][${i}].done; renderTasks();" class="flex-1 ${t.done ? 'task-done' : ''}">${t.text}</span>
+                        <span onclick="tasks['${cat}'][${i}].done = !tasks['${cat}'][${i}].done; renderTasks();" class="flex-1 ${t.done ? 'task-done' : ''}">${linkify(t.text)}</span>
                         <div class="flex gap-2 ml-2 shrink-0">
                             <button onclick="copyTaskText('${cat}', ${i})" class="text-emerald-500 hover:text-emerald-700 font-bold" title="Copiar al portapapeles">📋</button>
                             <button onclick="editTask('${cat}', ${i})" class="text-indigo-400 hover:text-indigo-600 font-bold" title="Editar nota">✏️</button>
@@ -698,7 +710,7 @@ function saveStarFormats() {
                 list.innerHTML = '';
                 blocNotas[cat].forEach((t, i) => {
                     list.innerHTML += `<li draggable="true" ondragstart="dragNota(event, '${cat}', ${i})" class="flex justify-between items-start p-2 bg-slate-50 rounded border hover:bg-white transition cursor-default">
-                        <span onclick="blocNotas['${cat}'][${i}].done = !blocNotas['${cat}'][${i}].done; renderNotas();" class="flex-1 ${t.done ? 'task-done' : ''}">${t.text}</span>
+                        <span onclick="blocNotas['${cat}'][${i}].done = !blocNotas['${cat}'][${i}].done; renderNotas();" class="flex-1 ${t.done ? 'task-done' : ''}">${linkify(t.text)}</span>
                         <div class="flex gap-2 ml-2 shrink-0">
                             <button onclick="copyNotaText('${cat}', ${i})" class="text-emerald-500 hover:text-emerald-700 font-bold" title="Copiar al portapapeles">📋</button>
                             <button onclick="editNota('${cat}', ${i})" class="text-indigo-400 hover:text-indigo-600 font-bold" title="Editar nota">✏️</button>
