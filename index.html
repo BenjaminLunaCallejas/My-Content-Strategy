@@ -312,7 +312,7 @@ Reemplaza la función `procesarTablaPaste()`, `renderTablaCalendario()` y `envia
 * Se modificó la asignación de variables en `enviarARepositorio` para cumplir estrictamente con el mapeo lógico solicitado.
 
 ```javascript
-        // --- NUEVO MÓDULO LÓGICO: PROCESAMIENTO DE TABLAS IA ---
+// --- NUEVO MÓDULO LÓGICO: PROCESAMIENTO DE TABLAS IA ---
         let tablaIAParsed = [];
 
         function guardarYProcesarTabla() {
@@ -367,7 +367,7 @@ Reemplaza la función `procesarTablaPaste()`, `renderTablaCalendario()` y `envia
             localStorage.setItem('tablaIAGuardada', JSON.stringify(tablaIAParsed));
             textarea.value = ''; // Limpiar el área de ingreso
             renderTablaCalendario();
-            alert("✅ Tabla procesada y guardada en el entorno operativo.");
+            alert("✅ Tabla procesada y guardada con éxito.");
         }
 
         function renderTablaCalendario() {
@@ -413,14 +413,14 @@ Reemplaza la función `procesarTablaPaste()`, `renderTablaCalendario()` y `envia
             document.getElementById('ideaHook').value = idea.hook;
             
             // Concatenación estructurada: Propuesta + CTA + Tipo de Formato
-            document.getElementById('ideaGuionBase').value = `${idea.guionBase}\nCTA: ${idea.cta}\n(Tipo de Formato: ${idea.formato})`;
+            document.getElementById('ideaGuionBase').value = `${idea.guionBase}\n\nCTA: ${idea.cta}\n(Tipo de Formato: ${idea.formato})`;
 
             // Redirección y actualización del entorno
             switchTab('ideas');
             updateLivePrompt();
             document.getElementById('ideaTitulo').scrollIntoView({ behavior: 'smooth' });
         }
- // --- FIN NUEVO MÓDULO LÓGICO ---
+        // --- FIN NUEVO MÓDULO LÓGICO ---
             </section>
 
             <!-- PESTAÑA 4 REUBICADA: REPOSITORIO Y GUIONES -->
