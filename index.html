@@ -1438,6 +1438,7 @@ function archiveTask(cat, index) {
     localStorage.setItem('historyTasks', JSON.stringify(historyTasks));
     renderTasks();
     renderHistoryTasks();
+    renderHistoryNotas();
 }
 
 function restoreTask(index) {
@@ -1447,6 +1448,7 @@ function restoreTask(index) {
     localStorage.setItem('historyTasks', JSON.stringify(historyTasks));
     renderTasks();
     renderHistoryTasks();
+    renderHistoryNotas();
 }
 
 function renderHistoryTasks() {
