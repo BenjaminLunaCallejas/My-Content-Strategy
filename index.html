@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: block; }Estrategia de Contenido Resumida
         .tag { display: inline-flex; align-items: center; background-color: #e2e8f0; color: #1e293b; padding: 0.25rem 0.75rem; border-radius: 9999px; margin: 0.25rem; font-size: 0.875rem; }
         .tag button { margin-left: 0.5rem; color: #ef4444; font-weight: bold; }
         .task-done { text-decoration: line-through; opacity: 0.6; }
@@ -259,17 +259,17 @@
     <h3 class="text-xl font-bold mb-2 text-indigo-800 flex items-center gap-2">⭐ Formatos Estrella</h3>
     <p class="text-xs text-gray-500 mb-4 italic">Define hasta 3 formatos ganadores para que la IA los considere en el calendario.</p>
     
-   <div class="space-y-4">
+<div class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <input type="text" id="starFormat1_name" onblur="saveStarFormats()" placeholder="Nombre Formato Estrella 1 (Ej: Qué tan probable es...?)" class="w-full p-3 border rounded-lg text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-indigo-400">
+            <textarea id="starFormat1_name" onblur="saveStarFormats()" placeholder="Nombre Formato Estrella 1 (Ej: Qué tan probable es...?)" class="w-full p-3 border rounded-lg text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-indigo-400 custom-scroll" rows="2"></textarea>
             <textarea id="starFormat1_desc" onblur="saveStarFormats()" placeholder="Descripción del formato estrella 1..." class="w-full p-3 border rounded-lg text-xs md:col-span-2 shadow-sm outline-none focus:ring-2 focus:ring-indigo-400 custom-scroll" rows="2"></textarea>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <input type="text" id="starFormat2_name" onblur="saveStarFormats()" placeholder="Nombre Formato Estrella 2 (Ej: ¿Sabías qué...?)" class="w-full p-3 border rounded-lg text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-indigo-400">
+            <textarea id="starFormat2_name" onblur="saveStarFormats()" placeholder="Nombre Formato Estrella 2 (Ej: ¿Sabías qué...?)" class="w-full p-3 border rounded-lg text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-indigo-400 custom-scroll" rows="2"></textarea>
             <textarea id="starFormat2_desc" onblur="saveStarFormats()" placeholder="Descripción del formato estrella 2..." class="w-full p-3 border rounded-lg text-xs md:col-span-2 shadow-sm outline-none focus:ring-2 focus:ring-indigo-400 custom-scroll" rows="2"></textarea>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <input type="text" id="starFormat3_name" onblur="saveStarFormats()" placeholder="Nombre Formato Estrella 3 (Ej: Esto es lo que tienes que hacer para que tú...)" class="w-full p-3 border rounded-lg text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-indigo-400">
+            <textarea id="starFormat3_name" onblur="saveStarFormats()" placeholder="Nombre Formato Estrella 3 (Ej: Esto es lo que tienes que hacer para que tú...)" class="w-full p-3 border rounded-lg text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-indigo-400 custom-scroll" rows="2"></textarea>
             <textarea id="starFormat3_desc" onblur="saveStarFormats()" placeholder="Descripción del formato estrella 3..." class="w-full p-3 border rounded-lg text-xs md:col-span-2 shadow-sm outline-none focus:ring-2 focus:ring-indigo-400 custom-scroll" rows="2"></textarea>
         </div>
     </div>
