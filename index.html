@@ -246,6 +246,10 @@
                         </div>
                     </div>
                 </div>
+                    <div class="mt-8 border-t pt-4">
+    <h4 class="font-bold text-gray-700 text-sm mb-2">Historial de Tareas Completadas</h4>
+    <div id="history-list-tasks" class="max-h-40 overflow-y-auto"></div>
+</div>
             </section>
 
             <!-- PESTAÑA 3 REUBICADA: ESTRATEGIA DE CONTENIDO -->
@@ -540,6 +544,10 @@
                         </div>
                     </div>
                 </div>
+                <div class="mt-8 border-t pt-4">
+    <h4 class="font-bold text-gray-700 text-sm mb-2">Historial de Notas Completadas</h4>
+    <div id="history-list-notas" class="max-h-40 overflow-y-auto"></div>
+</div>
             </section>
 
         </main>
@@ -617,7 +625,11 @@
             if(tabId === 'estrategia_resumen') renderEstrategiaResumen();
             if(tabId === 'ideas') actualizarSelectFormatosEstrella();
         }
-
+        
+// Agrega esto debajo de let tasks y let blocNotas
+let historyTasks = JSON.parse(localStorage.getItem('historyTasks')) || [];
+let historyNotas = JSON.parse(localStorage.getItem('historyNotas')) || [];
+        
         // ESTRATEGIA & ARQUETIPOS
         function initArquetipos() {
             const container = document.getElementById('arquetiposContainer');
@@ -739,7 +751,8 @@ function saveStarFormats() {
                         <div class="flex gap-2 ml-2 shrink-0">
                             <button onclick="copyTaskText('${cat}', ${i})" class="text-emerald-500 hover:text-emerald-700 font-bold" title="Copiar al portapapeles">📋</button>
                             <button onclick="editTask('${cat}', ${i})" class="text-indigo-400 hover:text-indigo-600 font-bold" title="Editar nota">✏️</button>
-                            <button onclick="tasks['${cat}'].splice(${i}, 1); renderTasks(); localStorage.setItem('contentTasks', JSON.stringify(tasks));" class="text-red-400 font-bold hover:text-red-600" title="Eliminar nota">×</button>
+                            // Dentro de la cadena de renderTasks():
+                            <button onclick="archiveTask('${cat}', ${i})" class="text-red-400 font-bold hover:text-red-600" title="Eliminar / Archivar nota">×</button>
                         </div>
                     </li>`;
                 });
@@ -766,7 +779,8 @@ function saveStarFormats() {
                         <div class="flex gap-2 ml-2 shrink-0">
                             <button onclick="copyNotaText('${cat}', ${i})" class="text-emerald-500 hover:text-emerald-700 font-bold" title="Copiar al portapapeles">📋</button>
                             <button onclick="editNota('${cat}', ${i})" class="text-indigo-400 hover:text-indigo-600 font-bold" title="Editar nota">✏️</button>
-                            <button onclick="blocNotas['${cat}'].splice(${i}, 1); renderNotas(); localStorage.setItem('blocNotasTasks', JSON.stringify(blocNotas));" class="text-red-400 font-bold hover:text-red-600" title="Eliminar nota">×</button>
+                            // Dentro de la cadena de renderNotas():
+                            <button onclick="archiveNota('${cat}', ${i})" class="text-red-400 font-bold hover:text-red-600" title="Eliminar / Archivar nota">×</button>
                         </div>
                     </li>`;
                 });
@@ -1416,6 +1430,63 @@ function allowDrop(ev) {
             updateLivePrompt();
             document.getElementById('ideaTitulo').scrollIntoView({ behavior: 'smooth' });
         }
+        // --- LÓGICA DE HISTORIAL DE TAREAS (Tab 2) ---
+function archiveTask(cat, index) {
+    const item = tasks[cat].splice(index, 1)[0];
+    historyTasks.push({ cat: cat, text: item.text });
+    localStorage.setItem('contentTasks', JSON.stringify(tasks));
+    localStorage.setItem('historyTasks', JSON.stringify(historyTasks));
+    renderTasks();
+    renderHistoryTasks();
+}
+
+function restoreTask(index) {
+    const item = historyTasks.splice(index, 1)[0];
+    tasks[item.cat].push({ text: item.text, done: false });
+    localStorage.setItem('contentTasks', JSON.stringify(tasks));
+    localStorage.setItem('historyTasks', JSON.stringify(historyTasks));
+    renderTasks();
+    renderHistoryTasks();
+}
+
+function renderHistoryTasks() {
+    const container = document.getElementById('history-list-tasks');
+    container.innerHTML = historyTasks.map((item, i) => `
+        <div class="flex justify-between items-center bg-gray-50 p-2 text-xs rounded border mb-1">
+            <span>${item.text} <span class="text-[9px] text-gray-400">(${item.cat})</span></span>
+            <button onclick="restoreTask(${i})" class="text-indigo-600 font-bold ml-2 hover:underline">↺ Restaurar</button>
+        </div>
+    `).join('');
+}
+
+// --- LÓGICA DE HISTORIAL DE NOTAS (Tab 6) ---
+function archiveNota(cat, index) {
+    const item = blocNotas[cat].splice(index, 1)[0];
+    historyNotas.push({ cat: cat, text: item.text });
+    localStorage.setItem('blocNotasTasks', JSON.stringify(blocNotas));
+    localStorage.setItem('historyNotas', JSON.stringify(historyNotas));
+    renderNotas();
+    renderHistoryNotas();
+}
+
+function restoreNota(index) {
+    const item = historyNotas.splice(index, 1)[0];
+    blocNotas[item.cat].push({ text: item.text, done: false });
+    localStorage.setItem('blocNotasTasks', JSON.stringify(blocNotas));
+    localStorage.setItem('historyNotas', JSON.stringify(historyNotas));
+    renderNotas();
+    renderHistoryNotas();
+}
+
+function renderHistoryNotas() {
+    const container = document.getElementById('history-list-notas');
+    container.innerHTML = historyNotas.map((item, i) => `
+        <div class="flex justify-between items-center bg-gray-50 p-2 text-xs rounded border mb-1">
+            <span>${item.text} <span class="text-[9px] text-gray-400">(${item.cat})</span></span>
+            <button onclick="restoreNota(${i})" class="text-emerald-600 font-bold ml-2 hover:underline">↺ Restaurar</button>
+        </div>
+    `).join('');
+}
         // --- FIN NUEVO MÓDULO LÓGICO ---
         window.onload = () => {
             initArquetipos();
