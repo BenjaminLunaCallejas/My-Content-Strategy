@@ -18,12 +18,6 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* NUEVO: Fuerza a la tabla a no desbordarse hacia los lados */
-        table {
-            table-layout: fixed; 
-            width: 100%;
-        }
-
         /* Calendario */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: 1px; background-color: #e2e8f0; border: 1px solid #e2e8f0; }
         .calendar-day { background-color: white; min-height: 120px; padding: 0.5rem; overflow-y: auto; }
@@ -288,7 +282,7 @@
 </button>
                     <div id="calendarioTablaContainer" class="mt-6 hidden">
                         <div class="overflow-x-auto custom-scroll border rounded-lg shadow-sm relative">
-                            <table class="w-full text-left text-xs border-collapse min-w-max">
+                           <table class="w-full text-left text-xs border-collapse min-w-[1200px]">
                                 <thead>
                                     <tr class="bg-indigo-100 text-indigo-900 border-b-2 border-indigo-200">
                                         <th class="p-3">Día</th>
@@ -1347,38 +1341,39 @@ function allowDrop(ev) {
         }
 
  function renderTablaCalendario() {
-            const container = document.getElementById('calendarioTablaContainer');
-            const tbody = document.getElementById('calendarioTablaBody');
-            tbody.innerHTML = '';
+    const container = document.getElementById('calendarioTablaContainer');
+    const tbody = document.getElementById('calendarioTablaBody');
+    tbody.innerHTML = '';
 
-            if (tablaIAParsed.length === 0) {
-                container.classList.add('hidden');
-                return;
-            }
+    if (tablaIAParsed.length === 0) {
+        container.classList.add('hidden');
+        return;
+    }
 
-            tablaIAParsed.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                tr.className = "border-b hover:bg-slate-50 transition";
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-slate-700 w-16">${item.dia}</td>
-                    <td class="p-3 text-slate-600 w-20 break-words">${item.tipo}</td>
-                    <td class="p-3 font-medium text-indigo-700 w-32 break-words">${item.tema}</td>
-                    <td class="p-3 text-slate-600 text-[10px] uppercase font-bold w-20 break-words">${item.formato}</td>
-                    <td class="p-3 text-gray-800 w-40 break-words">${item.hook}</td>
-                    <td class="p-3 text-gray-600 w-48 break-words">${item.contenido}</td>
-                    <td class="p-3 text-gray-600 w-64 break-words">${item.guionBase}</td>
-                    <td class="p-3 text-indigo-600 w-24 break-words">${item.cta}</td>
-                    <td class="p-3 text-center w-24 sticky right-0 bg-white border-l shadow-[-5px_0_10px_-5px_rgba(0,0,0,0.1)]">
-                        <button onclick="enviarARepositorio(${index})" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-[10px] font-bold hover:bg-indigo-700 transition">
-                            Producir 🚀
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+    tablaIAParsed.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b hover:bg-slate-50 transition";
+        // Anchos porcentuales y alineación superior (align-top) para estética impecable
+        tr.innerHTML = `
+            <td class="p-3 font-bold text-slate-700 w-[4%] align-top">${item.dia}</td>
+            <td class="p-3 text-slate-600 w-[6%] align-top break-words">${item.tipo}</td>
+            <td class="p-3 font-medium text-indigo-700 w-[12%] align-top break-words">${item.tema}</td>
+            <td class="p-3 text-slate-600 text-[10px] uppercase font-bold w-[8%] align-top break-words">${item.formato}</td>
+            <td class="p-3 text-gray-800 w-[15%] align-top whitespace-normal break-words italic">${item.hook}</td>
+            <td class="p-3 text-gray-600 w-[15%] align-top whitespace-normal break-words">${item.contenido}</td>
+            <td class="p-3 text-gray-700 w-[25%] align-top whitespace-normal break-words leading-relaxed">${item.guionBase}</td>
+            <td class="p-3 text-indigo-600 w-[10%] align-top whitespace-normal break-words font-semibold">${item.cta}</td>
+            <td class="p-3 text-center align-middle sticky right-0 bg-white border-l border-gray-100 shadow-[-5px_0_10px_-5px_rgba(0,0,0,0.1)] z-10 w-[100px]">
+                <button onclick="enviarARepositorio(${index})" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-[10px] font-bold hover:bg-indigo-700 shadow-sm transition whitespace-nowrap">
+                    Producir 🚀
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
 
-            container.classList.remove('hidden');
-        }
+    container.classList.remove('hidden');
+}
 
         function enviarARepositorio(index) {
             const idea = tablaIAParsed[index];
