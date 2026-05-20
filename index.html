@@ -1442,6 +1442,10 @@ function allowDrop(ev) {
         function autoResizeTextarea() {
             const textareas = document.querySelectorAll('textarea');
             textareas.forEach(textarea => {
+                const adjust = function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        };
                 textarea.addEventListener('input', function() {
                     this.style.height = 'auto'; 
                     this.style.height = (this.scrollHeight) + 'px'; 
