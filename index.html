@@ -110,19 +110,13 @@
                         <input type="text" id="temaCentral" onblur="guardarTemaCentralAuto()" placeholder="Ej. Emprendimiento STEAM y Ciencia" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                     
-                    <div class="border-t pt-4">
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">Nombre y descripción del Creador de Contenido</label>
-                        <p class="text-xs text-gray-500 mb-2">Para conocer más de ti indica cuál es el nombre de tu marca y describre tus intereses, hobbies, talentos y características personales. Esta información humanizará tu estrategia y se integrará en el prompt de la IA.</p>
-                        <textarea id="descCreador" onblur="saveStrategyExtras()" rows="2" placeholder="Ej. Soy @Belucaa Gamer y me encanta tocar la guitarra, soy fan de la ciencia ficción, y disfruto el diseño digital..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none custom-scroll"></textarea>
-                    </div>
-
-                    <div class="border-t pt-4 mt-4">
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">Identidad y Tono de Comunicación</label>
-                        <p class="text-xs text-gray-500 mb-2">Define la identidad de tu marca (personalidad, propósito, valor diferencial), tu tono de voz, y el estilo de tu comunicación. <br><span class="font-medium">Ejemplo:</span> <em>Mi personalidad mezcla los arquetipos de “El Sabio” y “El Bufón”. Mi propósito es despertar curiosidad y motivar a las personas a aprender mientras se entretienen. Mi valor diferencial es combinar ciencia y humor, haciendo que conceptos complejos se vuelvan virales y accesibles.Tono académico pero accesible, uso lenguaje científico intercalado con referencias de la cultura pop, evito el sarcasmo, ritmo rápido y directo.</em></p>
-                        <textarea id="identidadTono" onblur="saveStrategyExtras()" rows="2" placeholder="Ej. Mi tono es inspirador, riguroso y disruptivo..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none custom-scroll"></textarea>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
+                           <div class="mb-6 border-t pt-6">
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Ejes Transversales (Pilares Secundarios)</label>
+                    <p class="text-xs text-gray-500 mb-2">Temáticas complementarias que cruzan tu contenido principal para humanizar la marca, generar afinidad o alcanzar a una audiencia más amplia. <br><span class="font-medium">Ejemplo:</span> <em>Productividad para académicos, Salud mental en el laboratorio, Análisis de herramientas digitales.</em></p>
+                    <input type="text" id="inputEjes" placeholder="Escribe un eje secundario y presiona Enter..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none mb-2">
+                    <div id="listaEjes" class="flex flex-wrap"></div>
+                </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Nicho de Contenido</label>
                             <select id="nichoContenido" onchange="saveStrategyExtras()" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
@@ -149,21 +143,25 @@
                             <input type="text" id="publicoObjetivo" onblur="saveStrategyExtras()" placeholder="¿A quién diriges tus videos?" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                         </div>
                     </div>
-                    
-                    <div>
+                    <div class="border-t pt-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Nombre y descripción del Creador de Contenido</label>
+                        <p class="text-xs text-gray-500 mb-2">Para conocer más de ti indica cuál es el nombre de tu marca y describre tus intereses, hobbies, talentos y características personales. Esta información humanizará tu estrategia y se integrará en el prompt de la IA.</p>
+                        <textarea id="descCreador" onblur="saveStrategyExtras()" rows="2" placeholder="Ej. Soy @Belucaa Gamer y me encanta tocar la guitarra, soy fan de la ciencia ficción, y disfruto el diseño digital..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none custom-scroll"></textarea>
+                    </div>
+
+                          <div>
                         <label class="block text-sm font-semibold text-gray-600 mb-2">Arquetipos de Marca (Selecciona máximo 2 para evitar dilución de mensaje)</label>
                         <div id="arquetiposContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg bg-gray-50 max-h-64 overflow-y-auto custom-scroll"></div>
                         <div id="arquetipoDescripcion" class="mt-4 p-5 bg-indigo-50 border-l-4 border-indigo-500 text-sm text-indigo-900 hidden"></div>
                     </div>
                 </div>
 
-                <div class="mb-6 border-t pt-6">
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">Ejes Transversales (Pilares Secundarios)</label>
-                    <p class="text-xs text-gray-500 mb-2">Temáticas complementarias que cruzan tu contenido principal para humanizar la marca, generar afinidad o alcanzar a una audiencia más amplia. <br><span class="font-medium">Ejemplo:</span> <em>Productividad para académicos, Salud mental en el laboratorio, Análisis de herramientas digitales.</em></p>
-                    <input type="text" id="inputEjes" placeholder="Escribe un eje secundario y presiona Enter..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none mb-2">
-                    <div id="listaEjes" class="flex flex-wrap"></div>
-                </div>
-
+                    <div class="border-t pt-4 mt-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Identidad y Tono de Comunicación</label>
+                        <p class="text-xs text-gray-500 mb-2">Define la identidad de tu marca (personalidad, propósito, valor diferencial), tu tono de voz, y el estilo de tu comunicación. <br><span class="font-medium">Ejemplo:</span> <em>Mi personalidad mezcla los arquetipos de “El Sabio” y “El Bufón”. Mi propósito es despertar curiosidad y motivar a las personas a aprender mientras se entretienen. Mi valor diferencial es combinar ciencia y humor, haciendo que conceptos complejos se vuelvan virales y accesibles.Tono académico pero accesible, uso lenguaje científico intercalado con referencias de la cultura pop, evito el sarcasmo, ritmo rápido y directo.</em></p>
+                        <textarea id="identidadTono" onblur="saveStrategyExtras()" rows="2" placeholder="Ej. Mi tono es inspirador, riguroso y disruptivo..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none custom-scroll"></textarea>
+                    </div>
+                    
                 <div class="mb-6 border-t pt-6">
                     <label class="block text-sm font-semibold text-gray-800 mb-4 bg-slate-100 p-2 rounded">Objetivos del Contenido (Redacción obligatoria)</label>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
