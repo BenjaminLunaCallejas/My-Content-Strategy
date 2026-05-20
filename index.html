@@ -109,7 +109,13 @@
                         <p class="text-xs text-gray-500 mb-2">Representa tu nicho principal y área de mayor rigor o <em>expertise</em>. Es el núcleo primario por el que tu audiencia te reconocerá como referente. <br><span class="font-medium">Ejemplo:</span> <em>Emprendimiento STEAM, Astrofísica Aplicada, Biotecnología.</em></p>
                         <input type="text" id="temaCentral" onblur="guardarTemaCentralAuto()" placeholder="Ej. Emprendimiento STEAM y Ciencia" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
-
+                    
+                    <div class="border-t pt-4 mt-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Identidad y Tono de Comunicación</label>
+                        <p class="text-xs text-gray-500 mb-2">Define la identidad de tu marca, su tono de voz, el estilo de tu comunicación y los modismos o características verbales que empleas. Esta variable parametrizará el modelo de lenguaje para mantener consistencia. <br><span class="font-medium">Ejemplo:</span> <em>Tono académico pero accesible, uso lenguaje científico intercalado con referencias de la cultura pop, evito el sarcasmo, ritmo rápido y directo.</em></p>
+                        <textarea id="identidadTono" onblur="saveStrategyExtras()" rows="2" placeholder="Ej. Mi tono es inspirador, riguroso y disruptivo..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none custom-scroll"></textarea>
+                    </div>
+                    
                     <div class="border-t pt-4">
                         <label class="block text-sm font-semibold text-gray-600 mb-1">Nombre y descripción del Creador de Contenido</label>
                         <p class="text-xs text-gray-500 mb-2">Para conocer más de ti indica cuál es el nombre de tu marca y describre tus intereses, hobbies, talentos y características personales. Esta información humanizará tu estrategia y se integrará en el prompt de la IA.</p>
@@ -650,12 +656,12 @@
             setTimeout(() => status.style.opacity = 0, 2000);
         }
 
-        function saveStrategyExtras() {
+function saveStrategyExtras() {
             localStorage.setItem('nichoContenido', document.getElementById('nichoContenido').value);
             localStorage.setItem('publicoObjetivo', document.getElementById('publicoObjetivo').value);
             localStorage.setItem('descCreador', document.getElementById('descCreador').value);
+            localStorage.setItem('identidadTono', document.getElementById('identidadTono').value); // LÍNEA AÑADIDA
         }
-
         function saveFunnel() {
             localStorage.setItem('strat_awareness', document.getElementById('strat_awareness').value);
             localStorage.setItem('strat_consideracion', document.getElementById('strat_consideracion').value);
@@ -989,6 +995,7 @@ function saveStarFormats() {
             const nicho = localStorage.getItem('nichoContenido') || 'No definido';
             const publico = localStorage.getItem('publicoObjetivo') || 'No definido';
             const creador = localStorage.getItem('descCreador') || 'No definido';
+            const tono = localStorage.getItem('identidadTono') || 'Tono no definido';
             const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || [];
             const ejes = JSON.parse(localStorage.getItem('ejesTags')) || [];
             // Carga de Formatos Estrella para el Prompt
@@ -1032,6 +1039,10 @@ const seccionFormatos = lineasFormatos.length > 0 ? `\nMIS FORMATOS ESTRELLA (Ú
                             <h4 class="text-xs font-bold text-gray-400 uppercase">Nombre y descripción del Creador (Talentos, Hobbies)</h4>
                             <p class="text-sm text-slate-700 mt-1">${creador}</p>
                         </div>
+                        <div class="p-4 bg-slate-50 rounded-lg border md:col-span-2">
+                            <h4 class="text-xs font-bold text-gray-400 uppercase">Identidad y Tono de Comunicación</h4>
+                            <p class="text-sm text-slate-700 mt-1">${tono}</p>
+                        </div>
                     </div>`;
             }
 
@@ -1039,6 +1050,7 @@ const seccionFormatos = lineasFormatos.length > 0 ? `\nMIS FORMATOS ESTRELLA (Ú
 CONTEXTO:
 - Nicho: ${nicho} | Tema de autoridad: ${tema}
 - Nombre y descripción del Creador: ${creador}
+- Identidad y Tono de Comunicación: ${tono}
 - Personalidad (Arquetipos): ${arq.join(', ')} | Público: ${publico}
 - Ejes Transversales: ${ejes.join(', ')}
 ${seccionFormatos}
@@ -1057,7 +1069,7 @@ REGLAS CRÍTICAS:
 4. El contenido debe resolver algún problema o dar un tema de interés para mi público objetivo. Además debe ser lógico, preciso y entretenido.
 5. DURACIÓN: Contenido diseñado para videos de máximo 39 segundos.
 6. El contenido total debe distribuirse en 70% de contenido de valor, 20% de contenido de marca y 10% de contenido de presencia. Y del total de contenidos, un 70% deben derivar del formato estrella y el resto es formaot libre. Además, el 50% de los contenidos deben ser enfocados en el tema central puro, mientras que el 50% restante se destinará a los ejes transversales, los cuales deberán abordarse de manera individual por cada pieza y estar estrictamente fundamentados en su intersección con el tema central.
-7. TONO: Coherente con los arquetipos ${arq.join(' y ')}.`;
+7. TONO: Coherente con los arquetipos ${arq.join(' y ')}. Aplica estrictamente este tono y estilo particular del creador: ${tono}.`;
             if (promptArea) promptArea.value = prompt;
         }
 
@@ -1099,14 +1111,18 @@ REGLAS CRÍTICAS:
             
             // Variables de Estrategia (Globales / LocalStorage)
             const tema = localStorage.getItem('temaCentral') || "mi pilar de autoridad";
+            const creador = localStorage.getItem('descCreador') || "No definido";
             const nicho = localStorage.getItem('nichoContenido') || "No definido";
             const publico = localStorage.getItem('publicoObjetivo') || "mi audiencia objetivo";
             const arq = JSON.parse(localStorage.getItem('arquetiposSeleccionados')) || ["El Sabio"];
             const ejes = JSON.parse(localStorage.getItem('ejesTags')) || ["mis temas secundarios"];
+            const tono = localStorage.getItem('identidadTono') || "Tono profesional y adecuado al nicho";
             
             area.value = `Actúa como un guionista experto en redes sociales. 
 MI PERFIL ESTRATÉGICO:
 - Tema central (Autoridad): ${tema}
+- Nombre y descripción del Creador: ${creador}
+- Identidad y Tono de Comunicación: ${tono}
 - Nicho: ${nicho} 
 - Personalidad (Arquetipos): ${arq.join(', ')} 
 - Público Objetivo: ${publico}
@@ -1122,7 +1138,7 @@ ESPECIFICACIONES TÉCNICAS DEL VIDEO:
 - GANCHO (Hook) PROPUESTO: "${hook}"${especificacionesOpcionales}
 
 INSTRUCCIONES DE REDACCIÓN:
-1. TONO: Dinámico, profesional pero accesible. DEBE SER MEMORABLE, EMOCIONAL Y ENTRETENIDO.
+1. TONO: Debe estar escrito obligatoriamente bajo esta directriz: ${tono}. DEBE SER MEMORABLE, EMOCIONAL Y ENTRETENIDO.
 2. CALIDAD: Entrega información de valor y precisa o propone un microresultado. El desarrollo debe explicar el tema para que todos entiendan pero con información oficial, confiable y un contexto teórico útil. Evita lo superficial; debe ser relevante, específico y completo.
 3. ESTRUCTURA: Diseña el guion en UN SOLO PÁRRAFO. Debe incluir: Hook verbal interesante (promesa del video, es decir lo que verá el público) + Frase breve de refuerzo + Desarrollo (debe ser dinámico, incluir hooks anidados o preguntas interesantes durante el desarrollo para mantener la atención del público) + Llamado a la acción (CTA).
 4. RESTRICCIONES: No especifiques las partes en el video. Evita figuras retóricas. PROHIBIDO PRESENTARSE (Ej: "Hola soy...", "En este video hablaremos de..."). Evita saludos o temarios.
@@ -1396,6 +1412,7 @@ function allowDrop(ev) {
             initArquetipos();
             document.getElementById('temaCentral').value = localStorage.getItem('temaCentral') || '';
             document.getElementById('descCreador').value = localStorage.getItem('descCreador') || '';
+            document.getElementById('identidadTono').value = localStorage.getItem('identidadTono') || '';
             document.getElementById('nichoContenido').value = localStorage.getItem('nichoContenido') || '';
             document.getElementById('publicoObjetivo').value = localStorage.getItem('publicoObjetivo') || '';
             document.getElementById('strat_awareness').value = localStorage.getItem('strat_awareness') || '';
