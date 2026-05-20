@@ -110,18 +110,18 @@
                         <input type="text" id="temaCentral" onblur="guardarTemaCentralAuto()" placeholder="Ej. Emprendimiento STEAM y Ciencia" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                     
-                    <div class="border-t pt-4 mt-4">
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">Identidad y Tono de Comunicación</label>
-                        <p class="text-xs text-gray-500 mb-2">Define la identidad de tu marca, su tono de voz, el estilo de tu comunicación y los modismos o características verbales que empleas. Esta variable parametrizará el modelo de lenguaje para mantener consistencia. <br><span class="font-medium">Ejemplo:</span> <em>Tono académico pero accesible, uso lenguaje científico intercalado con referencias de la cultura pop, evito el sarcasmo, ritmo rápido y directo.</em></p>
-                        <textarea id="identidadTono" onblur="saveStrategyExtras()" rows="2" placeholder="Ej. Mi tono es inspirador, riguroso y disruptivo..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none custom-scroll"></textarea>
-                    </div>
-                    
                     <div class="border-t pt-4">
                         <label class="block text-sm font-semibold text-gray-600 mb-1">Nombre y descripción del Creador de Contenido</label>
                         <p class="text-xs text-gray-500 mb-2">Para conocer más de ti indica cuál es el nombre de tu marca y describre tus intereses, hobbies, talentos y características personales. Esta información humanizará tu estrategia y se integrará en el prompt de la IA.</p>
                         <textarea id="descCreador" onblur="saveStrategyExtras()" rows="2" placeholder="Ej. Soy @Belucaa Gamer y me encanta tocar la guitarra, soy fan de la ciencia ficción, y disfruto el diseño digital..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none custom-scroll"></textarea>
                     </div>
 
+                    <div class="border-t pt-4 mt-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Identidad y Tono de Comunicación</label>
+                        <p class="text-xs text-gray-500 mb-2">Define la identidad de tu marca, su tono de voz, el estilo de tu comunicación y los modismos o características verbales que empleas. Esta variable parametrizará el modelo de lenguaje para mantener consistencia. <br><span class="font-medium">Ejemplo:</span> <em>Tono académico pero accesible, uso lenguaje científico intercalado con referencias de la cultura pop, evito el sarcasmo, ritmo rápido y directo.</em></p>
+                        <textarea id="identidadTono" onblur="saveStrategyExtras()" rows="2" placeholder="Ej. Mi tono es inspirador, riguroso y disruptivo..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none custom-scroll"></textarea>
+                    </div>
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Nicho de Contenido</label>
