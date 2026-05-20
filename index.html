@@ -18,6 +18,12 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
+        /* NUEVO: Fuerza a la tabla a no desbordarse hacia los lados */
+        table {
+            table-layout: fixed; 
+            width: 100%;
+        }
+
         /* Calendario */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: 1px; background-color: #e2e8f0; border: 1px solid #e2e8f0; }
         .calendar-day { background-color: white; min-height: 120px; padding: 0.5rem; overflow-y: auto; }
@@ -1340,7 +1346,7 @@ function allowDrop(ev) {
             alert("✅ Tabla procesada y guardada con éxito.");
         }
 
-        function renderTablaCalendario() {
+ function renderTablaCalendario() {
             const container = document.getElementById('calendarioTablaContainer');
             const tbody = document.getElementById('calendarioTablaBody');
             tbody.innerHTML = '';
@@ -1354,17 +1360,17 @@ function allowDrop(ev) {
                 const tr = document.createElement('tr');
                 tr.className = "border-b hover:bg-slate-50 transition";
                 tr.innerHTML = `
-                    <td class="p-3 font-bold text-slate-700 whitespace-nowrap">${item.dia}</td>
-                    <td class="p-3 text-slate-600 whitespace-nowrap">${item.tipo}</td>
-                    <td class="p-3 font-medium text-indigo-700 min-w-[120px] whitespace-normal">${item.tema}</td>
-                    <td class="p-3 text-slate-600 text-[10px] uppercase font-bold whitespace-nowrap">${item.formato}</td>
-                    <td class="p-3 text-gray-800 min-w-[180px] whitespace-normal italic">${item.hook}</td>
-                    <td class="p-3 text-gray-600 min-w-[150px] whitespace-normal text-[11px]">${item.contenido}</td>
-                    <td class="p-3 text-gray-600 min-w-[200px] whitespace-normal">${item.guionBase}</td>
-                    <td class="p-3 text-indigo-600 min-w-[120px] whitespace-normal text-[11px] font-semibold">${item.cta}</td>
-                    <td class="p-3 text-center sticky right-0 bg-white shadow-[-5px_0_10px_-5px_rgba(0,0,0,0.1)] z-10 border-l border-gray-100">
-                        <button onclick="enviarARepositorio(${index})" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-[10px] font-bold hover:bg-indigo-700 shadow-sm transition whitespace-nowrap">
-                            Producir Guion 🚀
+                    <td class="p-3 font-bold text-slate-700 w-16">${item.dia}</td>
+                    <td class="p-3 text-slate-600 w-20 break-words">${item.tipo}</td>
+                    <td class="p-3 font-medium text-indigo-700 w-32 break-words">${item.tema}</td>
+                    <td class="p-3 text-slate-600 text-[10px] uppercase font-bold w-20 break-words">${item.formato}</td>
+                    <td class="p-3 text-gray-800 w-40 break-words">${item.hook}</td>
+                    <td class="p-3 text-gray-600 w-48 break-words">${item.contenido}</td>
+                    <td class="p-3 text-gray-600 w-64 break-words">${item.guionBase}</td>
+                    <td class="p-3 text-indigo-600 w-24 break-words">${item.cta}</td>
+                    <td class="p-3 text-center w-24 sticky right-0 bg-white border-l shadow-[-5px_0_10px_-5px_rgba(0,0,0,0.1)]">
+                        <button onclick="enviarARepositorio(${index})" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-[10px] font-bold hover:bg-indigo-700 transition">
+                            Producir 🚀
                         </button>
                     </td>
                 `;
