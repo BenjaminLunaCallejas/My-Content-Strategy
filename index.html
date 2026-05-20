@@ -14,8 +14,11 @@
 
         textarea {
     min-height: 100px; /* Asegura que siempre tengan un tamaño visible decente */
-    resize: vertical;  /* Permite al usuario ajustar si lo necesita */
-} 
+    resize: vertical !important; /* Fuerza estrictamente la dirección vertical */
+            max-width: 100% !important; /* Evita que la caja rompa el diseño a lo ancho */
+            word-wrap: break-word; /* Obliga al texto largo a saltar a la siguiente línea */
+        }
+        
         /* Estética de scroll */
         .custom-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
