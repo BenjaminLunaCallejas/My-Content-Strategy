@@ -11,7 +11,11 @@
         .tag { display: inline-flex; align-items: center; background-color: #e2e8f0; color: #1e293b; padding: 0.25rem 0.75rem; border-radius: 9999px; margin: 0.25rem; font-size: 0.875rem; }
         .tag button { margin-left: 0.5rem; color: #ef4444; font-weight: bold; }
         .task-done { text-decoration: line-through; opacity: 0.6; }
-        
+
+        textarea {
+    min-height: 100px; /* Asegura que siempre tengan un tamaño visible decente */
+    resize: vertical;  /* Permite al usuario ajustar si lo necesita */
+} 
         /* Estética de scroll */
         .custom-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
@@ -594,6 +598,10 @@
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('aside button').forEach(btn => btn.classList.remove('bg-slate-800'));
             document.getElementById(tabId).classList.add('active');
+
+            const target = document.getElementById(tabId);
+    target.classList.add('active');
+            autoResizeTextareas();
             
             // Si no es el blog de notas, aplicamos el fondo estándar. Si es el blog de notas, mantenemos la coherencia de UI.
             if(tabId !== 'blog_notas') {
@@ -1439,22 +1447,30 @@ function allowDrop(ev) {
             }
         };
         // PEGUE EL NUEVO CÓDIGO AQUÍ:
-        function autoResizeTextarea() {
-            const textareas = document.querySelectorAll('textarea');
-            textareas.forEach(textarea => {
-                const adjust = function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-        };
-                textarea.addEventListener('input', function() {
-                    this.style.height = 'auto'; 
-                    this.style.height = (this.scrollHeight) + 'px'; 
-                });
-                textarea.style.height = 'auto';
-                textarea.style.height = (textarea.scrollHeight) + 'px';
-            });
-        }
-        window.addEventListener('load', autoResizeTextarea);
+        
+      // 1. Esta función es la que se encarga de re-calcular los tamaños
+function resizeHandler() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight + 10) + 'px';
+}
+
+// 2. Esta función inicializa todos los textareas
+function autoResizeTextareas() {
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+        // Ejecuta el ajuste inicial
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight + 10) + 'px';
+        
+        // Limpia cualquier evento previo para no duplicarlos
+        textarea.removeEventListener('input', resizeHandler);
+        // Agrega el evento de redimensionamiento
+        textarea.addEventListener('input', resizeHandler);
+    });
+}
+
+// 3. Ejecución al cargar la página
+window.addEventListener('load', autoResizeTextareas);
     </script>
 </body>
 </html>
