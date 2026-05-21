@@ -742,9 +742,11 @@ function saveStarFormats() {
             localStorage.setItem('contentTasks', JSON.stringify(tasks));
         }
 
-       function renderTasks() {
+ function renderTasks() {
             ['ideas', 'audios', 'tendencias', 'proximos'].forEach(cat => {
                 const list = document.getElementById(`lista_${cat}`);
+                if (!list) return;
+                if (!tasks[cat]) tasks[cat] = []; // Evita el error silencioso de lectura
                 list.innerHTML = '';
                 tasks[cat].forEach((t, i) => {
                     list.innerHTML += `<li draggable="true" ondragstart="dragTask(event, '${cat}', ${i})" class="flex justify-between items-start p-2 bg-slate-50 rounded border hover:bg-white transition cursor-default">
@@ -769,9 +771,11 @@ function saveStarFormats() {
             localStorage.setItem('blocNotasTasks', JSON.stringify(blocNotas));
         }
 
-        function renderNotas() {
+      function renderNotas() {
             ['rapidas', 'borradores', 'recursos', 'personales'].forEach(cat => {
                 const list = document.getElementById(`lista_${cat}`);
+                if (!list) return;
+                if (!blocNotas[cat]) blocNotas[cat] = []; // Evita el error silencioso de lectura
                 list.innerHTML = '';
                 blocNotas[cat].forEach((t, i) => {
                     list.innerHTML += `<li draggable="true" ondragstart="dragNota(event, '${cat}', ${i})" class="flex justify-between items-start p-2 bg-slate-50 rounded border hover:bg-white transition cursor-default">
@@ -1459,7 +1463,13 @@ function renderHistoryTasks() {
         </div>
     `).join('');
 }
-
+function deleteHistoryTask(index) {
+            if(!confirm("¿Seguro que quieres eliminar esta tarea del historial para siempre?")) return;
+            historyTasks.splice(index, 1);
+            localStorage.setItem('historyTasks', JSON.stringify(historyTasks));
+            renderHistoryTasks();
+        }
+        
 // --- LÓGICA DE HISTORIAL DE NOTAS (Tab 6) ---
 function archiveNota(cat, index) {
     const item = blocNotas[cat].splice(index, 1)[0];
@@ -1488,6 +1498,12 @@ function renderHistoryNotas() {
         </div>
     `).join('');
 }
+        function deleteHistoryNota(index) {
+            if(!confirm("¿Seguro que quieres eliminar esta nota del historial para siempre?")) return;
+            historyNotas.splice(index, 1);
+            localStorage.setItem('historyNotas', JSON.stringify(historyNotas));
+            renderHistoryNotas();
+        }
         // --- FIN NUEVO MÓDULO LÓGICO ---
         window.onload = () => {
             initArquetipos();
