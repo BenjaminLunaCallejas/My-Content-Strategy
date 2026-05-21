@@ -1507,7 +1507,7 @@ function clearHistory(type) {
     }
 }
         // --- FIN NUEVO MÓDULO LÓGICO ---
-        window.onload = () => {
+       window.onload = () => {
             initArquetipos();
             document.getElementById('temaCentral').value = localStorage.getItem('temaCentral') || '';
             document.getElementById('descCreador').value = localStorage.getItem('descCreador') || '';
@@ -1518,20 +1518,29 @@ function clearHistory(type) {
             document.getElementById('strat_consideracion').value = localStorage.getItem('strat_consideracion') || '';
             document.getElementById('strat_conversion').value = localStorage.getItem('strat_conversion') || '';
             document.getElementById('strat_fidelizacion').value = localStorage.getItem('strat_fidelizacion') || '';
+            
             for(let i=1; i<=3; i++) {
                 document.getElementById(`starFormat${i}_name`).value = localStorage.getItem(`starFormat${i}_name`) || '';
                 document.getElementById(`starFormat${i}_desc`).value = localStorage.getItem(`starFormat${i}_desc`) || '';
             }
+            
             renderTags('listaEjes', ejesTags, 'ejesTags');
             setupTagsInput('inputEjes', 'listaEjes', ejesTags, 'ejesTags');
             
             // Carga de Paneles Kanban
             renderTasks();
-            renderNotas(); // Renderizado inicial del nuevo Blog
+            renderNotas(); 
+            
+            // --- ESTAS LÍNEAS HACEN QUE EL HISTORIAL APAREZCA AL CARGAR ---
+            renderHistoryTasks();
+            renderHistoryNotas();
+            // -----------------------------------------------------------
+            
             renderIdeas();
             actualizarSelectFormatosEstrella();
             updateLivePrompt();
-               // Recuperar tabla IA generada previamente
+            
+            // Recuperar tabla IA generada previamente
             const tablaGuardadaStr = localStorage.getItem('tablaIAGuardada');
             if (tablaGuardadaStr) {
                 tablaIAParsed = JSON.parse(tablaGuardadaStr);
