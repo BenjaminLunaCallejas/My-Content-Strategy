@@ -249,8 +249,6 @@
 
         </div> </div> <div class="mt-12 pt-6 border-t border-gray-200 w-full">
         <h4 class="font-bold text-gray-700 text-sm mb-2">Historial de Tareas Completadas</h4>
-        <button onclick="clearHistory('tasks')" class="text-xs text-red-500 hover:underline">Borrar historial</button>
-    </div>
         <div id="history-list-tasks" class="max-h-40 overflow-y-auto bg-white p-2 rounded border border-gray-200"></div>
     </div>
 </section>
@@ -549,8 +547,6 @@
                 </div>
               <div class="mt-12 pt-6 border-t border-gray-200 w-full" style="clear: both;">
         <h4 class="font-bold text-gray-700 text-sm mb-2">Historial de Notas Completadas</h4>
-        <button onclick="clearHistory('notas')" class="text-xs text-red-500 hover:underline">Borrar historial</button>
-    </div>
         <div id="history-list-notas" class="max-h-40 overflow-y-auto bg-white p-2 rounded border border-gray-200"></div>
     </div>
 </section>
@@ -1492,22 +1488,8 @@ function renderHistoryNotas() {
         </div>
     `).join('');
 }
-        // --- AGREGA LA FUNCIÓN AQUÍ ---
-function clearHistory(type) {
-    if(confirm('¿Estás seguro de que quieres borrar todo el historial permanentemente?')) {
-        if(type === 'tasks') {
-            historyTasks = [];
-            localStorage.setItem('historyTasks', '[]');
-            renderHistoryTasks();
-        } else {
-            historyNotas = [];
-            localStorage.setItem('historyNotas', '[]');
-            renderHistoryNotas();
-        }
-    }
-}
         // --- FIN NUEVO MÓDULO LÓGICO ---
-       window.onload = () => {
+        window.onload = () => {
             initArquetipos();
             document.getElementById('temaCentral').value = localStorage.getItem('temaCentral') || '';
             document.getElementById('descCreador').value = localStorage.getItem('descCreador') || '';
@@ -1518,36 +1500,29 @@ function clearHistory(type) {
             document.getElementById('strat_consideracion').value = localStorage.getItem('strat_consideracion') || '';
             document.getElementById('strat_conversion').value = localStorage.getItem('strat_conversion') || '';
             document.getElementById('strat_fidelizacion').value = localStorage.getItem('strat_fidelizacion') || '';
-            
             for(let i=1; i<=3; i++) {
                 document.getElementById(`starFormat${i}_name`).value = localStorage.getItem(`starFormat${i}_name`) || '';
                 document.getElementById(`starFormat${i}_desc`).value = localStorage.getItem(`starFormat${i}_desc`) || '';
             }
-            
             renderTags('listaEjes', ejesTags, 'ejesTags');
             setupTagsInput('inputEjes', 'listaEjes', ejesTags, 'ejesTags');
             
             // Carga de Paneles Kanban
             renderTasks();
-            renderNotas(); 
-            
-            // --- ESTAS LÍNEAS HACEN QUE EL HISTORIAL APAREZCA AL CARGAR ---
-            renderHistoryTasks();
-            renderHistoryNotas();
-            // -----------------------------------------------------------
+            renderNotas(); // Renderizado inicial del nuevo Blog
             
             renderIdeas();
             actualizarSelectFormatosEstrella();
             updateLivePrompt();
-            
-            // Recuperar tabla IA generada previamente
+               // Recuperar tabla IA generada previamente
             const tablaGuardadaStr = localStorage.getItem('tablaIAGuardada');
             if (tablaGuardadaStr) {
                 tablaIAParsed = JSON.parse(tablaGuardadaStr);
                 renderTablaCalendario();
             }
         };
-       
+        // PEGUE EL NUEVO CÓDIGO AQUÍ:
+        
       // 1. Esta función es la que se encarga de re-calcular los tamaños
 function resizeHandler() {
     this.style.height = 'auto';
